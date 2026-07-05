@@ -1,0 +1,815 @@
+<!doctype html>
+
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title data-msgcom="true">SMO Randomizer</title>
+    <meta name="viewport" content="user-scalable=no" />
+    <meta name="focus-ring-visibility" content="hidden" />
+    <link rel="stylesheet" href="../../css/font-setting.css" />
+    <link rel="stylesheet" href="../../css/index.css" />
+    <script src="../../js/nx.js"></script>
+</head>
+
+<body>
+    <div class=" contents">
+        <div class="page page0">
+            <div class="toc-background-image"></div>
+            <h1><span data-msgcom="true" data-msgid="textbox_id-10901">SMO Randomizer</span></h1>
+            <ul class="toc">
+                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(0)" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toController" nx-se-disabled=""><span
+                            data-msgid="textbox_id-902">Controls</span></a>
+                </li>
+                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(1)" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toBasicAction" nx-se-disabled=""><span
+                            data-msgid="textbox_id-903">Basic
+                            Actions</span></a></li>
+                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(2)" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toCaptureAction" nx-se-disabled=""><span
+                            data-msgid="textbox_id-904">Capture
+                            Actions</span></a></li>
+                <li><a href="javascript:void(0);" onclick="openSpoilerLog()" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toOthers" nx-se-disabled=""><span>Spoiler
+                            Log</span></a></li>
+                <li><a href="javascript:void(0);" onclick="openDownloads()" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toDownloads" nx-se-disabled=""><span>Downloads</span></a></li>
+                <li><a href="javascript:void(0);" onclick="openCredits()" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toCredits" nx-se-disabled=""><span>Credits</span></a></li>
+            </ul>
+            <div class="toc-mov" id="toc-mov"></div>
+        </div>
+        <div class="page page1">
+            <a id="dummy-a-1" href="javascript:void(0);" nx-se-disabled=""></a>
+            <div class="top-bar">
+                <img class="left-arrow" src="../../img/left-arrow.webp" />
+                <span class="ruby-top-bar1" data-msgcom="true" data-msgid="textbox_id-10007">One
+                    Player</span>
+                <img class="right-arrow" src="../../img/right-arrow.webp" />
+            </div>
+            <div class="page-circle">
+                <div class="gold"></div>
+                <div class="silver"></div>
+                <div class="silver"></div>
+            </div>
+            <img class="single-play-hand" src="../../img/single-play-hand.webp" />
+            <div class="system-label system-left map"><span data-msgcom="true" data-msgid="textbox_id-10008">View
+                    map</span><img src="../../img/btn-minus-white.webp" /></div>
+            <div class="action-label action-left squat"><span data-msgcom="true"
+                    data-msgid="textbox_id-10009">Crouch</span>
+                <div class="sub-btn sub-btn-left">
+                    <p><span data-msgcom="true" data-msgid="textbox_id-10905">or</span></p><img
+                        src="../../img/btn-ZR-pink.webp" />
+                </div><img src="../../img/btn-ZL-red.webp" />
+            </div>
+            <div class="action-label action-left run"><span data-msgid="textbox_id-11">Run</span><img
+                    src="../../img/L-stick-red.webp" /></div>
+            <div class="system-label system-left snapshot-mode"><span data-msgid="textbox_id-12">Snapshot
+                    Mode</span><img src="../../img/btn-down-white.webp" /></div>
+            <div class="system-label system-left amiibo-btn amiibo-label"><span data-msgid="textbox_id-13">amiibo
+                    Button</span><img src="../../img/btn-right-white.webp" /></div>
+            <div class="system-label system-right pause"><span data-msgcom="true" data-msgid="textbox_id-10014">Pause
+                    Menu</span><img src="../../img/btn-plus-white.webp" /></div>
+            <div class="system-label system-right camera-reset"><span class="ruby-camera-reset" data-msgcom="true"
+                    data-msgid="textbox_id-10015">Reset camera</span><img src="../../img/btn-R-gray.webp" />
+                <div class="sub-btn sub-btn-right sub-btn-system">
+                    <p><span data-msgcom="true" data-msgid="textbox_id-10905">or</span></p><img
+                        src="../../img/btn-L-small-gray.webp" />
+                </div>
+            </div>
+            <div class="action-label action-right throw-cap"><img src="../../img/joycon-r-red.webp" />
+                <p><span data-msgid="textbox_id-17">flick</span></p>
+                <div class="sub-btn sub-btn-right sub-btn-right1">
+                    <p><span data-msgcom="true" data-msgid="textbox_id-10905">or</span></p><img
+                        src="../../img/btn-X-pink.webp" />
+                </div>
+                <div class="sub-btn sub-btn-right sub-btn-right2">
+                    <p><span data-msgcom="true" data-msgid="textbox_id-10905">or</span></p><img
+                        src="../../img/btn-Y-pink.webp" />
+                </div><span class="ruby-cap-throw" data-msgcom="true" data-msgid="textbox_id-10020">Throw
+                    cap</span>
+            </div>
+            <div class="action-label action-right jump"><img src="../../img/btn-B-red.webp" />
+                <div class="sub-btn sub-btn-right">
+                    <p><span data-msgcom="true" data-msgid="textbox_id-10905">or</span></p><img
+                        src="../../img/btn-A-pink.webp" />
+                </div><span data-msgcom="true" data-msgid="textbox_id-10022">Jump</span>
+            </div>
+            <div class="system-label system-right camera-move"><span data-msgcom="true"
+                    data-msgid="textbox_id-10023">Look around</span><img src="../../img/R-stick-gray.webp" /></div>
+            <div class="system-label system-right camera-zoom"><span class="ruby-camera-zoom"
+                    data-msgid="textbox_id-24">1st-person view</span><img src="../../img/R-stick-press-white.webp" />
+            </div>
+
+            <div class="red-circle circle-run"></div>
+            <div class="red-ellipse ellipse-throw-cap"></div>
+            <div class="red-ellipse ellipse-jump"></div>
+            <div class="gray-circle circle-map"></div>
+            <div class="gray-circle circle-pause"></div>
+            <div class="gray-circle circle-camera-reset"></div>
+            <div class="gray-circle circle-snapshot-mode"></div>
+            <div class="gray-circle circle-amiibo-btn"></div>
+            <div class="gray-circle circle-camera-move"></div>
+            <canvas class="call-out" id="call-out-red" width="1280" height="720"></canvas>
+            <canvas class="call-out" id="call-out-red-dash" width="1280" height="720"></canvas>
+            <canvas class="call-out" id="call-out-gray1" width="1280" height="720"></canvas>
+            <canvas class="call-out" id="call-out-gray2" width="1280" height="720"></canvas>
+            <img class="amiibo-figure-mini" src="../../img/amiibo-figure-mini.webp" />
+            <img class="control-mario-image controll-mario-squat" src="../../img/temp/controll-mario-squat.webp" />
+            <img class="control-mario-image controll-mario-run" src="../../img/temp/controll-mario-run.webp" />
+            <img class="control-mario-image controll-mario-cap-throw" src="../../video/controll-mario-cap-throw.webp" />
+            <img class="control-mario-image controll-mario-jump" src="../../img/temp/controll-mario-jump.webp" />
+        </div>
+        <div class="page page2">
+            <div class="top-bar">
+                <img class="left-arrow" src="../../img/left-arrow.webp" />
+                <span class="ruby-top-bar2" data-msgcom="true" data-msgid="textbox_id-10025">Two
+                    Players</span>
+                <img class="right-arrow" src="../../img/right-arrow.webp" />
+            </div>
+            <div class="page-circle">
+                <div class="silver"></div>
+                <div class="gold"></div>
+                <div class="silver"></div>
+            </div>
+            <div class="gold-bar-mario"><span data-msgcom="true" data-msgid="textbox_id-10026">Mario</span><img
+                    src="../../img/gold-bar-mario.webp" />
+            </div>
+            <div class="gold-bar-cap"><span data-msgid="textbox_id-27">Cappy</span><img
+                    src="../../img/gold-bar-cap.webp" /></div>
+            <img class="two-play-hand1" src="../../img/two-play-hand1.webp" />
+            <img class="two-play-hand2" src="../../img/two-play-hand2.webp" />
+
+            <div class="system-label system-left camera-reset2"><span class="ruby-camera-reset2" data-msgcom="true"
+                    data-msgid="textbox_id-10015">Reset camera</span><img src="../../img/btn-top-gray.webp" /></div>
+            <div class="system-label system-left camera-move2"><span data-msgcom="true"
+                    data-msgid="textbox_id-10023">Look around</span>
+                <div class="multi-btn-left"><img src="../../img/Stick-plus-up-white.webp" /></div>
+            </div>
+            <div class="action-label action-left throw-cap2"><span class="padright0 ruby-throw-cap2" data-msgcom="true"
+                    data-msgid="textbox_id-10020">Throw cap</span><img src="../../img/btn-left-red.webp" /></div>
+            <div class="action-label action-left squat2"><span data-msgcom="true"
+                    data-msgid="textbox_id-10009">Crouch</span>
+                <div class="sub-btn sub-btn-left">
+                    <p><span data-msgcom="true" data-msgid="textbox_id-10905">or</span></p><img
+                        src="../../img/btn-SR-pink.webp" />
+                </div><img src="../../img/btn-SL-red.webp" />
+            </div>
+            <div class="system-label system-left map2"><span data-msgcom="true" data-msgid="textbox_id-10008">View
+                    map</span><img src="../../img/btn-minus-white.webp" /></div>
+            <div class="action-label action-left run2"><span class="padright0" data-msgid="textbox_id-34">Run</span><img
+                    src="../../img/Stick-red.webp" />
+            </div>
+            <div class="action-label action-left jump2"><span data-msgcom="true"
+                    data-msgid="textbox_id-10022">Jump</span>
+                <div class="sub-btn sub-btn-left">
+                    <p><span data-msgcom="true" data-msgid="textbox_id-10905">or</span></p><img
+                        src="../../img/btn-right-pink.webp" />
+                </div><img src="../../img/btn-bottom-red.webp" />
+            </div>
+            <div class="action-label action-right cap-hip-drop"><img src="../../img/btn-SL-red.webp" />
+                <div class="sub-btn sub-btn-right">
+                    <p><span data-msgcom="true" data-msgid="textbox_id-10905">or</span></p><img
+                        src="../../img/btn-SR-pink.webp" />
+                </div><span data-msgcom="true" data-msgid="textbox_id-10040">Ground Pound</span>
+            </div>
+            <div class="action-label action-right cap-run"><img src="../../img/Stick-red.webp" /><span class="padleft0"
+                    data-msgid="textbox_id-41">Move</span></div>
+            <div class="action-label action-right cap-run2"><img src="../../img/btn-left-red.webp" /><span
+                    class="padleft0" data-msgid="textbox_id-42">Jump out / Return</span></div>
+            <div class="system-label system-right cap-camera-move">
+                <div class="multi-btn-right"><img src="../../img/Stick-plus-up-white.webp" /></div><span
+                    data-msgcom="true" data-msgid="textbox_id-10023">Look around</span>
+            </div>
+            <div class="action-label action-right cap-jump"><img src="../../img/btn-bottom-red.webp" />
+                <div class="sub-btn sub-btn-right">
+                    <p><span data-msgcom="true" data-msgid="textbox_id-10905">or</span></p><img
+                        src="../../img/btn-right-pink.webp" />
+                </div>
+                <span data-msgcom="true" data-msgid="textbox_id-10022">Jump</span>
+            </div>
+            <div class="system-label system-right pause2"><span class="ruby-pause2" data-msgcom="true"
+                    data-msgid="textbox_id-10014">Pause Menu</span><img src="../../img/btn-plus-white.webp" />
+                <div class="pause2-desc"><span class="ruby-pause2-desc" data-msgid="textbox_id-38">Select
+                        Two Players
+                        <br /> to play in co-op mode as Mario and Cappy!</span></div>
+            </div>
+
+            <div class="gray-circle circle-camera-reset2"></div>
+            <div class="red-circle circle-throw-cap2"></div>
+            <div class="red-circle circle-squat2"></div>
+            <div class="gray-circle circle-map2"></div>
+            <div class="red-circle circle-run2"></div>
+            <div class="red-ellipse ellipse-jump2"></div>
+            <div class="red-circle circle-cap-hip-drop"></div>
+            <div class="red-circle circle-cap-run"></div>
+            <div class="red-circle circle-cap-run2"></div>
+            <div class="gray-circle circle-cap-camera-move"></div>
+            <div class="red-ellipse ellipse-cap-jump"></div>
+            <div class="gray-circle circle-pause2"></div>
+            <canvas class="call-out call-out-page2-left" id="call-out-page2red-left" width="1280" height="720"></canvas>
+            <canvas class="call-out call-out-page2-right" id="call-out-page2red-right" width="1280"
+                height="720"></canvas>
+            <canvas class="call-out call-out-page2-left" id="call-out-page2gray-left" width="1280"
+                height="720"></canvas>
+            <canvas class="call-out call-out-page2-right" id="call-out-page2gray-right" width="1280"
+                height="720"></canvas>
+            <img class="control-mario-image two-play-mario-cap" src="../../video/two-play-mario-cap.webp" />
+
+
+        </div>
+        <div class="page page3">
+            <div class="top-bar">
+                <img class="left-arrow" src="../../img/left-arrow.webp" />
+                <span data-msgid="textbox_id-46">Play style</span>
+                <img class="right-arrow" src="../../img/right-arrow.webp" />
+            </div>
+            <div class="page-circle">
+                <div class="silver"></div>
+                <div class="silver"></div>
+                <div class="gold"></div>
+            </div>
+            <h2 class="h2-single"><span class="ruby-h2-single" data-msgcom="true" data-msgid="textbox_id-10007">One
+                    Player</span></h2>
+            <h2 class="h2-two-play"><span class="ruby-h2-two-play" data-msgcom="true" data-msgid="textbox_id-10025">Two
+                    Players</span></h2>
+            <h3 class="h3-single"><span data-msgcom="true" data-msgid="textbox_id-10026">Mario</span></h3>
+            <h3 class="h3-two-play"><span data-msgid="textbox_id-50">Mario + Cappy</span></h3>
+            <img class="single-mario" src="../../img/single-mario.webp" />
+            <img class="two-play-mario" src="../../img/two-play-mario.webp" />
+            <img class="play-style-plus" src="../../img/play-style-plus.webp" />
+            <img class="two-play-cap" src="../../img/two-play-cap.webp" />
+            <div class="bottom-white-area bottom-white-area1">
+                <img src="../../img/joy-con-L.webp" style="margin-right:10px;margin-top:20px" />
+                <img src="../../img/joy-con-R.webp" style="margin-right:12px" />
+                <img src="../../img/portable.webp" style="margin-right:12px;margin-bottom:16px" />
+                <img src="../../img/grip.webp" style="margin-right:12px;margin-bottom:16px" />
+                <img src="../../img/pro-con.webp" style="margin-bottom:16px" />
+                <p><span class="fontDB" data-msgid="textbox_id-51">Actions are the same for the Joy-Con
+                        or Nintendo
+                        Switch Pro Controller.</span></p>
+            </div>
+            <div class="bottom-white-area bottom-white-area2">
+                <img src="../../img/joy-con-L-side.webp" style="margin-right:0px;margin-bottom:16px" />
+                <img src="../../img/joy-con-R-side.webp" style="margin-right:12px;margin-bottom:16px" />
+                <img src="../../img/joy-con-L.webp" style="margin-right:10px;margin-top:20px" />
+                <img src="../../img/joy-con-R.webp" style="margin-right:12px" />
+                <img src="../../img/grip.webp" style="margin-right:12px;margin-bottom:16px" />
+                <img src="../../img/pro-con.webp" style="margin-bottom:16px" />
+                <p><span class="fontDB" data-msgid="textbox_id-52">You can play in two-player mode with
+                        any combination
+                        of controllers.</span></p>
+            </div>
+
+        </div>
+        <div class="page page4">
+            <div class="top-bar" id="basic-title">
+                <span></span>
+            </div>
+            <div class="top-red-area">
+                <div class="dark-red-area"><img class="label-joycon-lr" src="../../img/label-joycon-lr.webp" /><img
+                        class="label-joycon-side" src="../../img/label-joycon-side.webp" /></div>
+                <div class="joycon-lr-desc"><span class="fontDB"></span></div>
+                <div class="action-mov"></div>
+                <div class="joycon-side-desc"><span class="fontDB"></span></div>
+            </div>
+            <div class="action-desc">
+                <h2><span class="ruby-a1" data-msgid="textbox_id-53">Long Jump</span></h2><span class="action-ms"><span
+                        class="ruby-ad1" data-msgid="textbox_id-54"><img src="../../img/btn-ZL-white.webp"
+                            data-ms="true" /><img src="../../img/plus-white.webp" class="align4px" data-ms="true" /><img
+                            src="../../img/btn-B-white.webp" data-ms="true" /> while running</span></span>
+                <h2><span class="ruby-a2" data-msgid="textbox_id-55">Roll</span></h2><span class="action-ms"><span
+                        class="ruby-ad2" data-msgid="textbox_id-56"><img src="../../img/btn-ZL-white.webp"
+                            data-ms="true" /><img src="../../img/plus-white.webp" class="align4px" data-ms="true" /><img
+                            src="../../img/btn-Y-white.webp" data-ms="true" />
+                        <p class="or-text" data-ms="true"> or </p>Hold <img src="../../img/btn-ZL-white.webp"
+                            data-ms="true" /> and shake
+                        <img src="../../img/joycon-lr-white.webp" data-ms="true" />.
+                    </span></span>
+                <h2><span data-msgcom="true" data-msgid="textbox_id-10040">Ground Pound</span></h2><span
+                    class="action-ms"><span class="ruby-ad3" data-msgid="textbox_id-59"><img
+                            src="../../img/btn-ZL-white.webp" data-ms="true" /> (midair
+                        only)</span></span>
+                <h2><span data-msgid="textbox_id-60">Dive</span></h2><span class="action-ms"><span class="ruby-ad4"
+                        data-msgid="textbox_id-61">While Mario is falling in
+                        midair: <img src="../../img/btn-ZL-white.webp" data-ms="true" /><img
+                            src="../../img/plus-white.webp" class="align4px" data-ms="true" /><img
+                            src="../../img/btn-Y-white.webp" data-ms="true" /></span></span>
+                <h2><span data-msgid="textbox_id-62">Ground Pound Jump</span></h2><span class="action-ms"><span
+                        class="ruby-ad5" data-msgid="textbox_id-63">Press <img src="../../img/btn-ZL-white.webp"
+                            data-ms="true" /> in
+                        midair.<br /> When you hit the ground, press <img src="../../img/btn-B-white.webp"
+                            data-ms="true" />.</span></span>
+                <h2><span data-msgid="textbox_id-64">Capture</span></h2><span class="action-ms"
+                    data-msgid="textbox_id-65"><img src="../../img/btn-Y-white.webp" data-ms="true" />
+                    <p class="or-text" data-ms="true"> or </p>Shake <img src="../../img/joycon-lr-white.webp"
+                        data-ms="true" /><br />
+                    <p style="font-size:18px;" data-ms="true">Press <img src="../../img/btn-ZL-white.webp"
+                            style="margin:0 5px" data-ms="true" /> to release Capture</p>
+                </span>
+                <h2><span class="ruby-a7" data-msgid="textbox_id-68">Upward Throw</span></h2><span
+                    class="action-ms"><span class="ruby-ad7" data-msgid="textbox_id-69">Shake <img
+                            src="../../img/joycon-lr-white.webp" data-ms="true" />
+                        upward</span></span>
+                <h2><span class="ruby-a8" data-msgid="textbox_id-70">Downward Throw</span></h2><span
+                    class="action-ms"><span class="ruby-ad8" data-msgid="textbox_id-71">Shake <img
+                            src="../../img/joycon-lr-white.webp" data-ms="true" />
+                        downward</span></span>
+                <h2><span class="ruby-a9" data-msgid="textbox_id-72">Spin Throw</span></h2><span class="action-ms"><span
+                        class="ruby-ad9" data-msgid="textbox_id-73">Snap the
+                        <img src="../../img/joycon-lr-white.webp" data-ms="true" /> to the
+                        side</span></span>
+                <h2><span class="ruby-a10" data-msgid="textbox_id-74">Cap Throw and Hold</span></h2>
+                <span class="action-ms"><span class="ruby-ad10" data-msgid="textbox_id-75">Press and
+                        hold <img src="../../img/btn-Y-white.webp" data-ms="true" /></span></span>
+                <h2><span class="ruby-a11" data-msgid="textbox_id-76">Cap Jump</span></h2><span class="action-ms"><span
+                        class="ruby-ad11" data-msgid="textbox_id-77">Press and
+                        hold <img src="../../img/btn-Y-white.webp" data-ms="true" />, then step
+                        on the cap.</span></span>
+                <h2><span class="ruby-a12" data-msgid="textbox_id-78">Homing Cap Throw</span></h2><span
+                    class="action-ms"><span class="ruby-ad12" data-msgid="textbox_id-79">Shake the
+                        <img src="../../img/joycon-lr-white.webp" data-ms="true" /> repeatedly
+                        after throwing
+                        cap</span></span>
+                <h2><span class="ruby-a13" data-msgid="textbox_id-80">Backward Somersault</span></h2>
+                <span class="action-ms"><img src="../../img/btn-ZL-white.webp" /><img src="../../img/plus-white.webp"
+                        class="align4px" /><img src="../../img/btn-B-white.webp" /></span>
+                <h2><span class="ruby-a14" data-msgid="textbox_id-81">Side Somersault</span></h2><span
+                    class="action-ms"><span class="ruby-ad14" data-msgid="textbox_id-82"><img
+                            src="../../img/L-stick-plus-B-white.webp" data-ms="true" />
+                        (tilt in the opposite direction
+                        while running, then press)</span></span>
+                <h2><span class="ruby-a15" data-msgid="textbox_id-83">Triple Jump</span></h2><span class="action-ms"
+                    data-msgid="textbox_id-84"><img src="../../img/btn-B-white.webp" data-ms="true" /><img
+                        src="../../img/arrow-white.webp" class="align4px" data-ms="true" /><img
+                        src="../../img/btn-B-white.webp" data-ms="true" /><img src="../../img/arrow-white.webp"
+                        class="align4px" data-ms="true" /><img src="../../img/btn-B-white.webp"
+                        data-ms="true" /><br />(proper timing
+                    required!)</span>
+                <h2><span class="ruby-a16" data-msgid="textbox_id-85">Wall Jump</span></h2><span class="action-ms"><span
+                        class="ruby-ad16" data-msgid="textbox_id-86">Jump toward
+                        a wall and<br /> press <img src="../../img/btn-B-white.webp" data-ms="true" />.</span></span>
+                <h2><span class="ruby-a17" data-msgid="textbox_id-87">Hold/Throw</span></h2><span><span
+                        class="action-ms" data-msgid="textbox_id-177"><img src="../../img/btn-Y-white.webp"
+                            data-ms="true" /><br />
+                        <p style="font-size:18px;" data-ms="true">You can also shake the <img
+                                src="../../img/joycon-lr-white.webp" data-ms="true" />
+                            to throw farther.</p>
+                    </span></span>
+                <h2><span class="ruby-a18" data-msgid="textbox_id-88">Swim</span></h2><span class="action-ms"><img
+                        src="../../img/btn-B-white.webp" /></span>
+                <h2><span class="ruby-a19" data-msgid="textbox_id-89">Quick Swim</span></h2><span class="action-ms"><img
+                        src="../../img/btn-ZL-white.webp" /><img src="../../img/arrow-white.webp"
+                        class="align4px" /><img src="../../img/btn-Y-white.webp" /></span>
+                <h2><span data-msgid="textbox_id-90">Spin</span></h2><span class="action-ms"
+                    data-msgid="textbox_id-91">Rotate <img src="../../img/L-stick-white.webp" data-ms="true" /></span>
+                <h2><span data-msgid="textbox_id-92">Dash</span></h2><span class="action-ms"><img
+                        src="../../img/L-stick-plus-Y-white.webp" /></span>
+                <h2><span class="ruby-a22" data-msgid="textbox_id-93">Enter pipe</span></h2><span
+                    class="action-ms"><span class="ruby-ad22" data-msgid="textbox_id-94"><img
+                            src="../../img/btn-ZL-white.webp" data-ms="true" /> while atop a
+                        pipe</span></span>
+                <h2><span data-msgid="textbox_id-95">Jaxi</span></h2><span class="action-ms"
+                    data-msgid="textbox_id-96"><img src="../../img/btn-B-white.webp" data-ms="true" />
+                    Brake<br />
+                    <p style="font-size:18px;" data-ms="true"><img src="../../img/btn-ZL-white.webp" data-ms="true" />
+                        Dismount</p>
+                </span>
+                <h2><span data-msgid="textbox_id-98">Motor scooter</span></h2><span class="action-ms"
+                    data-msgid="textbox_id-99"><img src="../../img/btn-Y-white.webp" data-ms="true" />
+                    Accelerate<br />
+                    <img src="../../img/btn-B-white.webp" data-ms="true" /> Jump<br />
+                    <p style="font-size:18px;" data-ms="true"><img src="../../img/btn-ZL-white.webp" data-ms="true" />
+                        Dismount</p>
+                </span>
+            </div>
+            <a class="dummy-a-4" id="dummy-a-4" href="javascript:void(0);" nx-se-disabled=""></a>
+            <div class="thumb-area">
+                <a id="action1" href="javascript:void(0);" onfocus="basicMov(1)" nx-se-disabled=""><img
+                        src="../../img/temp/action1.webp" /></a>
+                <a id="action2" href="javascript:void(0);" onfocus="basicMov(2)" nx-se-disabled=""><img
+                        src="../../img/temp/action2.webp" /></a>
+                <a id="action3" href="javascript:void(0);" onfocus="basicMov(3)" nx-se-disabled=""><img
+                        src="../../img/temp/action3.webp" /></a>
+                <a id="action4" href="javascript:void(0);" onfocus="basicMov(4)" nx-se-disabled=""><img
+                        src="../../img/temp/action4.webp" /></a>
+                <a id="action5" href="javascript:void(0);" onfocus="basicMov(5)" nx-se-disabled=""><img
+                        src="../../img/temp/action5.webp" /></a>
+                <a id="action6" href="javascript:void(0);" onfocus="basicMov(6)" nx-se-disabled=""><img
+                        src="../../img/temp/action6.webp" /></a>
+                <a id="action7" href="javascript:void(0);" onfocus="basicMov(7)" nx-se-disabled=""><img
+                        src="../../img/temp/action7.webp" /></a>
+                <a id="action8" href="javascript:void(0);" onfocus="basicMov(8)" nx-se-disabled=""><img
+                        src="../../img/temp/action8.webp" /></a>
+                <a id="action9" href="javascript:void(0);" onfocus="basicMov(9)" nx-se-disabled=""><img
+                        src="../../img/temp/action9.webp" /></a>
+                <a id="action10" href="javascript:void(0);" onfocus="basicMov(10)" nx-se-disabled=""><img
+                        src="../../img/action10.webp" /></a>
+                <a id="action11" href="javascript:void(0);" onfocus="basicMov(11)" nx-se-disabled=""><img
+                        src="../../img/temp/action11.webp" /></a>
+                <a id="action12" href="javascript:void(0);" onfocus="basicMov(12)" nx-se-disabled=""><img
+                        src="../../img/temp/action12.webp" /></a>
+                <a id="action13" href="javascript:void(0);" onfocus="basicMov(13)" nx-se-disabled=""><img
+                        src="../../img/temp/action13.webp" /></a>
+                <a id="action14" href="javascript:void(0);" onfocus="basicMov(14)" nx-se-disabled=""><img
+                        src="../../img/temp/action14.webp" /></a>
+                <a id="action15" href="javascript:void(0);" onfocus="basicMov(15)" nx-se-disabled=""><img
+                        src="../../img/temp/action15.webp" /></a>
+                <a id="action16" href="javascript:void(0);" onfocus="basicMov(16)" nx-se-disabled=""><img
+                        src="../../img/temp/action16.webp" /></a>
+                <a id="action17" href="javascript:void(0);" onfocus="basicMov(17)" nx-se-disabled=""><img
+                        src="../../img/temp/action17.webp" /></a>
+                <a id="action18" href="javascript:void(0);" onfocus="basicMov(18)" nx-se-disabled=""><img
+                        src="../../img/temp/action18.webp" /></a>
+                <a id="action19" href="javascript:void(0);" onfocus="basicMov(19)" nx-se-disabled=""><img
+                        src="../../img/temp/action19.webp" /></a>
+                <a id="action20" href="javascript:void(0);" onfocus="basicMov(20)" nx-se-disabled=""><img
+                        src="../../img/temp/action20.webp" /></a>
+                <a id="action21" href="javascript:void(0);" onfocus="basicMov(21)" nx-se-disabled=""><img
+                        src="../../img/temp/action21.webp" /></a>
+                <a id="action22" href="javascript:void(0);" onfocus="basicMov(22)" nx-se-disabled=""><img
+                        src="../../img/temp/action22.webp" /></a>
+                <a id="action23" href="javascript:void(0);" onfocus="basicMov(23)" nx-se-disabled=""><img
+                        src="../../img/action23.webp" /></a>
+                <a id="action24" href="javascript:void(0);" onfocus="basicMov(24)" nx-se-disabled=""><img
+                        src="../../img/action24.webp" /></a>
+            </div>
+            <img class="action6-cap" src="../../img/icon-cap.webp" />
+            <img class="action7-cap" src="../../img/icon-cap.webp" />
+            <img class="action8-cap" src="../../img/icon-cap.webp" />
+            <img class="action9-cap" src="../../img/icon-cap.webp" />
+            <img class="action10-cap" src="../../img/icon-cap.webp" />
+            <img class="action11-cap" src="../../img/icon-cap.webp" />
+            <img class="action12-cap" src="../../img/icon-cap.webp" />
+        </div>
+        <div class="page page5">
+            <div class="top-bar" id="capture-title">
+                <span></span>
+            </div>
+            <div class="top-red-area">
+                <div class="dark-red-area"><img class="label-joycon-lr" src="../../img/label-joycon-lr.webp" /><img
+                        class="label-joycon-side" src="../../img/label-joycon-side.webp" /></div>
+                <div class="joycon-lr-desc"><span class="fontDB"></span></div>
+                <div class="action-mov"></div>
+                <div class="joycon-side-desc"><span class="fontDB"></span></div>
+            </div>
+            <div class="action-desc">
+                <h2><span data-msgid="textbox_id-101">Frog</span></h2><span class="capture-ms"
+                    data-msgid="textbox_id-102"><img src="../../img/L-stick-plus-Y-white.webp" data-ms="true" />
+                    Dash<br /> <img src="../../img/btn-B-white.webp" data-ms="true" /> Jump<br />
+                    <p style="font-size:18px;" data-ms="true">Shake the <img src="../../img/joycon-lr-white.webp"
+                            data-ms="true" /> to High
+                        Jump.</p>
+                </span>
+                <h2><span data-msgid="textbox_id-104">Paragoomba</span></h2><span class="capture-ms"
+                    data-msgid="textbox_id-105"><img src="../../img/btn-B-white.webp" data-ms="true" />
+                    Fly<br />
+                    <p style="font-size:18px;" data-ms="true"> Shake the <img src="../../img/joycon-lr-white.webp"
+                            data-ms="true" /> to fly
+                        faster</p>
+                </span>
+                <h2><span data-msgid="textbox_id-107">Chain Chomp</span></h2><span class="capture-ms"><span
+                        class="ruby-cd4" data-msgid="textbox_id-108"><img src="../../img/L-stick-white.webp"
+                            data-ms="true" /> Release
+                        (flick back)</span></span>
+                <h2><span data-msgid="textbox_id-109">T-Rex</span></h2><span class="capture-ms"
+                    data-msgid="textbox_id-110"><img src="../../img/L-stick-plus-Y-white.webp" data-ms="true" />
+                    Dash<br /> <img src="../../img/btn-B-white.webp" data-ms="true" /> Attack<br />
+                    <p style="font-size:18px;" data-ms="true">You can also shake the <img
+                            src="../../img/joycon-lr-white.webp" data-ms="true" /> to
+                        Attack.</p>
+                </span>
+                <h2><span class="ruby-c2" data-msgid="textbox_id-116">Binoculars</span></h2><span class="capture-ms"
+                    data-msgid="textbox_id-117"><img src="../../img/R-stick-white.webp" data-ms="true" /> Look
+                    around<br /> <img src="../../img/btn-Y-white.webp" data-ms="true" /> Zoom<br />
+                    <p style="font-size:18px;" data-ms="true">You can also look around with <img
+                            src="../../img/joycon-r-white.webp" data-ms="true" /><br /> <img
+                            src="../../img/btn-R-white.webp" data-ms="true" /> Reset</p>
+                </span>
+                <h2><span data-msgid="textbox_id-111">Bullet Bill</span></h2><span class="capture-ms"><span
+                        class="ruby-cd7" data-msgid="textbox_id-112">Hold <img src="../../img/btn-Y-white.webp"
+                            data-ms="true" /> to
+                        accelerate<br />
+                        <p style="font-size:18px;" data-ms="true">Shake the <img src="../../img/joycon-lr-white.webp"
+                                data-ms="true" />
+                            to Accelerate more.</p>
+                    </span></span>
+                <h2><span data-msgid="textbox_id-114">Moe-Eye</span></h2><span class="capture-ms"
+                    data-msgid="textbox_id-115"><img src="../../img/btn-Y-white.webp" data-ms="true" /> Put
+                    On / Take
+                    Off Shades</span>
+                <h2><span data-msgid="textbox_id-119">Goomba</span></h2><span class="capture-ms"
+                    data-msgid="textbox_id-120"><img src="../../img/L-stick-plus-Y-white.webp" data-ms="true" />
+                    Dash<br /> <img src="../../img/btn-B-white.webp" data-ms="true" /> Jump<br />
+                    <p style="font-size:18px;" data-ms="true">Shake the <img src="../../img/joycon-lr-white.webp"
+                            data-ms="true" /> to High
+                        Jump</p>
+                </span>
+                <h2><span data-msgid="textbox_id-122">Glydon</span></h2><span class="capture-ms"><span class="ruby-cd9"
+                        data-msgid="textbox_id-123">Hold <img src="../../img/btn-B-white.webp" data-ms="true" /> to
+                        Glide</span></span>
+                <h2><span data-msgid="textbox_id-124">Lakitu</span></h2><span class="capture-ms"><span class="ruby-cd10"
+                        data-msgid="textbox_id-125"><img src="../../img/btn-Y-white.webp" data-ms="true" /> Lower /
+                        Raise Line</span></span>
+                <h2><span data-msgid="textbox_id-135">Cheep Cheep</span></h2><span class="capture-ms"
+                    data-msgid="textbox_id-136"><img src="../../img/btn-Y-white.webp" data-ms="true" />
+                    Dive<br /> <img src="../../img/btn-B-white.webp" data-ms="true" /> Surface<br />
+                    <p style="font-size:18px;" data-ms="true">Shake the <img src="../../img/joycon-lr-white.webp"
+                            data-ms="true" /> to
+                        Attack.</p>
+                </span>
+                <h2><span data-msgid="textbox_id-126">Uproot</span></h2><span class="capture-ms"><span class="ruby-cd11"
+                        data-msgid="textbox_id-127">Hold <img src="../../img/btn-B-white.webp" data-ms="true" /> to
+                        Stretch<br />
+                        <p style="font-size:18px;" data-ms="true">Shake the <img src="../../img/joycon-lr-white.webp"
+                                data-ms="true" />
+                            to stretch farther</p>
+                    </span></span>
+                <h2><span data-msgid="textbox_id-129">Fire Bro</span></h2><span class="capture-ms"><span
+                        class="ruby-cd12" data-msgid="textbox_id-130"><img src="../../img/btn-Y-white.webp"
+                            data-ms="true" /> Throw<br />
+                        <img src="../../img/btn-B-white.webp" data-ms="true" />
+                        Jump<br />
+                        <p style="font-size:18px;" data-ms="true">Shake the <img src="../../img/joycon-lr-white.webp"
+                                data-ms="true" />
+                            to Throw faster.</p>
+                    </span></span>
+                <h2><span data-msgid="textbox_id-132">Sherm</span></h2><span class="capture-ms"><span class="ruby-cd13"
+                        data-msgid="textbox_id-133"><img src="../../img/R-stick-white.webp" data-ms="true" /> Aim<br />
+                        <img src="../../img/btn-Y-white.webp" data-ms="true" /> Shoot<br />
+                        <p style="font-size:18px;" data-ms="true">You can also aim with <img
+                                src="../../img/joycon-r-white.webp" data-ms="true" />.<br /> <img
+                                src="../../img/btn-R-white.webp" data-ms="true" /> Reset
+                        </p>
+                    </span></span>
+                <h2><span data-msgid="textbox_id-138">Tropical Wiggler</span></h2><span class="capture-ms"
+                    data-msgid="textbox_id-139"><img src="../../img/L-stick-plus-Y-white.webp" data-ms="true" />
+                    Stretch<br />
+                    <p style="font-size:18px;" data-ms="true">Shake the <img src="../../img/joycon-lr-white.webp"
+                            data-ms="true" /> to
+                        Stretch faster.</p>
+                </span>
+                <h2><span data-msgid="textbox_id-143">Ty-foo</span></h2><span class="capture-ms"><span class="ruby-cd17"
+                        data-msgid="textbox_id-144">Hold <img src="../../img/btn-Y-white.webp" data-ms="true" /> to
+                        Exhale<br />
+                        <p style="font-size:18px;" data-ms="true">Shake the <img src="../../img/joycon-lr-white.webp"
+                                data-ms="true" />
+                            to blow harder.</p>
+                    </span></span>
+                <h2><span class="ruby-c18" data-msgid="textbox_id-145">Shiverian Racer</span></h2><span
+                    class="capture-ms" data-msgid="textbox_id-146"><img src="../../img/btn-B-white.webp"
+                        data-ms="true" /> Bound<br />
+                    <p style="font-size:18px;" data-ms="true">You can also shake the <img
+                            src="../../img/joycon-lr-white.webp" data-ms="true" /> to bound.
+                    </p>
+                </span>
+                <h2><span data-msgid="textbox_id-140">Gushen</span></h2><span class="capture-ms"><span class="ruby-cd16"
+                        data-msgid="textbox_id-141">Hold <img src="../../img/btn-Y-white.webp" data-ms="true" /> to Jet
+                        Forward<br /> Hold <img src="../../img/btn-B-white.webp" data-ms="true" /> to Jet
+                        Upward<br />
+                        <p style="font-size:18px;" data-ms="true">Shake the <img src="../../img/joycon-lr-white.webp"
+                                data-ms="true" />
+                            to spray in all directions.</p>
+                    </span></span>
+                <h2><span data-msgid="textbox_id-147">Lava Bubble</span></h2><span class="capture-ms"
+                    data-msgid="textbox_id-148"><img src="../../img/L-stick-plus-Y-white.webp" data-ms="true" />
+                    Dash<br /> <img src="../../img/btn-B-white.webp" data-ms="true" /> Jump<br />
+                    <p style="font-size:18px;" data-ms="true">Shake the <img src="../../img/joycon-lr-white.webp"
+                            data-ms="true" /> to Dash
+                        faster.</p>
+                </span>
+                <h2><span data-msgid="textbox_id-150">Hammer Bro</span></h2><span class="capture-ms"><span
+                        class="ruby-cd20" data-msgid="textbox_id-151"><img src="../../img/btn-Y-white.webp"
+                            data-ms="true" /> Throw<br />
+                        <img src="../../img/btn-B-white.webp" data-ms="true" />
+                        Jump<br />
+                        <p style="font-size:18px;" data-ms="true">Shake the <img src="../../img/joycon-lr-white.webp"
+                                data-ms="true" />to
+                            Throw faster.</p>
+                    </span></span>
+                <h2><span data-msgid="textbox_id-153">Pokio</span></h2><span class="capture-ms"><span class="ruby-cd21"
+                        data-msgid="textbox_id-154"><img src="../../img/btn-Y-white.webp" data-ms="true" /> Poke<br />
+                        <img src="../../img/L-stick-white.webp" data-ms="true" /> Flick<br />
+                        <img src="../../img/btn-B-white.webp" data-ms="true" />
+                        Jump</span></span>
+                <h2><span data-msgid="textbox_id-155">Chargin' Chuck</span></h2><span class="capture-ms"><span
+                        class="ruby-cd22" data-msgid="textbox_id-156">Hold <img src="../../img/btn-Y-white.webp"
+                            data-ms="true" /> to Charge
+                        Up<br /> Release <img src="../../img/btn-Y-white.webp" data-ms="true" />
+                        to Tackle</span></span>
+                <h2><span data-msgid="textbox_id-157">Bowser</span></h2><span class="capture-ms"
+                    data-msgid="textbox_id-158"><img src="../../img/btn-Y-white.webp" data-ms="true" />
+                    Attack<br />
+                    <img src="../../img/btn-B-white.webp" data-ms="true" /> Jump<br />
+                    <p style="font-size:18px;" data-ms="true">Shake the <img src="../../img/joycon-lr-white.webp"
+                            data-ms="true" /> to
+                        breathe Fire.</p>
+                </span>
+                <h2><span data-msgid="textbox_id-160">Yoshi</span></h2><span class="capture-ms"><span class="ruby-cd24"
+                        data-msgid="textbox_id-161"><img src="../../img/btn-Y-white.webp" data-ms="true" /> Extend
+                        Tongue<br /> Hold <img src="../../img/btn-B-white.webp" data-ms="true" /> to Flutter
+                        Jump<br />
+                        <p style="font-size:18px;" data-ms="true">You can also shake the <img
+                                src="../../img/joycon-lr-white.webp" data-ms="true" />
+                            to extend tongue.</p>
+                    </span></span>
+            </div>
+            <a class="dummy-a-5" id="dummy-a-5" href="javascript:void(0);" nx-se-disabled=""></a>
+            <div class="thumb-area">
+                <a id="capture1" href="javascript:void(0);" onfocus="captureMov(1)" nx-se-disabled=""><img
+                        src="../../img/temp/capture1.webp" /></a>
+                <a id="capture2" href="javascript:void(0);" onfocus="captureMov(2)" nx-se-disabled=""><img
+                        src="../../img/temp/capture2.webp" /></a>
+                <a id="capture3" href="javascript:void(0);" onfocus="captureMov(3)" nx-se-disabled=""><img
+                        src="../../img/temp/capture3.webp" /></a>
+                <a id="capture4" href="javascript:void(0);" onfocus="captureMov(4)" nx-se-disabled=""><img
+                        src="../../img/temp/capture4.webp" /></a>
+                <a id="capture5" href="javascript:void(0);" onfocus="captureMov(5)" nx-se-disabled=""><img
+                        src="../../img/temp/capture5.webp" /></a>
+                <a id="capture6" href="javascript:void(0);" onfocus="captureMov(6)" nx-se-disabled=""><img
+                        src="../../img/temp/capture6.webp" /></a>
+                <a id="capture7" href="javascript:void(0);" onfocus="captureMov(7)" nx-se-disabled=""><img
+                        src="../../img/temp/capture7.webp" /></a>
+                <a id="capture8" href="javascript:void(0);" onfocus="captureMov(8)" nx-se-disabled=""><img
+                        src="../../img/temp/capture8.webp" /></a>
+                <a id="capture9" href="javascript:void(0);" onfocus="captureMov(9)" nx-se-disabled=""><img
+                        src="../../img/temp/capture9.webp" /></a>
+                <a id="capture10" href="javascript:void(0);" onfocus="captureMov(10)" nx-se-disabled=""><img
+                        src="../../img/temp/capture10.webp" /></a>
+                <a id="capture11" href="javascript:void(0);" onfocus="captureMov(11)" nx-se-disabled=""><img
+                        src="../../img/temp/capture11.webp" /></a>
+                <a id="capture12" href="javascript:void(0);" onfocus="captureMov(12)" nx-se-disabled=""><img
+                        src="../../img/temp/capture12.webp" /></a>
+                <a id="capture13" href="javascript:void(0);" onfocus="captureMov(13)" nx-se-disabled=""><img
+                        src="../../img/temp/capture13.webp" /></a>
+                <a id="capture14" href="javascript:void(0);" onfocus="captureMov(14)" nx-se-disabled=""><img
+                        src="../../img/temp/capture14.webp" /></a>
+                <a id="capture15" href="javascript:void(0);" onfocus="captureMov(15)" nx-se-disabled=""><img
+                        src="../../img/temp/capture15.webp" /></a>
+                <a id="capture16" href="javascript:void(0);" onfocus="captureMov(16)" nx-se-disabled=""><img
+                        src="../../img/temp/capture16.webp" /></a>
+                <a id="capture17" href="javascript:void(0);" onfocus="captureMov(17)" nx-se-disabled=""><img
+                        src="../../img/temp/capture17.webp" /></a>
+                <a id="capture18" href="javascript:void(0);" onfocus="captureMov(18)" nx-se-disabled=""><img
+                        src="../../img/temp/capture18.webp" /></a>
+                <a id="capture19" href="javascript:void(0);" onfocus="captureMov(19)" nx-se-disabled=""><img
+                        src="../../img/temp/capture19.webp" /></a>
+                <a id="capture20" href="javascript:void(0);" onfocus="captureMov(20)" nx-se-disabled=""><img
+                        src="../../img/temp/capture20.webp" /></a>
+                <a id="capture21" href="javascript:void(0);" onfocus="captureMov(21)" nx-se-disabled=""><img
+                        src="../../img/temp/capture21.webp" /></a>
+                <a id="capture22" href="javascript:void(0);" onfocus="captureMov(22)" nx-se-disabled=""><img
+                        src="../../img/temp/capture22.webp" /></a>
+                <a id="capture23" href="javascript:void(0);" onfocus="captureMov(23)" nx-se-disabled=""><img
+                        src="../../img/temp/capture23.webp" /></a>
+                <a id="capture24" href="javascript:void(0);" onfocus="captureMov(24)" nx-se-disabled=""><img
+                        src="../../img/temp/capture24.webp" /></a>
+            </div>
+        </div>
+        <div class="page page6 spoiler-page">
+            <div class="top-bar">
+                <a href="javascript:void(0);" id="spoiler-back" onclick="closeSpoilerLog()" nx-se-disabled=""
+                    class="back-link"><img class="left-arrow-static" src="../../img/left-arrow.webp" /><span
+                        class="back-label fontDB">Back</span></a>
+                <span>Spoiler Log</span>
+            </div>
+            <div class="spoiler-container">
+                <div class="spoiler-empty" id="spoiler-empty">
+                    <p class="spoiler-empty-text">Load a randomizer spoiler log (.txt) to browse the seed's
+                        settings, moon placements, entrances, and more.</p>
+                    <label for="spoiler-file-input" class="spoiler-load-btn">Choose File</label>
+                    <input type="file" id="spoiler-file-input" accept=".txt,text/plain"
+                        onchange="loadSpoilerFile(this.files[0])" />
+                </div>
+                <div class="spoiler-viewer" id="spoiler-viewer" style="display:none;">
+                    <div class="spoiler-sidebar">
+                        <p class="spoiler-filename" id="spoiler-filename"></p>
+                        <div class="spoiler-section-list" id="spoiler-section-list"></div>
+                        <label for="spoiler-file-input" class="spoiler-reload-btn">Load Different File</label>
+                    </div>
+                    <div class="spoiler-content-wrapper" id="spoiler-content-wrapper">
+                        <div class="spoiler-toolbar" id="spoiler-toolbar" style="display:none;">
+                            <input type="text" id="spoiler-search" class="spoiler-search"
+                                placeholder="Search this section..." oninput="filterSpoilerContent(this.value)" />
+                            <span class="spoiler-count" id="spoiler-count"></span>
+                        </div>
+                        <div class="spoiler-content" id="spoiler-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page page12 downloads-page">
+            <div class="top-bar">
+                <a href="javascript:void(0);" id="downloads-back" onclick="closeDownloads()" nx-se-disabled=""
+                    class="back-link"><img class="left-arrow-static" src="../../img/left-arrow.webp" /><span
+                        class="back-label fontDB">Back</span></a>
+                <span>Downloads</span>
+            </div>
+            <div class="downloads-container">
+                <div class="download-item">
+                    <div class="download-info">
+                        <p class="download-title fontDB">SMO Randomizer for Nintendo Switch</p>
+                        <p class="download-desc">Randomizer mod for SMO on Nintendo Switch.</p>
+                    </div>
+                    <a class="download-btn" href="../../downloads/SMO-Randomizer-Switch.zip" download
+                        onclick="wsnd.play('seDecide')">Download</a>
+                </div>
+                <div class="download-item">
+                    <div class="download-info">
+                        <p class="download-title fontDB">SMO Randomizer for Emulator</p>
+                        <p class="download-desc">Randomizer mod for SMO on emulator.</p>
+                    </div>
+                    <a class="download-btn" href="../../downloads/SMO-Randomizer-Emulator.zip" download
+                        onclick="wsnd.play('seDecide')">Download</a>
+                </div>
+            </div>
+        </div>
+        <div class="page page13 credits-page">
+            <div class="top-bar">
+                <a href="javascript:void(0);" id="credits-back" onclick="closeCredits()" nx-se-disabled=""
+                    class="back-link"><img class="left-arrow-static" src="../../img/left-arrow.webp" /><span
+                        class="back-label fontDB">Back</span></a>
+                <span>Credits</span>
+            </div>
+            <div class="credits-container">
+                <div class="credit-item">
+                    <div class="credit-header"><p class="credit-name fontDB">Karateman</p><p class="credit-role">Logic</p></div>
+                    <p class="credit-desc">Responsible for the randomizer logic.</p>
+                    <div class="credit-links">
+                        <a href="https://youtube.com/@karateman" target="_blank" rel="noopener noreferrer">🎥 YouTube</a>
+                        <a href="https://www.tiktok.com/@karateman10998" target="_blank" rel="noopener noreferrer">🎵 TikTok</a>
+                        <a href="https://twitch.tv/karateman" target="_blank" rel="noopener noreferrer">🟣 Twitch</a>
+                        <a href="https://discord.gg/BUDXWDPVUM" target="_blank" rel="noopener noreferrer">💬 Discord</a>
+                    </div>
+                </div>
+                <div class="credit-item">
+                    <div class="credit-header"><p class="credit-name fontDB">MaliciousMajora</p><p class="credit-role">Co-leader</p></div>
+                    <p class="credit-desc">Co-leader of the mod.</p>
+                    <div class="credit-links">
+                        <a href="https://github.com/guymakinggames" target="_blank" rel="noopener noreferrer">🐙 GitHub</a>
+                    </div>
+                </div>
+                <div class="credit-item">
+                    <div class="credit-header"><p class="credit-name fontDB">MrKatzenGaming</p><p class="credit-role">Developer</p></div>
+                    <p class="credit-desc">Helped on the mod.</p>
+                    <div class="credit-links">
+                        <a href="https://youtube.com/@mrkatzengaming" target="_blank" rel="noopener noreferrer">🎥 YouTube</a>
+                        <a href="https://github.com/MrKatzenGaming" target="_blank" rel="noopener noreferrer">🐙 GitHub</a>
+                        <a href="https://twitch.tv/MrKatzenGaming" target="_blank" rel="noopener noreferrer">🟣 Twitch</a>
+                        <a href="https://discord.gg/pGg2wddNBa" target="_blank" rel="noopener noreferrer">💬 Discord</a>
+                    </div>
+                </div>
+                <div class="credit-item">
+                    <div class="credit-header"><p class="credit-name fontDB">1tsAJ</p><p class="credit-role">Moon Models</p></div>
+                    <p class="credit-desc">Contributed Moon Models.</p>
+                    <div class="credit-links">
+                        <a href="https://youtube.com/@1tsaj" target="_blank" rel="noopener noreferrer">🎥 YouTube</a>
+                        <a href="https://twitch.tv/1tsAJ" target="_blank" rel="noopener noreferrer">🟣 Twitch</a>
+                        <a href="https://discord.gg/KyYVsxrvE5" target="_blank" rel="noopener noreferrer">💬 Discord</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer id="page0Footer">
+            <div class="page-title"><span id="action-guide"></span></div>
+            <div id="footer-title" style="display:none">
+                <span data-msgid="textbox_id-914"><img src="../../img/temp/cap-gold.webp" data-ms="true" />
+                    Controls</span>
+                <span data-msgid="textbox_id-915"><img src="../../img/temp/cap-gold.webp" data-ms="true" />
+                    Basic
+                    Actions</span>
+                <span data-msgid="textbox_id-916"><img src="../../img/temp/cap-gold.webp" data-ms="true" />Capture
+                    Actions</span>
+                <span data-msgid="textbox_id-187"><img src="../../img/temp/cap-gold.webp" data-ms="true" />Spoiler
+                    Log</span>
+                <span></span>
+            </div>
+            <div class="btn-operation"><img class="footer-L" src="../../img/footer-L-stick.webp" /><span
+                    class="footer-choose fontDB ruby-choose1" data-msgid="textbox_id-181">Select</span><img
+                    class="footer-B" src="../../img/footer-btn-B.webp" /><span class="footer-back fontDB"
+                    data-msgid="textbox_id-183">Cancel</span><img class="footer-A"
+                    src="../../img/footer-btn-A.webp" /><span class="footer-ok fontDB ruby-ok1"
+                    data-msgid="textbox_id-182">OK</span>
+            </div>
+            <div class="btn-operation"><img class="footer-L" src="../../img/footer-L-stick.webp" /><span
+                    class="footer-choose fontDB ruby-choose2"></span><img class="footer-B"
+                    src="../../img/footer-btn-B.webp" /><span class="footer-back fontDB"></span>
+            </div>
+            <div class="btn-operation"><img class="footer-B" src="../../img/footer-btn-B.webp" /><span
+                    class="footer-back fontDB"></span></div>
+        </footer>
+
+
+    </div>
+
+    <!--★<script src="../../js/playreport.js"></script>-->
+    <script src="../../js/wsnd.min.js"></script>
+    <script src="../../js/index.js"></script>
+
+    <!-- textbox_id_counter-916 -->
+</body>
+
+</html>

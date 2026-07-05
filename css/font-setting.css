@@ -1,0 +1,12 @@
+@charset "utf-8";
+
+/*フォント-----------------------------------------------------------------*/
+
+@font-face {
+    font-family: "FontEB";
+    src: url("../font/FOT-RodinNTLGPro-EB.otf");
+}
+@font-face {
+    font-family: "FontDB";
+    src: url("../font/FOT-RodinNTLGPro-DB.otf");
+}

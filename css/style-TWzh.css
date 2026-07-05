@@ -1,0 +1,41 @@
+.page1>.camera-reset>span {
+    padding-left: 40px;
+    width: 264px;
+}
+.page1>.throw-cap>span {
+    width: 216px;
+    padding: 0 54px 0 36px;
+}
+.page2>.camera-move2>span {
+    width: 215px;
+    padding-right: 0px;
+}
+.page2>.action-left>span {
+    width: 263px;
+    padding: 0;
+}
+.page2>.action-right>span {
+    width: 263px;
+    padding: 0;
+}
+.sub-btn>p {
+    font-size: 12px;
+    margin-top: -2px;
+}
+.sub-btn-system>p {
+    font-size: 12px;
+    margin-top: -2px;
+}
+.or-text{
+  font-size: 16px;
+}
+.joycon-lr-desc img, .joycon-side-desc img {
+    padding: 0 8px;
+    vertical-align: -4px;
+}
+.btn-operation> img {
+    vertical-align: -4px;
+}
+.bottom-red-area> span>img {
+    vertical-align: -4px;
+}

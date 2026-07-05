@@ -1,0 +1,715 @@
+@charset "utf-8";
+/*フッター*/
+.ruby-choose1::before{
+  content: "えら";
+  font-size: 9px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-4px;
+  left:318px;
+}
+.ruby-ok1::before{
+  content: "けってい";
+  font-size: 9px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-4px;
+  left:541px;
+}
+.ruby-choose2::before{
+  content: "えら";
+  font-size: 9px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-4px;
+  left:420px;
+}
+
+/*１人でプレイ*/
+.ruby-top-bar1::before{
+  content: "ひ と り";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:536px;
+}
+.ruby-camera-reset::before{
+  content:"してん";
+  font-size:10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-2px;
+  left:132px;
+}
+.ruby-cap-throw::before{
+  content:"ぼうし";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:16px;
+  left:173px;
+}
+.ruby-cap-throw::after{
+  content:"な";
+font-size: 10px;
+  font-family:"FontDB";
+position: absolute;
+top:16px;
+right:116px;
+}
+.ruby-camera-zoom::before{
+  content:"しゅかんしてん";
+  font-size: 10px;
+    font-family:"FontDB";
+    position: absolute;
+    top:-2px;
+    left:134px;
+}
+/*２人でプレイ*/
+.ruby-top-bar2::before{
+  content: "ふ た り";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:536px;
+}
+.ruby-camera-reset2::before{
+  content:"してん";
+  font-size:10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-2px;
+  left:48px;
+}
+.ruby-throw-cap2::before{
+  content:"ぼうし";
+  font-size:10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-4px;
+  left:66px;
+}
+.ruby-throw-cap2::after{
+  content:"な";
+  font-size:10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-4px;
+  right:178px;
+}
+.ruby-pause2::after{
+  content: "ふたり";
+  font-size:8px;
+  font-family:"FontDB";
+  position: absolute;
+  top:38px;
+  left:70px;
+}
+.ruby-pause2-desc::before{
+  content: "えら";
+  font-size:8px;
+  font-family:"FontDB";
+  position: absolute;
+  top:33px;
+  left:196px;
+}
+.pause2-desc{
+  line-height: 30px;
+}
+.ruby-pause2-desc::after{
+  content: "きょうりょく";
+  font-size:8px;
+  font-family:"FontDB";
+  position: absolute;
+  top:63px;
+  left:178px;
+}
+
+/*プレイスタイル*/
+.ruby-h2-single::before{
+  content: "ひとり";
+  font-size:10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-6px;
+  left:243px;
+}
+.ruby-h2-two-play::before{
+  content: "ふたり";
+  font-size:10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-6px;
+  left:244px;
+}
+
+/*きほんアクション*/
+.ruby-a1::before{
+  content: "はし　　 　 は ば と";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:546px;
+}
+
+.ruby-a2::before{
+  content: "ころ";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:588px;
+}
+.ruby-a7::before{
+  content: "う え な";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:595px;
+}
+
+.ruby-a8::before{
+  content: "し た な";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:595px;
+}
+.ruby-a9::before{
+  content: "か い て ん な";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:572px;
+}
+.ruby-a10::before{
+  content: "ぼ　う　し　な";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:485px;
+}
+.ruby-a11::before{
+  content: "ぼ　う　し　ふ";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:486px;
+}
+.ruby-a12::before{
+  content: "ぼ　う　し　な";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:466px;
+}
+.ruby-a13::before{
+  content: "ちゅう";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:677px;
+}
+.ruby-a14::before{
+  content: "よこちゅうがえ";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:568px;
+}
+.ruby-a15::before{
+  content: "さ ん だ ん と";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:573px;
+}
+.ruby-a16::before{
+  content: "か べ";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:560px;
+}
+.ruby-a17::before{
+  content: "も　　　 　　な";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:545px;
+}
+.ruby-a18::before{
+  content: "お よ";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:604px;
+}
+.ruby-a19::before{
+  content: "ひ ら お よ";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:584px;
+}
+.ruby-a22::before{
+  content: "ど か ん";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:524px;
+}
+.ruby-ad1::before{
+  content: "はし";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:98px;
+}
+.ruby-ad2::after{
+  content: "お";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:80px;
+  right:256px;
+}
+.joycon-side-desc .ruby-ad2::after{
+  content: "お";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:80px;
+  right:260px;
+}
+.ruby-ad3::before{
+  content: "くうちゅう";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:152px;
+}
+.ruby-ad4::before{
+  content: "くうちゅう　 　　　　　　　 　 らっか ちゅう";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:69px;
+}
+.ruby-ad5::before{
+  content: "くうちゅう　 　　　　　　　　  ちゃくち";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:69px;
+}
+.ruby-ad7::before{
+  content: "うえ";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:196px;
+}
+.joycon-side-desc .ruby-ad7::before{
+  content: "うえ";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:200px;
+}
+.ruby-ad8::before{
+  content: "した";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:196px;
+}
+.ruby-ad9::before{
+  content: "よこ";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:197px;
+}
+.joycon-side-desc .ruby-ad9::before{
+  content: "よこ";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:201px;
+}
+.ruby-ad10::before{
+  content: "な が お";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:200px;
+}
+.ruby-ad11::before{
+  content: "ちゅう　  　 ぼ う し　　　 ちか";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:160px;
+}
+.ruby-ad12::before{
+  content: "れんぞく";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:188px;
+}
+.joycon-side-desc .ruby-ad12::before{
+  content: "れんぞく";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:190px;
+}
+.ruby-ad14::before{
+  content: "はし  　　　　　　　　　　せ な か ほ う こ う";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:40px;
+}
+.ruby-ad16::before{
+  content: "かべ";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:108px;
+}
+.ruby-ad22::before{
+  content: "ど か ん　　　 うえ";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:136px;
+}
+/*キャプチャーアクション*/
+.ruby-c2::before{
+  content: "ぼ う え ん き ょ う";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:572px;
+}
+.ruby-c18::before{
+  content: "じ ん";
+  font-size: 15px;
+  font-family:"FontDB";
+  position: absolute;
+  top:-8px;
+  left:602px;
+}
+.ruby-cd4::before{
+  content: "ひ";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:105px;
+}
+.ruby-cd7::before{
+  content: "な が お　　　　　　か そ く";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:151px;
+}
+.joycon-side-desc .ruby-cd7::before{
+  content: "な が お　　　　　　か そ く";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:149px;
+}
+.ruby-cd7::after{
+  content: "か そ く";
+  font-size: 8px;
+  font-family:"FontDB";
+  position: absolute;
+  top:70px;
+  right:89px;
+}
+.joycon-side-desc .ruby-cd7::after{
+  content: "か そ く";
+  font-size: 8px;
+  font-family:"FontDB";
+  position: absolute;
+  top:70px;
+  right:84px;
+}
+.ruby-cd9::before{
+  content: "な が お　　　　　　かっくう";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:165px;
+}
+.ruby-cd10::before{
+  content: "つ　　 　いと";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:113px;
+}
+.ruby-cd11::before{
+  content: "な が お";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:142px;
+}
+.joycon-side-desc .ruby-cd11::before{
+  content: "な が お";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:139px;
+}
+.ruby-cd12::before{
+  content: "な";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:146px;
+}
+.joycon-side-desc .ruby-cd12::before{
+  content: "な";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:142px;
+}
+.ruby-cd12::after{
+  content: "な";
+  font-size: 8px;
+  font-family:"FontDB";
+  position: absolute;
+  top:104px;
+  right:116px;
+}
+.joycon-side-desc .ruby-cd12::after{
+  content: "な";
+  font-size: 8px;
+  font-family:"FontDB";
+  position: absolute;
+  top:102px;
+  right:113px;
+}
+.ruby-cd13::before{
+  content: "う";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:48px;
+  left:177px;
+}
+.joycon-side-desc .ruby-cd13::before{
+  content: "う";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:48px;
+  left:167px;
+}
+.ruby-cd16::before{
+  content: "な が お";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:153px;
+}
+.joycon-side-desc .ruby-cd16::before{
+  content: "な が お";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:148px;
+}
+.ruby-cd16::after{
+  content: "な が お";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:48px;
+  right:212px;
+}
+.joycon-side-desc .ruby-cd16::after{
+  content: "な が お";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:48px;
+  right:216px;
+}
+.ruby-cd17::before{
+  content: "な が お　 　  　 　 　ふ";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:152px;
+}
+.joycon-side-desc .ruby-cd17::before{
+  content: "な が お　 　  　 　 　ふ";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:148px;
+}
+.ruby-cd17::after{
+  content: "ふ";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:69px;
+  right:108px;
+}
+.joycon-side-desc .ruby-cd17::after{
+  content: "ふ";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:67px;
+  right:104px;
+}
+.ruby-cd20::before{
+  content: "な";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:146px;
+}
+.joycon-side-desc .ruby-cd20::before{
+  content: "な";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:142px;
+}
+.ruby-cd20::after{
+  content: "な";
+  font-size: 8px;
+  font-family:"FontDB";
+  position: absolute;
+  top:104px;
+  right:117px;
+}
+.joycon-side-desc .ruby-cd20::after{
+  content: "な";
+  font-size: 8px;
+  font-family:"FontDB";
+  position: absolute;
+  top:102px;
+  right:113px;
+}
+.ruby-cd21::before{
+  content: "つ";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:162px;
+}
+.ruby-cd22::before{
+  content: "な が お";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:81px;
+}
+.joycon-side-desc .ruby-cd22::before{
+  content: "な が お";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:12px;
+  left:81px;
+}
+.ruby-cd24::before{
+  content: "し た　　　な が お";
+  font-size: 10px;
+  width:60px;
+  line-height: 34px;
+  font-family:"FontDB";
+  position: absolute;
+  top:13px;
+  left:122px;
+}
+.joycon-side-desc .ruby-cd24::before{
+  content: "し た　　　な が お";
+  font-size: 10px;
+  width:60px;
+  line-height: 34px;
+  font-family:"FontDB";
+  position: absolute;
+  top:13px;
+  left:117px;
+}
+.ruby-cd24::after{
+  content: "した";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:102px;
+  right:165px;
+}
+.joycon-side-desc .ruby-cd24::after{
+  content: "した";
+  font-size: 10px;
+  font-family:"FontDB";
+  position: absolute;
+  top:102px;
+  right:162px;
+}

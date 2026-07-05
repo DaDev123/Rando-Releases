@@ -1,0 +1,8 @@
+@charset "utf-8";
+
+/*フォント-----------------------------------------------------------------*/
+
+@font-face {
+    font-family: "FontEB";
+    src:url("../font/nintendoP_NewRodin-EB_003.ttf");
+}

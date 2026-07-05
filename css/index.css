@@ -1,0 +1,1601 @@
+@charset "utf-8";
+
+/*共通スタイル-----------------------------------------------------------------*/
+
+html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 1280px;
+    height: 720px;
+}
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 1280px;
+    height: 720px;
+    background-color: #e9e8e8;
+    font-family: "FontEB";
+}
+.fontDB {
+    font-family: "FontDB";
+}
+.contents {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    transition-duration: 0.5s;
+}
+.page {
+    position: fixed;
+    width: 1280px;
+    height: 660px;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    background-color: #e9e8e8;
+    display: none;
+}
+.page0 {
+    display: block;
+    opacity: 1;
+}
+.top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1280px;
+    height: 75px;
+    background-color: #fff;
+    text-align: center;
+}
+.top-bar> span {
+    position: absolute;
+    top: -2px;
+    left: 0;
+    display: block;
+    width: 1280px;
+    height: 40px;
+    font-size: 40px;
+    color: #B59D00;
+}
+.title-control-lr {
+    margin-top: 21px;
+}
+.title-control-side {
+    margin-top: 30px;
+}
+.left-arrow {
+    position: absolute;
+    top: 25px;
+    left: 300px;
+    animation-duration: 0.9s;
+    animation-timing-function: ease;
+    animation-iteration-count: infinite;
+    animation-name: left-arrow-move;
+}
+@keyframes left-arrow-move {
+    50% {
+        left: 290px;
+    }
+}
+.right-arrow {
+    position: absolute;
+    top: 25px;
+    right: 300px;
+    animation-duration: 0.9s;
+    animation-timing-function: ease;
+    animation-iteration-count: infinite;
+    animation-name: right-arrow-move;
+}
+@keyframes right-arrow-move {
+    50% {
+        right: 290px;
+    }
+}
+.page-circle {
+    position: absolute;
+    top: 79px;
+    width: 1280px;
+    text-align: center;
+}
+.page6> .page-circle, .page7> .page-circle, .page8> .page-circle, .page9> .page-circle, .page10> .page-circle, .page11> .page-circle {
+    top: 83px;
+}
+.page-circle> div {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin: 0 4px;
+}
+.action-label {
+    position: absolute;
+    width: 378px;
+    height: 56px;
+    border: 3px solid #f80026;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+.page2>.action-label {
+    width: 332px;
+}
+.action-left {
+    left: 36px;
+}
+.action-right {
+    right: 36px;
+}
+.action-label>span {
+    display: table-cell;
+    width: 216px;
+    height: 50px;
+    font-size: 24px;
+    line-height: 25px;
+    color: #fff;
+    background-color: #f80026;
+    vertical-align: middle;
+    text-align: center;
+}
+.action-left>span {
+    padding: 0 37px 0 56px;
+}
+.page2>.action-left>span {
+    width: 219px;
+    padding: 0 44px 0 0;
+}
+.action-left>.padright0 {
+    width: 236px;
+    padding-right: 0;
+}
+.page2>.action-left>.padright0 {
+    width: 263px;
+    padding: 0;
+}
+.action-right>span {
+    padding: 0 54px 0 36px;
+}
+.page2>.action-right>span {
+    width: 219px;
+    padding: 0 0 0 44px;
+}
+.page2>.action-right>.padleft0 {
+    padding: 0;
+    width: 263px;
+}
+.action-right>.padleft0 {
+    padding-left: 0;
+}
+.page1>.throw-cap>span {
+    width: 270px;
+    padding: 0 0 0 36px;
+}
+.action-left>img {
+    position: absolute;
+    right: 15px;
+    top: 7px;
+}
+.action-right>img {
+    float: left;
+    padding: 7px 15px;
+    background-color: #fff;
+}
+.sub-btn {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+}
+.sub-btn-left {
+    top: 0;
+    left: 256px;
+}
+.page2 .sub-btn-left {
+    left: 210px;
+}
+.sub-btn-right {
+    left: 65px;
+}
+.sub-btn-right1 {
+    top: -3px;
+}
+.sub-btn-right2 {
+    top: 40px;
+}
+.sub-btn-system {
+    top: 0;
+    left: 36px;
+    height: 40px;
+}
+.sub-btn>p {
+    position: absolute;
+    top: 5px;
+    margin: 0;
+    width: 50px;
+    font-size: 10px;
+    text-align: center;
+    color: #fc99a8;
+}
+.sub-btn-system>p {
+    font-size: 10px;
+    color: #DDD;
+}
+.sub-btn>img {
+    position: absolute;
+    top: 19px;
+    left: 13px;
+}
+.sub-btn-system>img {
+    top: 18px;
+    left: 16px;
+}
+.system-label {
+    position: absolute;
+    width: 304px;
+    height: 40px;
+    background-color: #9fa0a0;
+}
+.amiibo-label {
+    background-color: #b59d00;
+}
+.page2>.system-label {
+    width: 252px;
+}
+.system-left {
+    left: 36px;
+}
+.system-right {
+    right: 36px;
+}
+.system-label>span {
+    display: table-cell;
+    font-size: 18px;
+    line-height: 19px;
+    color: #fff;
+    height: 40px;
+    vertical-align: middle;
+    text-align: center;
+}
+.page2>.system-left>span {
+    padding-right: 37px;
+    width: 215px;
+}
+.page2>.camera-move2>span {
+    width: 165px;
+}
+.system-left>span {
+    width: 268px;
+    padding-right: 36px;
+}
+.system-right>span {
+    width: 268px;
+    padding-left: 36px;
+}
+.page2>.system-right>span {
+    width: 162px;
+    padding-left: 50px;
+}
+.page1>.camera-reset>span {
+    padding-left: 80px;
+    width: 224px;
+}
+.system-label>img {
+    position: absolute;
+    top: 7px;
+}
+.system-left>img {
+    right: 10px;
+}
+.system-right>img {
+    left: 10px;
+}
+.page-circle> .gold {
+    background-color: #B59D00;
+    width: 14px;
+    height: 14px;
+    margin: -3px 0;
+    animation-duration: 1.4s;
+    animation-timing-function: ease;
+    animation-iteration-count: infinite;
+    animation-name: gold-flashing;
+}
+@keyframes gold-flashing {
+    0% {
+        background-color: #B59D00;
+    }
+    50% {
+        background-color: #d8c66c;
+    }
+}
+.silver {
+    background-color: #fff;
+}
+.page6 .silver, .page7 .silver, .page8 .silver, .page9 .silver, .page10 .silver, .page11 .silver {
+    background-color: #e9e8e8;
+}
+.top-red-area {
+    position: absolute;
+    top: 75px;
+    width: 1280px;
+    height: 324px;
+    background-image: url(../img/red-zone.webp);
+}
+.top-red-area2 {
+    position: absolute;
+    top: 75px;
+    width: 1280px;
+    height: 324px;
+    background-image: url(../img/red-zone2.webp);
+}
+.dark-red-area {
+    width: 1280px;
+    height: 78px;
+    /*background-color: #C30D23;*/
+}
+.label-joycon-lr {
+    position: absolute;
+    top: 18px;
+    left: 181px;
+}
+.label-joycon-side {
+    position: absolute;
+    top: 30px;
+    right: 181px;
+}
+.joycon-lr-desc {
+    position: absolute;
+    top: 78px;
+    width: 400px;
+    height: 246px;
+    text-align: center;
+    display: none;
+}
+.joycon-side-desc {
+    position: absolute;
+    top: 78px;
+    left: 860px;
+    width: 400px;
+    height: 246px;
+    text-align: center;
+    display: none;
+}
+.joycon-lr-desc> span, .joycon-side-desc> span {
+    display: inline-block;
+    color: #FFF;
+    font-size: 24px;
+    line-height: 34px;
+    text-align: left;
+    margin: 30px 10px 0 30px;
+    /*もともとは左右36px*/
+}
+.or-text {
+    font-size: 14px;
+    margin: 0 0 0 10px;
+}
+.joycon-lr-desc img, .joycon-side-desc img {
+    padding: 0 8px;
+    vertical-align: 0;
+}
+.joycon-lr-desc>span> .align4px, .joycon-side-desc>span>.align4px {
+    vertical-align: 4px;
+}
+.dummy-a-4, .dummy-a-5 {
+    position: absolute;
+    top: 427px;
+    left: 0;
+    width: 10px;
+    height: 10px;
+}
+.thumb-area {
+    position: absolute;
+    top: 427px;
+    left: 36px;
+    height: 218px;
+    width: 1212px;
+}
+.thumb-area> a {
+    display: block;
+    float: left;
+    width: 96px;
+    height: 104px;
+    background-color: #fff;
+    margin: 0 5px 5px 0;
+    text-align: center;
+}
+.thumb-area> a:focus {
+    background-color: #B59D00;
+    animation-duration: 0.9s;
+    animation-timing-function: ease;
+    animation-iteration-count: infinite;
+    animation-name: focus-background;
+}
+@keyframes focus-background {
+    20% {
+        background-color: #B59D00;
+    }
+    50% {
+        background-color: #b5a95b;
+    }
+    80% {
+        background-color: #B59D00;
+    }
+}
+.thumb-area> a>img {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.page4>.thumb-area> a:focus>img {
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
+@keyframes focus-thmb-up1 {
+    0% {
+        top: 50%;
+    }
+    10% {
+        top: 44%;
+    }
+    18% {
+        top: 50%;
+    }
+}
+.page5>.thumb-area> a:focus>img {
+    animation-duration: 1.5s;
+    /*animation-name: focus-thmb-up1;*/
+    animation-iteration-count: infinite;
+}
+
+/*@keyframes focus-thmb-up2 {
+    0% {
+        top: 50%;
+    }
+    10% {
+        top: 44%;
+    }
+    18% {
+        top: 52%;
+    }
+    28% {
+        top: 44%;
+    }
+    36% {
+        top: 50%;
+    }
+}*/
+
+.bottom-red-area {
+    position: absolute;
+    top: 399px;
+    width: 1280px;
+    height: 263px;
+    background-color: #e9e8e8;
+}
+.bottom-red-area> span {
+    display: table-cell;
+    font-size: 21px;
+    color: #898989;
+    line-height: 35px;
+    vertical-align: middle;
+    width: 1280px;
+    height: 261px;
+    padding: 0 90px;
+}
+.assist-mode-desc>span {
+    text-align: left;
+    height: 189px;
+}
+.assist-mode-desc {
+    text-align: center;
+}
+.mode-change {
+    display: block;
+    position: absolute;
+    top: 580px;
+    left: 0;
+    width: 1280px;
+    height: 82px;
+    text-decoration: none;
+    color: #b59d00;
+    background-color: #fff;
+    font-size: 30px;
+    text-align: center;
+    padding-top: 22px;
+    animation-duration: 0.3s;
+    animation-timing-function: ease;
+    animation-iteration-count: 1;
+    animation-name: "";
+}
+@keyframes text-flashing {
+    0% {
+        font-size: 30px;
+        color: #B59D00;
+    }
+    50% {
+        font-size: 32px;
+        color: #f8eb9f;
+    }
+}
+.mode-change> img {
+    vertical-align: -5px;
+    margin-right: 14px;
+    width: 36px;
+}
+.bottom-red-area> span>p {
+    display: block;
+    font-size: 21px;
+    color: #898989;
+    line-height: 35px;
+}
+.bottom-red-area> span>img {
+    vertical-align: -2px;
+    margin: 0 6px;
+}
+.red-circle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: #F80026;
+    border-radius: 50%;
+}
+.gray-circle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: #9fa0a0;
+    border-radius: 50%;
+}
+footer {
+    position: fixed;
+    top: 662px;
+    width: 1280px;
+    height: 54px;
+    background-color: #fff;
+    border-top: 4px solid #bca001;
+}
+.page-title {
+    position: absolute;
+    bottom: 19px;
+    left: 36px;
+    height: 25px;
+    width: 500px;
+}
+.page-title>span> img {
+    vertical-align: -2px;
+    margin-right: 10px;
+}
+.page-title> span {
+    font-size: 20px;
+    color: #B59D00;
+}
+.btn-operation {
+    position: absolute;
+    bottom: 19px;
+    right: 0;
+    height: 27px;
+    width: 580px;
+    padding: 0 62px 0 0;
+    text-align: right;
+    opacity: 0;
+}
+.btn-operation> img {
+    vertical-align: -2px;
+    padding: 0 8px 0 23px;
+}
+.btn-operation> span {
+    font-size: 21px;
+    color: #b59d00;
+}
+
+/*目次------------------------------------------------------------------------*/
+
+.page0 {
+    background-color: #f80026;
+}
+.page0>h1 {
+    position: absolute;
+    top: 96px;
+    left: 70px;
+    font-family: "FontEB";
+    color: #fff;
+    font-size: 53px;
+    padding: 0;
+    margin: 0;
+    transform: rotate(-3deg);
+}
+.toc-background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1280px;
+    height: 720px;
+    background-image: url(../img/toc-background-image.webp);
+}
+.toc {
+    list-style: none;
+    position: absolute;
+    top: 262px;
+    left: 53px;
+    padding: 0;
+    transform: rotate(-3deg);
+}
+.toc> li>a {
+    display: table-cell;
+    text-decoration: none;
+    color: #FFFFFF;
+    font-size: 30px;
+    padding-left: 80px;
+    width: 464px;
+    height: 56px;
+    border-radius: 3px;
+    vertical-align: middle;
+    background-image: url("");
+    background-repeat: no-repeat;
+    background-position: 14px 14px;
+    margin: 0;
+}
+.toc> li>a:focus {
+    background-color: #fff;
+    color: #525252;
+    font-size: 32px;
+    /*35px*/
+    background-image: url(../video/cap-select.webp);
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+}
+.amiibo-arrow1 {
+    left: 148px;
+}
+.amiibo-arrow2 {
+    left: 1060px;
+}
+.tips {
+    position: relative;
+    top: -4px;
+    left: 24px;
+    font-size: 22px;
+}
+.toc-mov{
+  position: absolute;
+  top:234px;
+  left:827px;
+  width:480px;
+  height: 270px;
+  transform: rotate(-11deg);
+  background-image: "";
+}
+
+/*Joy-Con２本持ち--------------------------------------------------------------*/
+
+.page1 {
+    background-image: url(../img/map-background-gray.webp);
+}
+.single-play-hand {
+    position: absolute;
+    top: 212px;
+    left: 261px;
+}
+.map, .pause {
+    top: 104px;
+}
+.squat, .camera-reset {
+    top: 160px;
+}
+.run {
+    top: 268px;
+}
+.snapshot-mode {
+    top: 363px;
+}
+.amiibo-btn {
+    top: 540px;
+}
+.amiibo-figure-mini{
+  position: absolute;
+  top:446px;
+  left: 80px;
+}
+.throw-cap {
+    top: 308px;
+    height: 94px;
+}
+.throw-cap>p {
+    position: absolute;
+    top: 61px;
+    margin: 0;
+    width: 69px;
+    height: 24px;
+    color: #f80026;
+    font-size: 12px;
+    line-height: 12px;
+    text-align: center;
+    vertical-align: middle;
+}
+.throw-cap>span {
+    height: 91px;
+}
+.jump {
+    top: 464px;
+}
+.camera-move {
+    top: 540px;
+}
+.camera-zoom {
+    top: 584px;
+}
+.circle-run {
+    top: 290px;
+    left: 510px;
+}
+.circle-map {
+    top: 246px;
+    left: 530px;
+}
+.circle-pause {
+    top: 242px;
+    left: 720px;
+}
+.circle-camera-reset {
+    top: 225px;
+    left: 750px;
+}
+.circle-snapshot-mode {
+    top: 376px;
+    left: 494px;
+}
+.page1>.circle-amiibo-btn {
+    top: 370px;
+    left: 524px;
+    background-color: #b59d00;
+}
+.circle-camera-move {
+    top: 358px;
+    left: 745px;
+}
+.red-ellipse {
+    position: absolute;
+    width: 46px;
+    height: 22px;
+    border-radius: 11px;
+    border: solid 3px #F80026;
+    transform: rotate(-40deg);
+}
+.ellipse-throw-cap {
+    top: 274px;
+    left: 714px;
+}
+.ellipse-jump {
+    height: 19px;
+    top: 293px;
+    left: 735px;
+}
+.call-out {
+    position: absolute;
+}
+.control-mario-image {
+    position: absolute;
+}
+.controll-mario-squat {
+    top: 166px;
+    left: 46px;
+}
+.controll-mario-run {
+    top: 250px;
+    left: 40px;
+}
+.controll-mario-cap-throw {
+    top: 238px;
+    right: 26px;
+}
+.controll-mario-jump {
+    top: 430px;
+    right: 38px;
+}
+
+/*Joy-Con横持ち--------------------------------------------------------------*/
+
+.page2 {
+    background-image: url(../img/map-background-gray.webp);
+}
+.call-out-page2-left, .call-out-page2-right {
+    left: 0
+}
+.gold-bar-mario {
+    position: absolute;
+    top: 102px;
+    width: 590px;
+    height: 56px;
+    background-color: #b59d00;
+}
+.gold-bar-mario>img {
+    position: absolute;
+    top: -18px;
+    left: 458px;
+}
+.gold-bar-cap {
+    position: absolute;
+    top: 102px;
+    right: 0;
+    padding-left: 100px;
+    width: 490px;
+    height: 56px;
+    background-color: #b59d00;
+}
+.gold-bar-cap>img {
+    position: absolute;
+    top: -19px;
+    left: 16px;
+}
+.gold-bar-mario>span, .gold-bar-cap>span {
+    display: table-cell;
+    vertical-align: middle;
+    width: 490px;
+    height: 56px;
+    font-size: 21px;
+    text-align: center;
+    color: #FFF;
+}
+.two-play-hand1 {
+    position: absolute;
+    top: 390px;
+    left: 144px;
+}
+.two-play-hand2 {
+    position: absolute;
+    top: 391px;
+    left: 642px;
+}
+.camera-reset2, .cap-hip-drop {
+    top: 168px;
+}
+.page2>.camera-move2 {
+    top: 211px;
+    width: 218px;
+    padding-right: 34px;
+}
+.multi-btn-left {
+    position: absolute;
+    top: 7px;
+    right: 0;
+    font-size: 16px;
+    color: #fff;
+}
+.multi-btn-right {
+    position: absolute;
+    top: 7px;
+    left: 6px;
+    font-size: 16px;
+    color: #fff;
+}
+.multi-btn-left>img {
+    vertical-align: middle;
+    margin-right: 10px;
+}
+.multi-btn-right>img {
+    vertical-align: middle;
+    margin-left: 3px;
+}
+.throw-cap2 {
+    top: 262px;
+}
+.squat2 {
+    top: 332px;
+}
+.map2 {
+    top: 433px;
+}
+.cap-run {
+    top: 236px;
+}
+.cap-run2 {
+    top: 304px;
+}
+.page2>.cap-camera-move {
+    top: 375px;
+    width: 214px;
+    padding-left: 34px;
+}
+.run2 {
+    top: 512px;
+}
+.cap-jump {
+    top: 580px;
+}
+.page2>.pause2 {
+    width: 300px;
+    top: 205px;
+    right: 485px;
+    height: auto;
+}
+.page2>.pause2>span {
+    padding-left: 40px;
+    width: 235px;
+}
+.pause2-desc {
+    font-size: 16px;
+    line-height: 20px;
+    color: #fff;
+    text-align: center;
+    padding: 6px 5px 30px 5px;
+}
+.jump2 {
+    top: 580px;
+}
+.circle-camera-reset2 {
+    top: 442px;
+    left: 391px;
+}
+.circle-throw-cap2 {
+    top: 457px;
+    left: 376px;
+}
+.circle-squat2 {
+    top: 406px;
+    left: 346px;
+}
+.circle-map2 {
+    top: 448px;
+    left: 302px;
+}
+.circle-run2 {
+    top: 467px;
+    left: 339px;
+}
+.ellipse-jump2 {
+    top: 469px;
+    left: 385px;
+    height: 15px;
+    width: 35px;
+}
+.circle-cap-hip-drop {
+    top: 406px;
+    left: 853px;
+}
+.circle-cap-run {
+    top: 464px;
+    left: 877px;
+}
+.circle-cap-run2 {
+    top: 457px;
+    left: 914px;
+}
+.circle-cap-camera-move {
+    top: 442px;
+    left: 930px;
+}
+.ellipse-cap-jump {
+    top: 469px;
+    left: 922px;
+    height: 15px;
+    width: 35px;
+}
+.circle-pause2 {
+    top: 457px;
+    left: 960px;
+}
+.two-play-mario-cap {
+    top: 290px;
+    left: 476px;
+}
+
+/*プレイスタイル--------------------------------------------------------------*/
+
+.page3 {
+    background-image: url(../img/map-background-gray.webp);
+}
+.page3>h2 {
+    position: absolute;
+    width: 640px;
+    font-size: 30px;
+    margin: 0;
+    color: #b59d00;
+    text-align: center;
+}
+.h2-single {
+    left: 0;
+    top: 90px;
+}
+.h2-two-play {
+    top: 90px;
+    right: 0;
+}
+.page3>h3 {
+    position: absolute;
+    width: 640px;
+    font-size: 20px;
+    margin: 0;
+    color: #b59d00;
+    text-align: center;
+}
+.h3-single {
+    top: 128px;
+}
+.h3-two-play {
+    top: 128px;
+    left: 640px;
+}
+.single-mario {
+    position: absolute;
+    top: 170px;
+    left: 210px;
+}
+.two-play-mario {
+    position: absolute;
+    top: 200px;
+    left: 784px;
+}
+.play-style-plus {
+    position: absolute;
+    top: 264px;
+    left: 975px;
+}
+.two-play-cap {
+    position: absolute;
+    top: 226px;
+    left: 1033px;
+}
+.bottom-white-area {
+    position: absolute;
+    top: 384px;
+    height: 276px;
+    width: 636px;
+    background-color: #fff;
+    text-align: center;
+}
+.bottom-white-area1 {
+    left: 0
+}
+.bottom-white-area2 {
+    right: 0
+}
+.bottom-white-area>p {
+    display: inline-block;
+    width: 560px;
+    font-size: 19px;
+    color: #9fa0a0;
+    margin-top: 10px;
+    line-height: 26px;
+}
+.bottom-white-area>p>span {
+    display: inline-block;
+    text-align: left;
+}
+.bottom-white-area>p>span>img {
+    vertical-align: middle;
+    height: 20px;
+    margin: 0 3px;
+}
+
+/*きほんアクション--------------------------------------------------------------*/
+
+.action-mov {
+    position: absolute;
+    top: 27px;
+    left: 400px;
+    width: 480px;
+    height: 270px;
+    opacity: 0;
+    display: none;
+    background-color: #000;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+}
+.action-desc {
+    display: none;
+}
+.action6-cap {
+    position: absolute;
+    top: 496px;
+    left: 602px;
+}
+.action7-cap {
+    position: absolute;
+    top: 496px;
+    left: 703px;
+}
+.action8-cap {
+    position: absolute;
+    top: 496px;
+    left: 804px;
+}
+.action9-cap {
+    position: absolute;
+    top: 496px;
+    left: 905px;
+}
+.action10-cap {
+    position: absolute;
+    top: 496px;
+    left: 1006px;
+}
+.action11-cap {
+    position: absolute;
+    top: 496px;
+    left: 1107px;
+}
+.action12-cap {
+    position: absolute;
+    top: 496px;
+    left: 1208px;
+}
+
+/*旅のヒント 共通------------------------------------------------------*/
+
+.tips-image {
+    position: absolute;
+    top: 106px;
+    /*106px*/
+    left: 400px;
+    /*400px*/
+    width: 480px;
+    /*480px*/
+    height: 270px;
+    /*270px*/
+    overflow: hidden;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+}
+.page6> .tips-image, .page7> .tips-image, .page8> .tips-image, .page10> .tips-image, .page11> .tips-image {
+    top: 110px;
+}
+
+/*旅のヒント マップ--------------------------------------------------------------*/
+.map-kinopio{
+  position: absolute;
+  top:214px;
+  left:334px;
+}
+.map-cappy{
+  position: absolute;
+  top:80px;
+  left:816px;
+}
+
+/*旅のヒント  amiibo1-----------------------------------------------------------*/
+
+.bottom-red-area>.amiibo-uncle {
+    position: absolute;
+    top: 48px;
+    right: 85px;
+}
+.amiibo-label1 {
+    position: absolute;
+    top: 200px;
+    right: 0;
+    width: 312px;
+    height: 62px;
+    background-color: rgba(255, 0, 0, 0);
+    ;
+    color: #b59d00;
+    margin: 0;
+}
+.amiibo-label1>span {
+    display: table-cell;
+    width: 312px;
+    height: 62px;
+    font-size: 21px;
+    line-height: 25px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/*旅のヒント  amiibo2-----------------------------------------------------------*/
+
+.amiibo-joycon {
+    position: absolute;
+    top: 124px;
+    left: 100px;
+    border-radius: 50%;
+    width: 213px;
+    height: 213px;
+    overflow: hidden;
+}
+.amiibo-procon {
+    position: absolute;
+    top: 124px;
+    right: 100px;
+    border-radius: 50%;
+    width: 213px;
+    height: 213px;
+    overflow: hidden;
+}
+.amiibo-figure {
+    position: absolute;
+    top: 126px;
+    left: 370px;
+}
+.amiibo-peach {
+    position: absolute;
+    top: 146px;
+    left: 556px;
+}
+.amiibo-koopa {
+    position: absolute;
+    top: 146px;
+    left: 700px;
+}
+.amiibo-joycon-text {
+    text-align: center;
+    width: 400px;
+    position: absolute;
+    font-size: 18px;
+    color: #fff;
+    top: 344px;
+    left: 0;
+}
+.amiibo-procon-text {
+    text-align: center;
+    width: 400px;
+    position: absolute;
+    font-size: 18px;
+    color: #fff;
+    top: 344px;
+    right: 0;
+}
+.amiibo-arrow {
+    position: absolute;
+    top: 154px;
+    animation-duration: 1.8s;
+    animation-timing-function: ease;
+    animation-iteration-count: infinite;
+    animation-name: amiibo-arrow-move;
+}
+@keyframes amiibo-arrow-move {
+    50% {
+        top: 144px;
+    }
+}
+.amiibo-arrow1 {
+    left: 148px;
+}
+.amiibo-arrow2 {
+    left: 1060px;
+}
+
+/*Downloads & Credits pages------------------------------------------------------------*/
+
+.downloads-page, .credits-page, .spoiler-page {
+    background-color: #e9e8e8;
+}
+.downloads-page .top-bar> span, .credits-page .top-bar> span, .spoiler-page .top-bar> span {
+    color: #B59D00;
+}
+.back-link {
+    position: absolute;
+    top: 20px;
+    left: 40px;
+    display: block;
+    height: 35px;
+    text-decoration: none;
+    z-index: 2;
+}
+.back-link> .left-arrow-static {
+    position: relative;
+    top: 4px;
+    margin-right: 10px;
+}
+.back-link> .back-label {
+    font-size: 24px;
+    color: #898989;
+    vertical-align: middle;
+}
+.back-link:focus> .back-label, .back-link:hover> .back-label {
+    color: #B59D00;
+}
+
+.downloads-container, .credits-container {
+    position: absolute;
+    top: 100px;
+    left: 90px;
+    width: 1100px;
+    height: 550px;
+    overflow: hidden;
+}
+
+.download-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 24px 32px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+.download-info {
+    max-width: 780px;
+}
+.download-title {
+    font-size: 26px;
+    color: #525252;
+    margin: 0 0 8px 0;
+}
+.download-desc {
+    font-size: 18px;
+    color: #898989;
+    margin: 0;
+    line-height: 26px;
+}
+.download-btn {
+    display: inline-block;
+    background-color: #F80026;
+    color: #fff;
+    font-size: 20px;
+    text-decoration: none;
+    padding: 12px 30px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+.download-btn:focus, .download-btn:hover {
+    background-color: #B59D00;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+.credit-item {
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 14px 28px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+.credit-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+}
+.credit-name {
+    font-size: 23px;
+    color: #525252;
+    margin: 0;
+}
+.credit-role {
+    font-size: 15px;
+    color: #B59D00;
+    margin: 0;
+}
+.credit-desc {
+    font-size: 15px;
+    color: #898989;
+    margin: 5px 0 0 0;
+    line-height: 20px;
+}
+
+/*Spoiler Log page-----------------------------------------------------------------*/
+
+.spoiler-container {
+    position: absolute;
+    top: 75px;
+    left: 0;
+    width: 1280px;
+    height: 585px;
+    box-sizing: border-box;
+}
+
+.spoiler-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    padding: 0 140px;
+    box-sizing: border-box;
+}
+.spoiler-empty-text {
+    font-size: 22px;
+    color: #898989;
+    line-height: 32px;
+    margin: 0 0 28px 0;
+}
+.spoiler-load-btn, .spoiler-reload-btn {
+    display: inline-block;
+    background-color: #F80026;
+    color: #fff;
+    font-size: 20px;
+    text-decoration: none;
+    padding: 12px 34px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.spoiler-load-btn:hover, .spoiler-load-btn:focus,
+.spoiler-reload-btn:hover, .spoiler-reload-btn:focus {
+    background-color: #B59D00;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+}
+#spoiler-file-input {
+    display: none;
+}
+
+.spoiler-viewer {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+.spoiler-sidebar {
+    width: 280px;
+    height: 100%;
+    background-color: #fff;
+    border-right: 2px solid #e2e2e2;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+.spoiler-filename {
+    font-size: 14px;
+    color: #898989;
+    margin: 0;
+    padding: 18px 20px 14px 20px;
+    border-bottom: 1px solid #e2e2e2;
+    word-break: break-all;
+}
+.spoiler-section-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 0;
+}
+.spoiler-section-item {
+    display: block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #525252;
+    text-decoration: none;
+    cursor: pointer;
+    border-left: 4px solid transparent;
+    box-sizing: border-box;
+}
+.spoiler-section-item:hover {
+    background-color: #f3ecc9;
+}
+.spoiler-section-item.active {
+    background-color: #f3ecc9;
+    border-left-color: #B59D00;
+    color: #B59D00;
+}
+.spoiler-reload-btn {
+    margin: 14px 20px 18px 20px;
+    text-align: center;
+    font-size: 15px;
+    padding: 10px;
+}
+.spoiler-content-wrapper {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background-color: #fdfdfd;
+}
+
+.spoiler-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 32px;
+    border-bottom: 1px solid #e2e2e2;
+    background-color: #fff;
+    flex-shrink: 0;
+}
+
+.spoiler-search {
+    flex: 1;
+    max-width: 360px;
+    font-size: 15px;
+    padding: 8px 14px;
+    border: 1px solid #d5d5d5;
+    border-radius: 20px;
+    box-sizing: border-box;
+    color: #525252;
+    outline: none;
+}
+
+.spoiler-search:focus {
+    border-color: #B59D00;
+}
+
+.spoiler-count {
+    font-size: 13px;
+    color: #898989;
+    white-space: nowrap;
+}
+
+.spoiler-content {
+    flex: 1;
+    box-sizing: border-box;
+    padding: 20px 32px 32px 32px;
+    overflow-y: auto;
+    color: #525252;
+}
+
+/* Fallback: plain-text rendering for sections that aren't list-shaped */
+.spoiler-content.raw-mode {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 22px;
+}
+
+/* Parsed table rendering */
+.spoiler-table {
+    display: flex;
+    flex-direction: column;
+}
+
+.spoiler-group-header {
+    font-family: "fontDB", sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: #B59D00;
+    background-color: #f3ecc9;
+    padding: 6px 14px;
+    border-radius: 4px;
+    margin: 14px 0 6px 0;
+    letter-spacing: 0.3px;
+}
+
+.spoiler-group-header.major {
+    font-size: 17px;
+    color: #fff;
+    background-color: #525252;
+    padding: 10px 16px;
+    margin: 24px 0 8px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.spoiler-group-header:first-child {
+    margin-top: 0;
+}
+
+.spoiler-row {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    padding: 9px 14px;
+    font-size: 14px;
+    line-height: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.spoiler-row:nth-child(even) {
+    background-color: #f7f7f7;
+}
+
+.spoiler-row:hover {
+    background-color: #f3ecc9;
+}
+
+.spoiler-row-key {
+    flex: 0 0 42%;
+    color: #525252;
+    font-weight: bold;
+    word-break: break-word;
+}
+
+.spoiler-row-value {
+    flex: 1;
+    color: #333;
+    word-break: break-word;
+}
+
+.spoiler-list-item {
+    padding: 6px 14px;
+    font-size: 14px;
+    line-height: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.spoiler-list-item:nth-child(even) {
+    background-color: #f7f7f7;
+}
+
+.spoiler-no-results {
+    padding: 24px 14px;
+    color: #898989;
+    font-size: 14px;
+    text-align: center;
+}
