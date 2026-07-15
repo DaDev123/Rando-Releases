@@ -900,6 +900,7 @@
                 function openActionGuide() {
                     wsnd.play("seDecide");
                     footerText();
+                    pageNum = 14;
                     document.getElementById('toActionGuide').style.backgroundColor = "#fff";
                     document.getElementById('toActionGuide').style.color = "#525252";
                     var actionGuideTimeout = setTimeout(function() {
@@ -914,12 +915,25 @@
                         // Action Guide page shows the same visual on the right.
                         var movElement = document.getElementById('toc-mov');
                         if (movElement) { document.getElementById('page-action-guide').appendChild(movElement); }
+                        // Defensively clear any leftover "selected" styling on
+                        // all three items before focusing one, so there's
+                        // never more than one hat showing regardless of how
+                        // this page was last left.
+                        ['toController', 'toBasicAction', 'toCaptureAction'].forEach(function(id) {
+                            var itemEl = document.getElementById(id);
+                            if (itemEl) {
+                                itemEl.style.backgroundImage = "";
+                                itemEl.style.backgroundColor = "";
+                                itemEl.style.color = "";
+                            }
+                        });
                         document.getElementById('toController').focus();
                         clearTimeout(actionGuideTimeout);
                     }, 100);
                 }
                 function closeActionGuide() {
                     wsnd.play("seBack");
+                    pageNum = 0;
                     document.getElementById('page-action-guide').classList.remove('active');
                     document.getElementsByClassName('page0')[0].style.display = "block";
                     document.getElementsByClassName('page0')[0].style.opacity = 1;
