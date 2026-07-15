@@ -71,6 +71,56 @@ window.onload = function() {
         } else if (pageNum == 14) {
             closeActionGuide();
             return;
+        } else if (pageNum == 1 || pageNum == 4 || pageNum == 5) {
+            // Controls / Basic Actions / Capture Actions are only ever
+            // reached through the Action Guide overlay now, so Cancel/B
+            // should return there - not to the Main Page - and shouldn't
+            // set inline "selected" styles on elements that are about to
+            // be hidden (that residue was the cause of multiple hats
+            // showing up next time the Action Guide was opened).
+            wsnd.play("seBack");
+            page0seBackCheck = false;
+            timeout0 = setTimeout(function() {
+                page0seBackCheck = true;
+                clearTimeout(timeout0);
+            }, 500);
+            document.getElementsByClassName('page' + pageNum.toString(10))[0].style.opacity = 0;
+            for (i = 1; i < 12; i++) {
+                var pageEl = document.getElementsByClassName('page' + i.toString(10))[0];
+                if (pageEl) {
+                    pageEl.style.display = "none";
+                }
+            }
+            var actionGuideFocusId;
+            if (pageNum == 1) {
+                actionGuideFocusId = 'toController';
+            } else if (pageNum == 4) {
+                document.getElementsByClassName("action-mov")[0].style.display = "none";
+                document.getElementsByClassName("action-mov")[0].style.opacity = 0;
+                document.getElementsByClassName('action-mov')[0].style.boxShadow = "";
+                document.getElementsByClassName("joycon-lr-desc")[0].style.display = "none";
+                document.getElementsByClassName("joycon-side-desc")[0].style.display = "none";
+                action1SE = false;
+                clearTimeout(playReport7, playReport15to38);
+                actionGuideFocusId = 'toBasicAction';
+            } else if (pageNum == 5) {
+                document.getElementsByClassName("action-mov")[1].style.display = "none";
+                document.getElementsByClassName("action-mov")[1].style.opacity = 0;
+                document.getElementsByClassName('action-mov')[1].style.boxShadow = "";
+                document.getElementsByClassName("joycon-lr-desc")[1].style.display = "none";
+                document.getElementsByClassName("joycon-side-desc")[1].style.display = "none";
+                capture1SE = false;
+                clearTimeout(playReport8, playReport39to62);
+                actionGuideFocusId = 'toCaptureAction';
+            }
+            document.getElementsByClassName('btn-operation')[0].style.opacity = 0;
+            document.getElementsByClassName('btn-operation')[1].style.opacity = 0;
+            document.getElementsByClassName('btn-operation')[2].style.opacity = 1;
+            document.getElementById('page-action-guide').classList.add('active');
+            document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "Action Guide";
+            document.getElementById(actionGuideFocusId).focus();
+            pageNum = 14;
+            return;
         }
         if (pageNum > 0.5) {
             wsnd.play("seBack");
