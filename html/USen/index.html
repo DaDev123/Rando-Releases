@@ -11,10 +11,15 @@
     <link rel="stylesheet" href="../../css/index.css" />
     <script src="../../js/nx.js"></script>
     <style>
+        .credits-container {
+            max-height: 65vh;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
         .social-link {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
         }
 
         .social-icon {
@@ -753,44 +758,97 @@
                         class="back-label fontDB">Back</span></a>
                 <span>Credits</span>
             </div>
-            <div class="credits-container">
-                <div class="credit-item">
-                    <div class="credit-header"><img class="credit-avatar" src="../../img/credits/Karateman.png" alt="Karateman" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-right:10px;vertical-align:middle;" /><p class="credit-name fontDB">Karateman</p><p class="credit-role">Logic</p></div>
-                    <p class="credit-desc">Responsible for the randomizer logic.</p>
-                    <div class="credit-links">
-                        <a href="https://youtube.com/@karateman" target="_blank" rel="noopener noreferrer" class="social-link"><img class="social-icon" src="../../img/credits/youtube.png" alt="" /> YouTube</a>
-                        <a href="https://www.tiktok.com/@karateman10998" target="_blank" rel="noopener noreferrer" class="social-link"><img class="social-icon" src="../../img/credits/tiktok.png" alt="" /> TikTok</a>
-                        <a href="https://twitch.tv/karateman" target="_blank" rel="noopener noreferrer" class="social-link"><img class="social-icon" src="../../img/credits/twitch.png" alt="" /> Twitch</a>
-                        <a href="https://discord.gg/BUDXWDPVUM" target="_blank" rel="noopener noreferrer" class="social-link"><img class="social-icon" src="../../img/credits/discord.png" alt="" /> Discord</a>
-                    </div>
-                </div>
-                <div class="credit-item">
-                    <div class="credit-header"><img class="credit-avatar" src="../../img/credits/Majora.png" alt="MaliciousMajora" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-right:10px;vertical-align:middle;" /><p class="credit-name fontDB">MaliciousMajora</p><p class="credit-role">Co-leader</p></div>
-                    <p class="credit-desc">Co-leader of the mod.</p>
-                    <div class="credit-links">
-                        <a href="https://github.com/guymakinggames" target="_blank" rel="noopener noreferrer" class="social-link"><img class="social-icon" src="../../img/credits/github.png" alt="" /> GitHub</a>
-                    </div>
-                </div>
-                <div class="credit-item">
-                    <div class="credit-header"><img class="credit-avatar" src="../../img/credits/SrDev.png" alt="MrKatzenGaming" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-right:10px;vertical-align:middle;" /><p class="credit-name fontDB">MrKatzenGaming</p><p class="credit-role">Developer</p></div>
-                    <p class="credit-desc">Helped on the mod.</p>
-                    <div class="credit-links">
-                        <a href="https://youtube.com/@mrkatzengaming" target="_blank" rel="noopener noreferrer" class="social-link"><img class="social-icon" src="../../img/credits/youtube.png" alt="" /> YouTube</a>
-                        <a href="https://github.com/MrKatzenGaming" target="_blank" rel="noopener noreferrer" class="social-link"><img class="social-icon" src="../../img/credits/github.png" alt="" /> GitHub</a>
-                        <a href="https://twitch.tv/MrKatzenGaming" target="_blank" rel="noopener noreferrer" class="social-link"><img class="social-icon" src="../../img/credits/twitch.png" alt="" /> Twitch</a>
-                        <a href="https://discord.gg/pGg2wddNBa" target="_blank" rel="noopener noreferrer" class="social-link"><img class="social-icon" src="../../img/credits/discord.png" alt="" /> Discord</a>
-                    </div>
-                </div>
-                <div class="credit-item">
-                    <div class="credit-header"><img class="credit-avatar" src="../../img/credits/AJ.png" alt="1tsAJ" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-right:10px;vertical-align:middle;" /><p class="credit-name fontDB">1tsAJ</p><p class="credit-role">Moon Models</p></div>
-                    <p class="credit-desc">Contributed Moon Models.</p>
-                    <div class="credit-links">
-                        <a href="https://youtube.com/@1tsaj" target="_blank" rel="noopener noreferrer" class="social-link"><img class="social-icon" src="../../img/credits/youtube.png" alt="" /> YouTube</a>
-                        <a href="https://twitch.tv/1tsAJ" target="_blank" rel="noopener noreferrer" class="social-link"><img class="social-icon" src="../../img/credits/twitch.png" alt="" /> Twitch</a>
-                        <a href="https://discord.gg/KyYVsxrvE5" target="_blank" rel="noopener noreferrer" class="social-link"><img class="social-icon" src="../../img/credits/discord.png" alt="" /> Discord</a>
-                    </div>
-                </div>
-            </div>
+            <div class="credits-container" id="credits-container"></div>
+            <script>
+                // ---- EDIT THIS LIST TO REORDER / ADD / REMOVE PEOPLE ----
+                // Just change the order of the objects below - the page updates automatically.
+                const creditsData = [
+                    {
+                        name: "Karateman",
+                        avatar: "../../img/credits/Karateman.png",
+                        role: "Logic",
+                        desc: "Responsible for the randomizer logic.",
+                        links: [
+                            { icon: "youtube", url: "https://youtube.com/@karateman" },
+                            { icon: "tiktok", url: "https://www.tiktok.com/@karateman10998" },
+                            { icon: "twitch", url: "https://twitch.tv/karateman" },
+                            { icon: "discord", url: "https://discord.gg/BUDXWDPVUM" }
+                        ]
+                    },
+                    {
+                        name: "MaliciousMajora",
+                        avatar: "../../img/credits/Majora.png",
+                        role: "Co-leader",
+                        desc: "Co-leader of the mod.",
+                        links: [
+                            { icon: "github", url: "https://github.com/guymakinggames" }
+                        ]
+                    },
+                    {
+                        name: "MrKatzenGaming",
+                        avatar: "../../img/credits/SrDev.png",
+                        role: "Developer",
+                        desc: "Helped on the mod.",
+                        links: [
+                            { icon: "youtube", url: "https://youtube.com/@mrkatzengaming" },
+                            { icon: "github", url: "https://github.com/MrKatzenGaming" },
+                            { icon: "twitch", url: "https://twitch.tv/MrKatzenGaming" },
+                            { icon: "discord", url: "https://discord.gg/pGg2wddNBa" }
+                        ]
+                    },
+                    {
+                        name: "1tsAJ",
+                        avatar: "../../img/credits/AJ.png",
+                        role: "Moon Models",
+                        desc: "Contributed Moon Models.",
+                        links: [
+                            { icon: "youtube", url: "https://youtube.com/@1tsaj" },
+                            { icon: "twitch", url: "https://twitch.tv/1tsAJ" },
+                            { icon: "discord", url: "https://discord.gg/KyYVsxrvE5" }
+                        ]
+                    },
+                    {
+                        name: "Secret Dev",
+                        avatar: "../../img/credits/SecretDev.png",
+                        role: "Contributor",
+                        desc: "TODO: add a description.",
+                        links: [
+                            // TODO: add links, e.g. { icon: "discord", url: "https://discord.gg/..." }
+                        ]
+                    }
+                ];
+
+                const iconFiles = {
+                    youtube: "../../img/icons/youtube.png",
+                    tiktok: "../../img/icons/tiktok.png",
+                    twitch: "../../img/icons/twitch.png",
+                    discord: "../../img/icons/discord.png",
+                    github: "../../img/icons/github.png"
+                };
+
+                function renderCredits() {
+                    const container = document.getElementById("credits-container");
+                    container.innerHTML = creditsData.map(person => `
+                        <div class="credit-item">
+                            <div class="credit-header">
+                                <img class="credit-avatar" src="${person.avatar}" alt="${person.name}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-right:10px;vertical-align:middle;" />
+                                <p class="credit-name fontDB">${person.name}</p>
+                                <p class="credit-role">${person.role}</p>
+                            </div>
+                            <p class="credit-desc">${person.desc}</p>
+                            <div class="credit-links">
+                                ${person.links.map(link => `
+                                    <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="social-link">
+                                        <img class="social-icon" src="${iconFiles[link.icon]}" alt="${link.icon}" />
+                                    </a>
+                                `).join("")}
+                            </div>
+                        </div>
+                    `).join("");
+                }
+
+                renderCredits();
+            </script>
         </div>
 
         <footer id="page0Footer">
