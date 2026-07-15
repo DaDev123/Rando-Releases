@@ -918,12 +918,45 @@
                     try { wsnd.play('seCancel'); } catch (e) {}
                 }
                 function selectActionGuideItem(el, reportIndex) {
-                    // Hide the Action Guide overlay first so the native
-                    // Controls/Basic Actions/Capture Actions page (switched
-                    // to below by menuSelect) is actually visible.
-                    document.getElementById('page-action-guide').classList.remove('active');
+                    // Run the native page-switch first, while our overlay is
+                    // still visible/laid out (menuSelect may depend on the
+                    // clicked element being visible to do its transition).
                     menuSelect(el);
                     playReportCount(reportIndex);
+
+                    var guide = document.getElementById('page-action-guide');
+                    var observer = null;
+                    var finished = false;
+                    var reveal = function () {
+                        if (finished) return;
+                        finished = true;
+                        guide.classList.remove('active');
+                        if (observer) observer.disconnect();
+                    };
+
+                    // Watch for the native system actually switching to the
+                    // target page (class/style change elsewhere), then reveal
+                    // it by closing our overlay.
+                    try {
+                        var contents = document.querySelector('.contents');
+                        observer = new MutationObserver(function (mutations) {
+                            for (var i = 0; i < mutations.length; i++) {
+                                var t = mutations[i].target;
+                                if (t !== guide && !guide.contains(t)) {
+                                    reveal();
+                                    break;
+                                }
+                            }
+                        });
+                        observer.observe(contents, {
+                            attributes: true,
+                            attributeFilter: ['class', 'style'],
+                            subtree: true
+                        });
+                    } catch (e) {}
+
+                    // Safety net in case nothing is observed.
+                    setTimeout(reveal, 500);
                 }
             </script>
         </div>
