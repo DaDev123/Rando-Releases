@@ -881,12 +881,9 @@
 
         <div class="page action-guide-page" id="page-action-guide">
             <div class="toc-background-image"></div>
-            <div class="top-bar">
-                <a href="javascript:void(0);" id="action-guide-back" onclick="closeActionGuide()" nx-se-disabled=""
-                    class="back-link"><img class="left-arrow-static" src="../../img/left-arrow.webp" /><span
-                        class="back-label fontDB">Back</span></a>
-                <span>Action Guide</span>
-            </div>
+            <a href="javascript:void(0);" id="action-guide-back" onclick="closeActionGuide()" nx-se-disabled=""
+                class="back-link"><img class="left-arrow-static" src="../../img/left-arrow.webp" /><span
+                    class="back-label fontDB">Back</span></a>
             <h1><span data-msgcom="true" data-msgid="textbox_id-10901">Action Guide</span></h1>
             <ul class="toc">
                 <li><a href="javascript:void(0);" onclick="selectActionGuideItem(this,1)" onblur="menuBlur(this)"
@@ -907,8 +904,8 @@
                 function openActionGuide() {
                     wsnd.play("seDecide");
                     footerText();
-                    document.getElementById('toActionGuide').style.backgroundColor = "#525252";
-                    document.getElementById('toActionGuide').style.color = "#fff";
+                    document.getElementById('toActionGuide').style.backgroundColor = "#fff";
+                    document.getElementById('toActionGuide').style.color = "#525252";
                     var actionGuideTimeout = setTimeout(function() {
                         document.getElementsByClassName('page0')[0].style.opacity = 0;
                         document.getElementsByClassName('page0')[0].style.display = "none";
@@ -957,8 +954,8 @@
                 }
                 function e_style_reset(el) {
                     el.style.backgroundImage = 'url("")';
-                    el.style.backgroundColor = "#525252";
-                    el.style.color = "#fff";
+                    el.style.backgroundColor = "#fff";
+                    el.style.color = "#525252";
                 }
             </script>
         </div>
