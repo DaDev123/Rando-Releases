@@ -881,25 +881,21 @@
 
         <div class="page action-guide-page" id="page-action-guide">
             <div class="toc-background-image"></div>
-            <a href="javascript:void(0);" id="action-guide-back" onclick="closeActionGuide()" nx-se-disabled=""
-                class="back-link"><img class="left-arrow-static" src="../../img/left-arrow.webp" /><span
-                    class="back-label fontDB">Back</span></a>
             <h1><span data-msgcom="true" data-msgid="textbox_id-10901">Action Guide</span></h1>
             <ul class="toc">
-                <li><a href="javascript:void(0);" onclick="selectActionGuideItem(this,1)" onblur="menuBlur(this)"
-                        onfocus="menuFocus(this)" id="toController" nx-se-disabled=""><span
+                <li><a href="javascript:void(0);" onclick="selectActionGuideItem(this,1)" onblur="actionGuideBlur(this)"
+                        onfocus="actionGuideFocus(this)" id="toController" nx-se-disabled=""><span
                             data-msgid="textbox_id-902">Controls</span></a>
                 </li>
-                <li><a href="javascript:void(0);" onclick="selectActionGuideItem(this,4)" onblur="menuBlur(this)"
-                        onfocus="menuFocus(this)" id="toBasicAction" nx-se-disabled=""><span
+                <li><a href="javascript:void(0);" onclick="selectActionGuideItem(this,4)" onblur="actionGuideBlur(this)"
+                        onfocus="actionGuideFocus(this)" id="toBasicAction" nx-se-disabled=""><span
                             data-msgid="textbox_id-903">Basic
                             Actions</span></a></li>
-                <li><a href="javascript:void(0);" onclick="selectActionGuideItem(this,5)" onblur="menuBlur(this)"
-                        onfocus="menuFocus(this)" id="toCaptureAction" nx-se-disabled=""><span
+                <li><a href="javascript:void(0);" onclick="selectActionGuideItem(this,5)" onblur="actionGuideBlur(this)"
+                        onfocus="actionGuideFocus(this)" id="toCaptureAction" nx-se-disabled=""><span
                             data-msgid="textbox_id-904">Capture
                             Actions</span></a></li>
             </ul>
-            <div class="toc-mov" id="toc-mov-action-guide"></div>
             <script>
                 function openActionGuide() {
                     wsnd.play("seDecide");
@@ -913,6 +909,11 @@
                         document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "Action Guide";
                         document.getElementsByClassName('btn-operation')[0].style.opacity = 0;
                         document.getElementsByClassName('btn-operation')[2].style.opacity = 1;
+                        // Reuse the same video/graphic element the Main Page uses
+                        // (rather than a separate, never-populated copy) so the
+                        // Action Guide page shows the same visual on the right.
+                        var movElement = document.getElementById('toc-mov');
+                        if (movElement) { document.getElementById('page-action-guide').appendChild(movElement); }
                         document.getElementById('toController').focus();
                         clearTimeout(actionGuideTimeout);
                     }, 100);
@@ -926,6 +927,9 @@
                     document.getElementsByClassName('btn-operation')[2].style.opacity = 0;
                     document.getElementById('toActionGuide').style.backgroundColor = "";
                     document.getElementById('toActionGuide').style.color = "";
+                    // Put the video/graphic element back on the Main Page.
+                    var movElement = document.getElementById('toc-mov');
+                    if (movElement) { document.getElementsByClassName('page0')[0].appendChild(movElement); }
                     document.getElementById('toActionGuide').focus();
                 }
                 function selectActionGuideItem(el, targetPage) {
@@ -956,6 +960,29 @@
                     el.style.backgroundImage = 'url("")';
                     el.style.backgroundColor = "#fff";
                     el.style.color = "#525252";
+                }
+                // Ensures only the currently-focused Controls/Basic Actions/
+                // Capture Actions item ever shows the selected (white
+                // background + hat) styling. Any inline style left behind on
+                // a previously-selected item (e.g. from controller navigation
+                // that doesn't cleanly blur) is cleared before/when a new one
+                // is focused, so there's never more than one at once.
+                function actionGuideFocus(el) {
+                    var items = document.querySelectorAll('#page-action-guide .toc > li > a');
+                    items.forEach(function(item) {
+                        if (item !== el) {
+                            item.style.backgroundImage = "";
+                            item.style.backgroundColor = "";
+                            item.style.color = "";
+                        }
+                    });
+                    if (typeof menuFocus === "function") { menuFocus(el); }
+                }
+                function actionGuideBlur(el) {
+                    el.style.backgroundImage = "";
+                    el.style.backgroundColor = "";
+                    el.style.color = "";
+                    if (typeof menuBlur === "function") { menuBlur(el); }
                 }
             </script>
         </div>
