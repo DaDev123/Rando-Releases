@@ -760,11 +760,29 @@
             </div>
             <div class="credits-container" id="credits-container"></div>
             <script>
-                // ---- EDIT THIS LIST TO REORDER / ADD / REMOVE PEOPLE ----
-                // Just change the order of the objects below - the page updates automatically.
-                const creditsData = [
-                    {
-                        name: "Karateman",
+                // ---- EDIT THIS LIST TO CHANGE THE ORDER PEOPLE APPEAR IN ----
+                // Just reorder / add / remove names here. Each name must match a key in creditsPeople below.
+                const creditsOrder = [
+                    "Secret Dev",
+                    "MaliciousMajora",
+                    "Karateman",
+                    "1tsAJ",
+                    "MrKatzenGaming"
+                ];
+
+                // ---- Person details live here. Add a new entry, then add their name to creditsOrder above. ----
+                const creditsPeople = {
+                    "1tsAJ": {
+                        avatar: "../../img/credits/AJ.png",
+                        role: "Moon Models",
+                        desc: "Contributed Moon Models.",
+                        links: [
+                            { icon: "youtube", url: "https://youtube.com/@1tsAJ" },
+                            { icon: "twitch", url: "https://twitch.tv/1tsAJ" },
+                            { icon: "discord", url: "https://discord.gg/KyYVsxrvE5" }
+                        ]
+                    },
+                    "Karateman": {
                         avatar: "../../img/credits/Karateman.png",
                         role: "Logic",
                         desc: "Responsible for the randomizer logic.",
@@ -775,8 +793,7 @@
                             { icon: "discord", url: "https://discord.gg/BUDXWDPVUM" }
                         ]
                     },
-                    {
-                        name: "MaliciousMajora",
+                    "MaliciousMajora": {
                         avatar: "../../img/credits/MaliciousMajora.png",
                         role: "Co-leader",
                         desc: "Co-leader of the mod.",
@@ -784,8 +801,7 @@
                             { icon: "github", url: "https://github.com/guymakinggames" }
                         ]
                     },
-                    {
-                        name: "MrKatzenGaming",
+                    "MrKatzenGaming": {
                         avatar: "../../img/credits/MrKatzenGaming.png",
                         role: "Developer",
                         desc: "Helped on the mod.",
@@ -796,19 +812,7 @@
                             { icon: "discord", url: "https://discord.gg/pGg2wddNBa" }
                         ]
                     },
-                    {
-                        name: "1tsAJ",
-                        avatar: "../../img/credits/AJ.png",
-                        role: "Moon Models",
-                        desc: "Contributed Moon Models.",
-                        links: [
-                            { icon: "youtube", url: "https://youtube.com/@1tsaj" },
-                            { icon: "twitch", url: "https://twitch.tv/1tsAJ" },
-                            { icon: "discord", url: "https://discord.gg/KyYVsxrvE5" }
-                        ]
-                    },
-                    {
-                        name: "Secret Dev",
+                    "Secret Dev": {
                         avatar: "../../img/credits/SrDev.png",
                         role: "Leader",
                         desc: "Leader of the mod.",
@@ -816,7 +820,7 @@
                             // TODO: add links, e.g. { icon: "discord", url: "https://discord.gg/..." }
                         ]
                     }
-                ];
+                };
 
                 const iconFiles = {
                     youtube: "../../img/icons/youtube.png",
@@ -828,6 +832,15 @@
 
                 function renderCredits() {
                     const container = document.getElementById("credits-container");
+                    const creditsData = creditsOrder
+                        .filter(name => {
+                            if (!creditsPeople[name]) {
+                                console.warn(`Credits: "${name}" is in creditsOrder but has no entry in creditsPeople.`);
+                                return false;
+                            }
+                            return true;
+                        })
+                        .map(name => ({ name, ...creditsPeople[name] }));
                     container.innerHTML = creditsData.map(person => `
                         <div class="credit-item">
                             <div class="credit-header">
