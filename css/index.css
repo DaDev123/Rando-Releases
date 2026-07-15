@@ -595,6 +595,15 @@ footer {
 .page0 {
     background-color: #f80026;
 }
+.action-guide-page h1 {
+    display: none;
+}
+.action-guide-page .toc {
+    transform: none;
+}
+.action-guide-page .toc>li>a {
+    color: #525252;
+}
 .page0>h1 {
     position: absolute;
     top: 96px;
