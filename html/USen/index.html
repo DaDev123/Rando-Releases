@@ -35,6 +35,30 @@
         .social-link:hover .social-icon {
             transform: rotate(10deg) scale(1.2);
         }
+
+        /* Action Guide overlay page (duplicate of the home menu) */
+        .page0.action-guide-page {
+            display: none !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            z-index: 9999 !important;
+        }
+
+        .page0.action-guide-page.active {
+            display: block !important;
+        }
+
+        /* Small gap between Downloads/Spoiler Log/Credits and the Action Guide button */
+        .toc-gap {
+            list-style: none;
+            height: 14px;
+            margin: 0;
+            padding: 0;
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -44,25 +68,17 @@
             <div class="toc-background-image"></div>
             <h1><span data-msgcom="true" data-msgid="textbox_id-10901">SMO Randomizer</span></h1>
             <ul class="toc">
-                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(0)" onblur="menuBlur(this)"
-                        onfocus="menuFocus(this)" id="toController" nx-se-disabled=""><span
-                            data-msgid="textbox_id-902">Controls</span></a>
-                </li>
-                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(1)" onblur="menuBlur(this)"
-                        onfocus="menuFocus(this)" id="toBasicAction" nx-se-disabled=""><span
-                            data-msgid="textbox_id-903">Basic
-                            Actions</span></a></li>
-                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(2)" onblur="menuBlur(this)"
-                        onfocus="menuFocus(this)" id="toCaptureAction" nx-se-disabled=""><span
-                            data-msgid="textbox_id-904">Capture
-                            Actions</span></a></li>
+                <li><a href="javascript:void(0);" onclick="openDownloads()" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toDownloads" nx-se-disabled=""><span>Downloads</span></a></li>
                 <li><a href="javascript:void(0);" onclick="openSpoilerLog()" onblur="menuBlur(this)"
                         onfocus="menuFocus(this)" id="toOthers" nx-se-disabled=""><span>Spoiler
                             Log</span></a></li>
-                <li><a href="javascript:void(0);" onclick="openDownloads()" onblur="menuBlur(this)"
-                        onfocus="menuFocus(this)" id="toDownloads" nx-se-disabled=""><span>Downloads</span></a></li>
                 <li><a href="javascript:void(0);" onclick="openCredits()" onblur="menuBlur(this)"
                         onfocus="menuFocus(this)" id="toCredits" nx-se-disabled=""><span>Credits</span></a></li>
+                <li class="toc-gap" aria-hidden="true"></li>
+                <li><a href="javascript:void(0);" onclick="openActionGuide()" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toActionGuide" nx-se-disabled=""><span>Action
+                            Guide</span></a></li>
             </ul>
             <div class="toc-mov" id="toc-mov"></div>
         </div>
@@ -865,6 +881,42 @@
                 }
 
                 renderCredits();
+            </script>
+        </div>
+
+        <div class="page page0 action-guide-page" id="page-action-guide">
+            <div class="toc-background-image"></div>
+            <div class="top-bar">
+                <a href="javascript:void(0);" id="action-guide-back" onclick="closeActionGuide()" nx-se-disabled=""
+                    class="back-link"><img class="left-arrow-static" src="../../img/left-arrow.webp" /><span
+                        class="back-label fontDB">Back</span></a>
+                <span>Action Guide</span>
+            </div>
+            <h1><span data-msgcom="true" data-msgid="textbox_id-10901">Action Guide</span></h1>
+            <ul class="toc">
+                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(0)" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toController" nx-se-disabled=""><span
+                            data-msgid="textbox_id-902">Controls</span></a>
+                </li>
+                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(1)" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toBasicAction" nx-se-disabled=""><span
+                            data-msgid="textbox_id-903">Basic
+                            Actions</span></a></li>
+                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(2)" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toCaptureAction" nx-se-disabled=""><span
+                            data-msgid="textbox_id-904">Capture
+                            Actions</span></a></li>
+            </ul>
+            <div class="toc-mov" id="toc-mov-action-guide"></div>
+            <script>
+                function openActionGuide() {
+                    document.getElementById('page-action-guide').classList.add('active');
+                    try { wsnd.play('seDecide'); } catch (e) {}
+                }
+                function closeActionGuide() {
+                    document.getElementById('page-action-guide').classList.remove('active');
+                    try { wsnd.play('seCancel'); } catch (e) {}
+                }
             </script>
         </div>
 
