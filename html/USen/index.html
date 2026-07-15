@@ -35,6 +35,10 @@
         .social-link:hover .social-icon {
             transform: rotate(10deg) scale(1.2);
         }
+
+        #actionGuideItem {
+            margin-top: 20px;
+        }
     </style>
 </head>
 
@@ -44,25 +48,16 @@
             <div class="toc-background-image"></div>
             <h1><span data-msgcom="true" data-msgid="textbox_id-10901">SMO Randomizer</span></h1>
             <ul class="toc">
-                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(0)" onblur="menuBlur(this)"
-                        onfocus="menuFocus(this)" id="toController" nx-se-disabled=""><span
-                            data-msgid="textbox_id-902">Controls</span></a>
-                </li>
-                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(1)" onblur="menuBlur(this)"
-                        onfocus="menuFocus(this)" id="toBasicAction" nx-se-disabled=""><span
-                            data-msgid="textbox_id-903">Basic
-                            Actions</span></a></li>
-                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(2)" onblur="menuBlur(this)"
-                        onfocus="menuFocus(this)" id="toCaptureAction" nx-se-disabled=""><span
-                            data-msgid="textbox_id-904">Capture
-                            Actions</span></a></li>
+                <li><a href="javascript:void(0);" onclick="openDownloads()" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toDownloads" nx-se-disabled=""><span>Downloads</span></a></li>
                 <li><a href="javascript:void(0);" onclick="openSpoilerLog()" onblur="menuBlur(this)"
                         onfocus="menuFocus(this)" id="toOthers" nx-se-disabled=""><span>Spoiler
                             Log</span></a></li>
-                <li><a href="javascript:void(0);" onclick="openDownloads()" onblur="menuBlur(this)"
-                        onfocus="menuFocus(this)" id="toDownloads" nx-se-disabled=""><span>Downloads</span></a></li>
                 <li><a href="javascript:void(0);" onclick="openCredits()" onblur="menuBlur(this)"
                         onfocus="menuFocus(this)" id="toCredits" nx-se-disabled=""><span>Credits</span></a></li>
+                <li id="actionGuideItem"><a href="javascript:void(0);" onclick="openActionGuide()" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toActionGuide" nx-se-disabled=""><span>Action
+                            Guide</span></a></li>
             </ul>
             <div class="toc-mov" id="toc-mov"></div>
         </div>
@@ -867,6 +862,41 @@
                 renderCredits();
             </script>
         </div>
+
+        <div class="page page14 action-guide-page" id="action-guide-page" style="display:none;">
+            <div class="top-bar">
+                <a href="javascript:void(0);" id="action-guide-back" onclick="closeActionGuide()" nx-se-disabled=""
+                    class="back-link"><img class="left-arrow-static" src="../../img/left-arrow.webp" /><span
+                        class="back-label fontDB">Back</span></a>
+                <span>Action Guide</span>
+            </div>
+            <div class="toc-background-image"></div>
+            <h1><span data-msgcom="true" data-msgid="textbox_id-10901">SMO Randomizer</span></h1>
+            <ul class="toc">
+                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(0)" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toController" nx-se-disabled=""><span
+                            data-msgid="textbox_id-902">Controls</span></a>
+                </li>
+                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(1)" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toBasicAction" nx-se-disabled=""><span
+                            data-msgid="textbox_id-903">Basic
+                            Actions</span></a></li>
+                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(2)" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toCaptureAction" nx-se-disabled=""><span
+                            data-msgid="textbox_id-904">Capture
+                            Actions</span></a></li>
+            </ul>
+            <div class="toc-mov" id="toc-mov2"></div>
+        </div>
+        <script>
+            function openActionGuide() {
+                document.getElementById("action-guide-page").style.display = "block";
+            }
+
+            function closeActionGuide() {
+                document.getElementById("action-guide-page").style.display = "none";
+            }
+        </script>
 
         <footer id="page0Footer">
             <div class="page-title"><span id="action-guide"></span></div>
