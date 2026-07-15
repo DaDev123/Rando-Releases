@@ -894,15 +894,15 @@
             </div>
             <h1><span data-msgcom="true" data-msgid="textbox_id-10901">Action Guide</span></h1>
             <ul class="toc">
-                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(0)" onblur="menuBlur(this)"
+                <li><a href="javascript:void(0);" onclick="selectActionGuideItem(this,0)" onblur="menuBlur(this)"
                         onfocus="menuFocus(this)" id="toController" nx-se-disabled=""><span
                             data-msgid="textbox_id-902">Controls</span></a>
                 </li>
-                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(1)" onblur="menuBlur(this)"
+                <li><a href="javascript:void(0);" onclick="selectActionGuideItem(this,1)" onblur="menuBlur(this)"
                         onfocus="menuFocus(this)" id="toBasicAction" nx-se-disabled=""><span
                             data-msgid="textbox_id-903">Basic
                             Actions</span></a></li>
-                <li><a href="javascript:void(0);" onclick="menuSelect(this);playReportCount(2)" onblur="menuBlur(this)"
+                <li><a href="javascript:void(0);" onclick="selectActionGuideItem(this,2)" onblur="menuBlur(this)"
                         onfocus="menuFocus(this)" id="toCaptureAction" nx-se-disabled=""><span
                             data-msgid="textbox_id-904">Capture
                             Actions</span></a></li>
@@ -916,6 +916,14 @@
                 function closeActionGuide() {
                     document.getElementById('page-action-guide').classList.remove('active');
                     try { wsnd.play('seCancel'); } catch (e) {}
+                }
+                function selectActionGuideItem(el, reportIndex) {
+                    // Hide the Action Guide overlay first so the native
+                    // Controls/Basic Actions/Capture Actions page (switched
+                    // to below by menuSelect) is actually visible.
+                    document.getElementById('page-action-guide').classList.remove('active');
+                    menuSelect(el);
+                    playReportCount(reportIndex);
                 }
             </script>
         </div>
