@@ -58,8 +58,6 @@ window.onload = function() {
         }, 1000);
     }
 
-
-
     window.nx.footer.setAssign('B', '', function() {
         if (pageNum == 6) {
             closeSpoilerLog();
@@ -69,6 +67,9 @@ window.onload = function() {
             return;
         } else if (pageNum == 13) {
             closeCredits();
+            return;
+        } else if (pageNum == 14) {
+            closeActionGuide();
             return;
         }
         if (pageNum > 0.5) {
