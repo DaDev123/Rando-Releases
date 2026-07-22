@@ -2082,10 +2082,9 @@ function normalizeGroupTitle(text) {
  * ---- Moon Placements by Location icons ----
  *
  * Base folder for the small icons shown next to "Moon Placements by
- * Location" rows. Adjust this (and the ".webp" extension used below in
- * moonPlacementIconSrc) if the real asset folder/extension differs.
+ * Location" rows.
  */
-var SPOILER_ICON_BASE = "../../img/spoiler-icons/";
+var SPOILER_ICON_BASE = "../../img/spoiler/";
 
 /** Full spoiler-log kingdom name -> short icon key ("Cap Kingdom" -> "cap"). */
 var KINGDOM_ICON_KEY = {
@@ -2176,17 +2175,104 @@ function extractParenName(extraDetail) {
     return m ? m[1].trim() : "";
 }
 
-/** "Side Flip" -> "AbilitySideFlip" */
+/** Exact ability name -> icon filename (these don't follow one consistent pattern, e.g. "Ground Pound" -> "AbilityGP.png"). */
+var ABILITY_ICON_FILENAMES = {
+    "Neutral Throw": "AbilityNeutralThrow.png",
+    "Up Throw": "AbilityUpThrow.png",
+    "Down Throw": "AbilityDownThrow.png",
+    "Spin Throw": "AbilitySpinThrow.png",
+    "Vault": "AbilityVault.png",
+    "Crouch": "AbilityCrouch.png",
+    "Backflip": "AbilityBackflip.png",
+    "Long Jump": "AbilityLongJump.png",
+    "Roll": "AbilityRoll.png",
+    "Roll Boost": "AbilityRollBoost.png",
+    "Ground Pound": "AbilityGP.png",
+    "Ground Pound Jump": "AbilityGPJump.png",
+    "Dive": "AbilityDive.png",
+    "Double Jump": "AbilityDoubleJump.png",
+    "Triple Jump": "AbilityTripleJump.png",
+    "Side Flip": "AbilitySideFlip.png",
+    "Spin": "AbilitySpin.png",
+    "Wall Jump": "AbilityWallJump.png",
+    "Ledge Grab": "AbilityLedgeGrab.png",
+    "Climb": "AbilityClimb.png",
+    "Swing": "AbilitySwing.png"
+};
+
+/** Exact capture name -> icon filename (a few break the "capture" + lowercase pattern, e.g. "T-Rex" -> "trex.png", "Gushen" -> "gushen.png"). */
+var CAPTURE_ICON_FILENAMES = {
+    "Frog": "capturefrog.png",
+    "Spark Pylon": "capturepylon.png",
+    "Paragoomba": "captureparagoomba.png",
+    "Chain Chomp": "capturechainchomp.png",
+    "Big Chain Chomp": "capturebigchainchomp.png",
+    "Broode's Chain Chomp": "capturegoldenchainchomp.png",
+    "T-Rex": "trex.png",
+    "Binoculars": "capturebinoculars.png",
+    "Bullet Bill": "capturebulletbill.png",
+    "Moe-Eye": "capturemoeeye.png",
+    "Cactus": "capturecactus.png",
+    "Goomba": "capturegoomba.png",
+    "Knucklotec's Fist": "captureknucklotecsfist.png",
+    "Mini Rocket": "capturerocket.png",
+    "Glydon": "captureglydon.png",
+    "Lakitu": "capturelakitu.png",
+    "Zipper": "capturezipper.png",
+    "Cheep Cheep": "capturecheepcheep.png",
+    "Puzzle Part (Lake Kingdom)": "capturepuzzlepartlake.png",
+    "Poison Piranha Plant": "capturepoisonpiranhaplant.png",
+    "Uproot": "captureuproot.png",
+    "Fire Bro": "capturefirebro.png",
+    "Sherm": "capturesherm.png",
+    "Coin Coffer": "capturecoincoffer.png",
+    "Tree": "capturetree.png",
+    "Boulder": "captureboulder.png",
+    "Picture Match Part (Goomba)": "capturepicturematchpartgoomba.png",
+    "Tropical Wiggler": "capturetropicalwiggler.png",
+    "Pole": "capturepole.png",
+    "Manhole": "capturemanhole.png",
+    "Taxi": "capturetaxi.png",
+    "RC Car": "capturerccar.png",
+    "Ty-foo": "capturetyfoo.png",
+    "Shiverian Racer": "captureshiverianracer.png",
+    "Cheep Cheep (Snow Kingdom)": "capturesnowcheepcheep.png",
+    "Gushen": "gushen.png",
+    "Lava Bubble": "capturelavabubble.png",
+    "Volbonan": "capturevolbonan.png",
+    "Hammer Bro": "capturehammerbro.png",
+    "Meat": "capturemeat.png",
+    "Fire Piranha Plant": "capturefirepiranhaplant.png",
+    "Pokio": "capturepokio.png",
+    "Jizo": "capturejizo.png",
+    "Bowser Statue": "capturebowserstatue.png",
+    "Parabones": "captureparabones.png",
+    "Banzai Bill": "capturebanzaibill.png",
+    "Chargin' Chuck": "capturecharginchuck.png",
+    "Bowser": "capturebowser.png",
+    "Letter": "captureletter.png",
+    "Puzzle Part (Metro Kingdom)": "capturepuzzlepartmetro.png",
+    "Picture Match Part (Mario)": "capturepicturematchpartmario.png",
+    "Yoshi": "captureyoshi.png"
+};
+
+/** "Side Flip" -> "AbilitySideFlip.png" (falls back to an auto-built name for anything not in the exact table above). */
 function abilityIconName(name) {
+    if (ABILITY_ICON_FILENAMES[name]) {
+        return ABILITY_ICON_FILENAMES[name];
+    }
     var pascal = name.replace(/[^A-Za-z0-9]+/g, " ").trim().split(/\s+/).map(function(w) {
         return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
     }).join("");
-    return "Ability" + pascal;
+    return "Ability" + pascal + ".png";
 }
 
-/** "Banzai Bill" -> "capturebanzaibill" */
+/** "Banzai Bill" -> "capturebanzaibill.png" (falls back to an auto-built name for anything not in the exact table above). */
 function captureIconName(name) {
-    return "capture" + name.replace(/[^A-Za-z0-9]+/g, "").toLowerCase();
+    if (CAPTURE_ICON_FILENAMES[name]) {
+        return CAPTURE_ICON_FILENAMES[name];
+    }
+    return "capture" + name.replace(/[^A-Za-z0-9]+/g, "").toLowerCase() + ".png";
 }
 
 /**
@@ -2203,6 +2289,10 @@ function moonPlacementGroupIconKey(kingdomTitle) {
  * moon's true home kingdom shown as "-> Kingdom". Dark Side moons use
  * their ability's icon, Mushroom Kingdom moons use their capture's icon,
  * and everything else uses the kingdom's (corrected) Art icon.
+ *
+ * Ability/capture icons come back as full filenames (already including
+ * ".png"); plain kingdom icons come back as bare short keys (extension
+ * added later in moonPlacementIconSrc).
  */
 function moonPlacementRowIconKey(trueKingdom, extraDetail, checkText) {
     if (trueKingdom === "Dark Side" || trueKingdom === "Darker Side") {
@@ -2226,9 +2316,19 @@ function moonPlacementRowIconKey(trueKingdom, extraDetail, checkText) {
     return kingdomArtIconKey(trueKingdom) || kingdomIconKey(trueKingdom);
 }
 
+/**
+ * Builds the final <img> src for an icon key. Ability/capture icon keys
+ * already include their exact filename + extension (e.g.
+ * "AbilitySideFlip.png"); plain kingdom short keys (e.g. "cap") get
+ * ".webp" appended - adjust here if the real kingdom icon files use a
+ * different extension.
+ */
 function moonPlacementIconSrc(iconKey) {
     if (!iconKey) {
         return "";
+    }
+    if (/\.(png|webp|jpg|jpeg|gif|svg)$/i.test(iconKey)) {
+        return SPOILER_ICON_BASE + iconKey;
     }
     return SPOILER_ICON_BASE + iconKey + ".webp";
 }
