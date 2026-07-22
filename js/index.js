@@ -2341,7 +2341,6 @@ function buildSpoilerModel(lines, sectionTitle) {
     var numberedPattern = /^\d+\.\s+/;
     var sphereMarker = /^@@SPHERE@@(.+)$/;
     var currentGroupTitle = "";
-    var isMoonPlacements = sectionTitle === "Moon Placements by Location";
 
     for (var i = 0; i < lines.length; i++) {
         var raw = lines[i];
@@ -2378,7 +2377,7 @@ function buildSpoilerModel(lines, sectionTitle) {
                     type: "entry",
                     key: entry.check + multiTag,
                     value: "→  " + trueKingdom + extraDetail,
-                    icon: isMoonPlacements ? moonPlacementRowIconKey(trueKingdom, extraDetail, entry.check) : null
+                    icon: moonPlacementRowIconKey(trueKingdom, extraDetail, entry.check)
                 });
             } else {
                 rows.push({ type: "entry", key: entry.key, value: entry.value });
@@ -2397,7 +2396,7 @@ function buildSpoilerModel(lines, sectionTitle) {
             type: "group",
             text: trimmed,
             major: false,
-            icon: (isMoonPlacements && KNOWN_KINGDOM_NAMES.indexOf(groupTitle) !== -1) ? moonPlacementGroupIconKey(groupTitle) : null
+            icon: KNOWN_KINGDOM_NAMES.indexOf(groupTitle) !== -1 ? moonPlacementGroupIconKey(groupTitle) : null
         });
         currentGroupTitle = groupTitle;
     }
