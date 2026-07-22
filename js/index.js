@@ -2144,14 +2144,6 @@ function kingdomIconKey(kingdomName) {
     return KINGDOM_ICON_KEY[kingdomName] || null;
 }
 
-function kingdomArtIconKey(kingdomName) {
-    var key = kingdomIconKey(kingdomName);
-    if (!key) {
-        return null;
-    }
-    return KINGDOM_ART_ICON_SWAP[key] || key;
-}
-
 /**
  * Detects a Dark Side numbered "Art" area reference (e.g. "Dark Side Art
  * 3", "Art 7") in a piece of text and returns the short key of the
@@ -2163,6 +2155,22 @@ function darkSideArtAreaIconKey(text) {
         return null;
     }
     return DARKSIDE_ART_ICON_MAP[m[1]] || null;
+}
+
+/**
+ * Detects a "Found with <Kingdom> Art" check name (e.g. "Found with Cap
+ * Kingdom Art") and returns the short icon key of the kingdom depicted in
+ * that art piece (e.g. "cap"). These specific checks are the only ones
+ * whose physical location visually reuses a different kingdom's assets,
+ * per KINGDOM_ART_ICON_SWAP - every other check just uses its own
+ * kingdom's icon unchanged.
+ */
+function artPieceDepictedIconKey(checkText) {
+    var m = checkText && checkText.match(/^Found with (.+?) Art\b/i);
+    if (!m) {
+        return null;
+    }
+    return kingdomIconKey(m[1]);
 }
 
 /**
@@ -2286,10 +2294,13 @@ function moonPlacementGroupIconKey(kingdomTitle) {
 /**
  * Icon key to use in front of every "Moon Placements by Location" row -
  * i.e. the kingdom the check is physically located in (same kingdom as
- * the group header), using the Art-corrected variant. Dark Side locations
- * use the specific numbered "Art N" area lookup when the check text names
- * one, since each of Dark Side's areas reuses a different kingdom's
- * visuals.
+ * the group header). Plain kingdom icon for almost every check. The only
+ * exceptions: "Found with <Kingdom> Art" checks, which use the
+ * KINGDOM_ART_ICON_SWAP-corrected icon for the depicted kingdom (since
+ * that art piece is physically found inside a different kingdom's set),
+ * and Dark Side locations, which use the specific numbered "Art N" area
+ * lookup when the check text names one, since each of Dark Side's areas
+ * reuses a different kingdom's visuals.
  */
 function moonPlacementFrontIconKey(locationKingdom, checkText) {
     if (locationKingdom === "Dark Side" || locationKingdom === "Darker Side") {
@@ -2299,14 +2310,20 @@ function moonPlacementFrontIconKey(locationKingdom, checkText) {
         }
         return "dark";
     }
-    return kingdomArtIconKey(locationKingdom) || kingdomIconKey(locationKingdom);
+    var depictedKey = artPieceDepictedIconKey(checkText);
+    if (depictedKey) {
+        return KINGDOM_ART_ICON_SWAP[depictedKey] || depictedKey;
+    }
+    return kingdomIconKey(locationKingdom);
 }
 
 /**
  * Icon key to use for a "Moon Placements by Location" row - i.e. the
  * moon's true home kingdom shown as "-> Kingdom". Dark Side moons use
  * their ability's icon, Mushroom Kingdom moons use their capture's icon,
- * and everything else uses the kingdom's (corrected) Art icon.
+ * and everything else uses that kingdom's own plain icon (this is the
+ * kingdom named right there in the "-> Kingdom" text, so it should never
+ * be swapped for a different kingdom's icon).
  *
  * Ability/capture icons come back as full filenames (already including
  * ".png"); plain kingdom icons come back as bare short keys (extension
