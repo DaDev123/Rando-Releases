@@ -2329,22 +2329,35 @@ function moonPlacementFrontIconKey(locationKingdom, checkText) {
  * ".png"); plain kingdom icons come back as bare short keys (extension
  * added later in moonPlacementIconSrc).
  */
+/**
+ * Toggle flags for the "Moon Placements by Location" destination icon.
+ * Set to 1 to force the generic kingdom icon instead of the
+ * specific capture/ability icon; set to 0 to use the specific icon
+ * (default).
+ */
+var USE_GENERIC_MUSHROOM_ICON = 1;
+var USE_GENERIC_DARK_ICON = 1;
+
 function moonPlacementRowIconKey(trueKingdom, extraDetail, checkText) {
     if (trueKingdom === "Dark Side" || trueKingdom === "Darker Side") {
-        var ability = extractParenName(extraDetail);
-        if (ability) {
-            return abilityIconName(ability);
-        }
-        var areaKey = darkSideArtAreaIconKey(checkText) || darkSideArtAreaIconKey(extraDetail);
-        if (areaKey) {
-            return areaKey;
+        if (!USE_GENERIC_DARK_ICON) {
+            var ability = extractParenName(extraDetail);
+            if (ability) {
+                return abilityIconName(ability);
+            }
+            var areaKey = darkSideArtAreaIconKey(checkText) || darkSideArtAreaIconKey(extraDetail);
+            if (areaKey) {
+                return areaKey;
+            }
         }
         return "dark";
     }
     if (trueKingdom === "Mushroom Kingdom") {
-        var capture = extractParenName(extraDetail);
-        if (capture) {
-            return captureIconName(capture);
+        if (!USE_GENERIC_MUSHROOM_ICON) {
+            var capture = extractParenName(extraDetail);
+            if (capture) {
+                return captureIconName(capture);
+            }
         }
         return "mushroom";
     }
