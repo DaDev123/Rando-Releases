@@ -114,6 +114,7 @@
         /* Features overlay page (built the same way as the Action Guide overlay) */
         .features-page {
             display: none;
+            position: relative;
         }
 
         .features-page.active {
@@ -121,18 +122,23 @@
             opacity: 1;
         }
 
-        .features-pager {
+        /* Pager lives on the side of the list (like the dots on the Controls
+           page) instead of taking up its own row, so all 4 cards fit. */
+        .features-side-pager {
+            position: absolute;
+            top: 50%;
+            right: 14px;
+            transform: translateY(-50%);
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 22px;
-            margin: 10px 0 18px 0;
+            gap: 14px;
+            z-index: 2;
         }
 
         .features-arrow {
-            width: 34px;
-            height: 34px;
+            width: 22px;
+            height: 22px;
             object-fit: contain;
             cursor: pointer;
             transition: transform 0.15s ease, opacity 0.15s ease;
@@ -149,15 +155,15 @@
 
         .features-dots {
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .features-dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: #6f6f6f;
             transition: background 0.15s ease, transform 0.15s ease;
@@ -169,15 +175,13 @@
         }
 
         .features-container {
-            height: 58vh;
-            max-height: 58vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            gap: 22px;
+            height: 60vh;
+            max-height: 60vh;
             box-sizing: border-box;
-            padding: 4px 24px;
+            padding: 10px 56px 10px 24px;
+            display: grid;
+            grid-template-rows: repeat(4, 1fr);
+            gap: 6px;
         }
 
         .feature-card {
@@ -185,8 +189,9 @@
             flex-direction: row;
             align-items: center;
             width: 100%;
+            min-height: 0;
             box-sizing: border-box;
-            gap: 24px;
+            gap: 16px;
         }
 
         /* Odd cards: image left, whole block left-aligned */
@@ -204,10 +209,10 @@
 
         .feature-image {
             flex: 0 0 auto;
-            width: 140px;
-            height: 140px;
+            width: 72px;
+            height: 72px;
             object-fit: cover;
-            border-radius: 10px;
+            border-radius: 8px;
         }
 
         .feature-text {
@@ -215,21 +220,26 @@
             min-width: 0;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            justify-content: center;
+            gap: 4px;
         }
 
         .feature-title {
             margin: 0;
             color: #d4af37;
-            font-size: 24px;
+            font-size: 19px;
             font-weight: bold;
         }
 
         .feature-desc {
             margin: 0;
             color: #a8a8a8;
-            font-size: 16px;
-            line-height: 1.35;
+            font-size: 13px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
     </style>
 </head>
@@ -1065,51 +1075,70 @@
                         class="back-label fontDB">Back</span></a>
                 <span>Features</span>
             </div>
-            <div class="features-pager">
+            <div class="features-container" id="features-container"></div>
+            <div class="features-side-pager">
                 <img class="features-arrow" id="features-arrow-left" src="../../img/left-arrow.webp"
                     onclick="prevFeaturesPage()" />
                 <div class="features-dots" id="features-dots"></div>
                 <img class="features-arrow" id="features-arrow-right" src="../../img/right-arrow.webp"
                     onclick="nextFeaturesPage()" />
             </div>
-            <div class="features-container" id="features-container"></div>
             <script>
-                // ---- EDIT THIS LIST TO CHANGE THE FEATURES SHOWN AND THEIR ORDER ----
-                // Just reorder / add / remove entries here. 4 features are shown per page;
-                // adding a 5th (and so on) automatically creates a new page, reachable
-                // with the L/R arrows (or the L/R keys) and reflected by the dots above.
-                const featuresList = [
-                    {
-                        title: "Item Randomization",
-                        desc: "Moons, coins, and other pickups are shuffled across every kingdom for a fresh playthrough every time.",
-                        image: "../../img/temp/capture1.webp"
-                    },
-                    {
-                        title: "Entrance Randomizer",
-                        desc: "Kingdom entrances and pipes can be shuffled, changing how you travel between areas.",
-                        image: "../../img/temp/capture2.webp"
-                    },
-                    {
-                        title: "Custom Logic Options",
-                        desc: "Fine-tune the randomizer's logic to match your preferred difficulty and playstyle.",
-                        image: "../../img/temp/capture3.webp"
-                    },
-                    {
-                        title: "Spoiler Log Viewer",
-                        desc: "Browse a full spoiler log right in the app, with search and section filtering built in.",
-                        image: "../../img/temp/capture4.webp"
-                    },
-                    {
-                        title: "Co-op Support",
-                        desc: "Play the randomized seed together with a friend in two-player mode.",
-                        image: "../../img/temp/capture5.webp"
-                    },
-                    {
-                        title: "Moon Model Variety",
-                        desc: "Community-made moon models add extra visual variety to the moon hunt.",
-                        image: "../../img/temp/capture6.webp"
-                    }
+                // ---- EDIT THIS LIST TO CHANGE THE ORDER FEATURES APPEAR IN ----
+                // Just reorder / add / remove titles here. Each title must match a key
+                // in featuresData below. 4 features are shown per page; adding a 5th
+                // (and so on) automatically creates a new page, reachable with the
+                // L/R arrows (or the L/R keys) and reflected by the dots on the side.
+                const featuresOrder = [
+                    "Item Randomization",
+                    "Entrance Randomizer",
+                    "Custom Logic Options",
+                    "Spoiler Log Viewer",
+                    "Co-op Support",
+                    "Moon Model Variety"
                 ];
+
+                // ---- Feature details live here. Add a new entry, then add its title to featuresOrder above. ----
+                // No image path needed - it's derived automatically from the title
+                // (lowercased, spaces/punctuation stripped), e.g. "Loading Zone
+                // Randomization" -> ../../img/features/loadingzonerandomization.png
+                const featuresData = {
+                    "Item Randomization": {
+                        desc: "Moons, coins, and other pickups are shuffled across every kingdom for a fresh playthrough every time."
+                    },
+                    "Entrance Randomizer": {
+                        desc: "Kingdom entrances and pipes can be shuffled, changing how you travel between areas."
+                    },
+                    "Custom Logic Options": {
+                        desc: "Fine-tune the randomizer's logic to match your preferred difficulty and playstyle."
+                    },
+                    "Spoiler Log Viewer": {
+                        desc: "Browse a full spoiler log right in the app, with search and section filtering built in."
+                    },
+                    "Co-op Support": {
+                        desc: "Play the randomized seed together with a friend in two-player mode."
+                    },
+                    "Moon Model Variety": {
+                        desc: "Community-made moon models add extra visual variety to the moon hunt."
+                    }
+                };
+
+                // Derives an image path from a feature's title, e.g.
+                // "Loading Zone Randomization" -> ../../img/features/loadingzonerandomization.png
+                function featureImagePath(title) {
+                    const filename = title.toLowerCase().replace(/[^a-z0-9]/g, "");
+                    return `../../img/features/${filename}.png`;
+                }
+
+                const featuresList = featuresOrder
+                    .filter(title => {
+                        if (!featuresData[title]) {
+                            console.warn(`Features: "${title}" is in featuresOrder but has no entry in featuresData.`);
+                            return false;
+                        }
+                        return true;
+                    })
+                    .map(title => ({ title, image: featureImagePath(title), ...featuresData[title] }));
 
                 const FEATURES_PER_PAGE = 4;
                 let currentFeaturesPage = 0;
