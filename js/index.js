@@ -2086,7 +2086,7 @@ function normalizeGroupTitle(text) {
  */
 var SPOILER_ICON_BASE = "../../img/spoiler/";
 
-/** Full spoiler-log kingdom name -> short icon key ("Cap Kingdom" -> "cap"). */
+/** Full spoiler-log kingdom name -> short icon key ("Cap Kingdom" -> "cap"). Matches the real filenames in img/spoiler. */
 var KINGDOM_ICON_KEY = {
     "Cap Kingdom": "cap",
     "Cascade Kingdom": "cascade",
@@ -2100,29 +2100,28 @@ var KINGDOM_ICON_KEY = {
     "Seaside Kingdom": "seaside",
     "Luncheon Kingdom": "luncheon",
     "Ruined Kingdom": "ruined",
-    "Bowser's Kingdom": "bowser",
+    "Bowser's Kingdom": "bowsers",
     "Moon Kingdom": "moon",
     "Mushroom Kingdom": "mushroom",
-    "Dark Side": "darkside",
-    "Darker Side": "darkside"
+    "Dark Side": "dark",
+    "Darker Side": "dark"
 };
 
 /**
- * "Art" icon corrections. The kingdom Art assets are mislabeled relative
- * to their kingdom names, so requesting kingdom X's Art icon actually
- * needs to load a different kingdom's file. Any short key absent here
- * uses its own name unchanged.
+ * "Art" icon corrections, used for the icon shown in front of every moon
+ * (representing the kingdom the check is physically located in). Any
+ * short key absent here uses its own name unchanged.
  */
 var KINGDOM_ART_ICON_SWAP = {
     "cap": "moon",
-    "sand": "bowser",
+    "sand": "bowsers",
     "wooded": "sand",
     "lake": "cascade",
     "metro": "lake",
     "seaside": "metro",
     "snow": "lost",
     "luncheon": "seaside",
-    "bowser": "sand",
+    "bowsers": "sand",
     "moon": "wooded",
     "mushroom": "cap"
 };
@@ -2285,6 +2284,25 @@ function moonPlacementGroupIconKey(kingdomTitle) {
 }
 
 /**
+ * Icon key to use in front of every "Moon Placements by Location" row -
+ * i.e. the kingdom the check is physically located in (same kingdom as
+ * the group header), using the Art-corrected variant. Dark Side locations
+ * use the specific numbered "Art N" area lookup when the check text names
+ * one, since each of Dark Side's areas reuses a different kingdom's
+ * visuals.
+ */
+function moonPlacementFrontIconKey(locationKingdom, checkText) {
+    if (locationKingdom === "Dark Side" || locationKingdom === "Darker Side") {
+        var areaKey = darkSideArtAreaIconKey(checkText);
+        if (areaKey) {
+            return areaKey;
+        }
+        return "dark";
+    }
+    return kingdomArtIconKey(locationKingdom) || kingdomIconKey(locationKingdom);
+}
+
+/**
  * Icon key to use for a "Moon Placements by Location" row - i.e. the
  * moon's true home kingdom shown as "-> Kingdom". Dark Side moons use
  * their ability's icon, Mushroom Kingdom moons use their capture's icon,
@@ -2304,7 +2322,7 @@ function moonPlacementRowIconKey(trueKingdom, extraDetail, checkText) {
         if (areaKey) {
             return areaKey;
         }
-        return "darkside";
+        return "dark";
     }
     if (trueKingdom === "Mushroom Kingdom") {
         var capture = extractParenName(extraDetail);
@@ -2320,7 +2338,7 @@ function moonPlacementRowIconKey(trueKingdom, extraDetail, checkText) {
  * Builds the final <img> src for an icon key. Ability/capture icon keys
  * already include their exact filename + extension (e.g.
  * "AbilitySideFlip.png"); plain kingdom short keys (e.g. "cap") get
- * ".webp" appended - adjust here if the real kingdom icon files use a
+ * ".png" appended - adjust here if the real kingdom icon files use a
  * different extension.
  */
 function moonPlacementIconSrc(iconKey) {
@@ -2330,7 +2348,7 @@ function moonPlacementIconSrc(iconKey) {
     if (/\.(png|webp|jpg|jpeg|gif|svg)$/i.test(iconKey)) {
         return SPOILER_ICON_BASE + iconKey;
     }
-    return SPOILER_ICON_BASE + iconKey + ".webp";
+    return SPOILER_ICON_BASE + iconKey + ".png";
 }
 
 function buildSpoilerModel(lines, sectionTitle) {
@@ -2377,7 +2395,8 @@ function buildSpoilerModel(lines, sectionTitle) {
                     type: "entry",
                     key: entry.check + multiTag,
                     value: "→  " + trueKingdom + extraDetail,
-                    icon: moonPlacementRowIconKey(trueKingdom, extraDetail, entry.check)
+                    icon: moonPlacementRowIconKey(trueKingdom, extraDetail, entry.check),
+                    frontIcon: moonPlacementFrontIconKey(currentGroupTitle, entry.check)
                 });
             } else {
                 rows.push({ type: "entry", key: entry.key, value: entry.value });
@@ -2467,7 +2486,14 @@ function renderSpoilerSection(section) {
             entryRow.setAttribute("data-parent-group", currentMajorGroupId);
             var keyEl = document.createElement("span");
             keyEl.className = "spoiler-row-key";
-            keyEl.textContent = row.key;
+            if (row.frontIcon) {
+                var frontIconImg = document.createElement("img");
+                frontIconImg.className = "spoiler-icon spoiler-row-front-icon";
+                frontIconImg.src = moonPlacementIconSrc(row.frontIcon);
+                frontIconImg.alt = "";
+                keyEl.appendChild(frontIconImg);
+            }
+            keyEl.appendChild(document.createTextNode(row.key));
             var valEl = document.createElement("span");
             valEl.className = "spoiler-row-value";
             if (row.icon) {
