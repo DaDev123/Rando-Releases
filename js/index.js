@@ -2329,9 +2329,9 @@ function moonPlacementRowIconKey(trueKingdom, extraDetail, checkText) {
         if (capture) {
             return captureIconName(capture);
         }
-        return kingdomArtIconKey(trueKingdom) || "mushroom";
+        return "mushroom";
     }
-    return kingdomArtIconKey(trueKingdom) || kingdomIconKey(trueKingdom);
+    return kingdomIconKey(trueKingdom);
 }
 
 /**
