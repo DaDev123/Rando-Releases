@@ -323,6 +323,9 @@ function customFunctionL() {
         }
         document.getElementById('capture' + (captureNum - 1)).focus();
 
+    } else if (pageNum == 15) {
+        prevFeaturesPage();
+
     } else if (pageNum > 5) {
         wsnd.play("UiTurnPage");
         clearTimeout(playReport9to14);
@@ -432,6 +435,9 @@ function customFunctionR() {
             capturenNum = 0;
         }
         document.getElementById('capture' + (capturenNum + 1)).focus();
+
+    } else if (pageNum == 15) {
+        nextFeaturesPage();
 
     } else if (pageNum > 5) {
         wsnd.play("UiTurnPage");
@@ -943,6 +949,7 @@ function parseSpoilerLog(text) {
     }
 
     spoilerSections = mergeSphereSections(spoilerSections);
+    relabelSeedOverviewSection(spoilerSections);
 
     var listEl = document.getElementById('spoiler-section-list');
     listEl.innerHTML = "";
@@ -994,6 +1001,34 @@ function mergeSphereSections(sections) {
     }
 
     return result;
+}
+
+/**
+ * The spoiler log's "Settings" section is renamed "Seed Overview" for
+ * display, and its "Seed" line (wherever it appears in the raw log) is
+ * moved to the top so it's the first thing shown.
+ */
+function relabelSeedOverviewSection(sections) {
+    for (var s = 0; s < sections.length; s++) {
+        if (sections[s].title !== "Settings") {
+            continue;
+        }
+        sections[s].title = "Seed Overview";
+
+        var lines = sections[s].lines;
+        var seedIdx = -1;
+        for (var i = 0; i < lines.length; i++) {
+            if (/^\s*Seed\s*:/i.test(lines[i])) {
+                seedIdx = i;
+                break;
+            }
+        }
+        if (seedIdx > 0) {
+            var seedLine = lines.splice(seedIdx, 1)[0];
+            lines.unshift(seedLine);
+        }
+        return;
+    }
 }
 
 function showSpoilerSection(idx) {
@@ -2043,7 +2078,162 @@ function normalizeGroupTitle(text) {
     return text.replace(/:\s*$/, "").trim();
 }
 
-function buildSpoilerModel(lines) {
+/**
+ * ---- Moon Placements by Location icons ----
+ *
+ * Base folder for the small icons shown next to "Moon Placements by
+ * Location" rows. Adjust this (and the ".webp" extension used below in
+ * moonPlacementIconSrc) if the real asset folder/extension differs.
+ */
+var SPOILER_ICON_BASE = "../../img/spoiler-icons/";
+
+/** Full spoiler-log kingdom name -> short icon key ("Cap Kingdom" -> "cap"). */
+var KINGDOM_ICON_KEY = {
+    "Cap Kingdom": "cap",
+    "Cascade Kingdom": "cascade",
+    "Sand Kingdom": "sand",
+    "Lake Kingdom": "lake",
+    "Wooded Kingdom": "wooded",
+    "Cloud Kingdom": "cloud",
+    "Lost Kingdom": "lost",
+    "Metro Kingdom": "metro",
+    "Snow Kingdom": "snow",
+    "Seaside Kingdom": "seaside",
+    "Luncheon Kingdom": "luncheon",
+    "Ruined Kingdom": "ruined",
+    "Bowser's Kingdom": "bowser",
+    "Moon Kingdom": "moon",
+    "Mushroom Kingdom": "mushroom",
+    "Dark Side": "darkside",
+    "Darker Side": "darkside"
+};
+
+/**
+ * "Art" icon corrections. The kingdom Art assets are mislabeled relative
+ * to their kingdom names, so requesting kingdom X's Art icon actually
+ * needs to load a different kingdom's file. Any short key absent here
+ * uses its own name unchanged.
+ */
+var KINGDOM_ART_ICON_SWAP = {
+    "cap": "moon",
+    "sand": "bowser",
+    "wooded": "sand",
+    "lake": "cascade",
+    "metro": "lake",
+    "seaside": "metro",
+    "snow": "lost",
+    "luncheon": "seaside",
+    "bowser": "sand",
+    "moon": "wooded",
+    "mushroom": "cap"
+};
+
+/** Dark Side's ten numbered "Art" areas each reuse another kingdom's visuals. */
+var DARKSIDE_ART_ICON_MAP = {
+    "1": "cascade",
+    "2": "metro",
+    "3": "mushroom",
+    "4": "cloud",
+    "5": "snow",
+    "6": "seaside",
+    "7": "lost",
+    "8": "luncheon",
+    "9": "lake",
+    "10": "ruined"
+};
+
+function kingdomIconKey(kingdomName) {
+    return KINGDOM_ICON_KEY[kingdomName] || null;
+}
+
+function kingdomArtIconKey(kingdomName) {
+    var key = kingdomIconKey(kingdomName);
+    if (!key) {
+        return null;
+    }
+    return KINGDOM_ART_ICON_SWAP[key] || key;
+}
+
+/**
+ * Detects a Dark Side numbered "Art" area reference (e.g. "Dark Side Art
+ * 3", "Art 7") in a piece of text and returns the short key of the
+ * kingdom whose visuals that area reuses, per DARKSIDE_ART_ICON_MAP.
+ */
+function darkSideArtAreaIconKey(text) {
+    var m = text && text.match(/\bArt\s*(\d{1,2})\b/i);
+    if (!m) {
+        return null;
+    }
+    return DARKSIDE_ART_ICON_MAP[m[1]] || null;
+}
+
+/**
+ * Extracts a bracketed ability/capture name from a moon's trailing detail
+ * text, e.g. " (Wall Jump)" -> "Wall Jump". Returns "" if there isn't one.
+ */
+function extractParenName(extraDetail) {
+    var m = extraDetail && extraDetail.match(/\(([^()]+)\)/);
+    return m ? m[1].trim() : "";
+}
+
+/** "Side Flip" -> "AbilitySideFlip" */
+function abilityIconName(name) {
+    var pascal = name.replace(/[^A-Za-z0-9]+/g, " ").trim().split(/\s+/).map(function(w) {
+        return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+    }).join("");
+    return "Ability" + pascal;
+}
+
+/** "Banzai Bill" -> "capturebanzaibill" */
+function captureIconName(name) {
+    return "capture" + name.replace(/[^A-Za-z0-9]+/g, "").toLowerCase();
+}
+
+/**
+ * Icon key to use for a "Moon Placements by Location" group header, i.e.
+ * the kingdom the checks are physically located in. Plain kingdom name;
+ * always "darkside" for Dark Side/Darker Side.
+ */
+function moonPlacementGroupIconKey(kingdomTitle) {
+    return kingdomIconKey(kingdomTitle);
+}
+
+/**
+ * Icon key to use for a "Moon Placements by Location" row - i.e. the
+ * moon's true home kingdom shown as "-> Kingdom". Dark Side moons use
+ * their ability's icon, Mushroom Kingdom moons use their capture's icon,
+ * and everything else uses the kingdom's (corrected) Art icon.
+ */
+function moonPlacementRowIconKey(trueKingdom, extraDetail, checkText) {
+    if (trueKingdom === "Dark Side" || trueKingdom === "Darker Side") {
+        var ability = extractParenName(extraDetail);
+        if (ability) {
+            return abilityIconName(ability);
+        }
+        var areaKey = darkSideArtAreaIconKey(checkText) || darkSideArtAreaIconKey(extraDetail);
+        if (areaKey) {
+            return areaKey;
+        }
+        return "darkside";
+    }
+    if (trueKingdom === "Mushroom Kingdom") {
+        var capture = extractParenName(extraDetail);
+        if (capture) {
+            return captureIconName(capture);
+        }
+        return kingdomArtIconKey(trueKingdom) || "mushroom";
+    }
+    return kingdomArtIconKey(trueKingdom) || kingdomIconKey(trueKingdom);
+}
+
+function moonPlacementIconSrc(iconKey) {
+    if (!iconKey) {
+        return "";
+    }
+    return SPOILER_ICON_BASE + iconKey + ".webp";
+}
+
+function buildSpoilerModel(lines, sectionTitle) {
     var rows = [];
     var entryCount = 0;
     var nonBlankCount = 0;
@@ -2051,6 +2241,7 @@ function buildSpoilerModel(lines) {
     var numberedPattern = /^\d+\.\s+/;
     var sphereMarker = /^@@SPHERE@@(.+)$/;
     var currentGroupTitle = "";
+    var isMoonPlacements = sectionTitle === "Moon Placements by Location";
 
     for (var i = 0; i < lines.length; i++) {
         var raw = lines[i];
@@ -2086,7 +2277,8 @@ function buildSpoilerModel(lines) {
                 rows.push({
                     type: "entry",
                     key: entry.check + multiTag,
-                    value: "→  " + trueKingdom + extraDetail
+                    value: "→  " + trueKingdom + extraDetail,
+                    icon: isMoonPlacements ? moonPlacementRowIconKey(trueKingdom, extraDetail, entry.check) : null
                 });
             } else {
                 rows.push({ type: "entry", key: entry.key, value: entry.value });
@@ -2100,8 +2292,14 @@ function buildSpoilerModel(lines) {
             continue;
         }
 
-        rows.push({ type: "group", text: trimmed, major: false });
-        currentGroupTitle = normalizeGroupTitle(trimmed);
+        var groupTitle = normalizeGroupTitle(trimmed);
+        rows.push({
+            type: "group",
+            text: trimmed,
+            major: false,
+            icon: (isMoonPlacements && KNOWN_KINGDOM_NAMES.indexOf(groupTitle) !== -1) ? moonPlacementGroupIconKey(groupTitle) : null
+        });
+        currentGroupTitle = groupTitle;
     }
 
     return { rows: rows, entryCount: entryCount, nonBlankCount: nonBlankCount };
@@ -2111,7 +2309,7 @@ function renderSpoilerSection(section) {
     var contentEl = document.getElementById('spoiler-content');
     var toolbar = document.getElementById('spoiler-toolbar');
     var countEl = document.getElementById('spoiler-count');
-    var model = buildSpoilerModel(section.lines);
+    var model = buildSpoilerModel(section.lines, section.title);
 
     var listy = model.rows.length > 0 &&
         (model.entryCount + countItemRows(model.rows)) / model.nonBlankCount >= 0.5;
@@ -2145,7 +2343,14 @@ function renderSpoilerSection(section) {
             var header = document.createElement("div");
             header.className = row.major ? "spoiler-group-header major" : "spoiler-group-header";
             header.id = groupId;
-            header.textContent = row.text;
+            if (row.icon) {
+                var groupIconImg = document.createElement("img");
+                groupIconImg.className = "spoiler-icon spoiler-group-icon";
+                groupIconImg.src = moonPlacementIconSrc(row.icon);
+                groupIconImg.alt = "";
+                header.appendChild(groupIconImg);
+            }
+            header.appendChild(document.createTextNode(row.text));
             table.appendChild(header);
 
             if (row.major) {
@@ -2166,7 +2371,14 @@ function renderSpoilerSection(section) {
             keyEl.textContent = row.key;
             var valEl = document.createElement("span");
             valEl.className = "spoiler-row-value";
-            valEl.textContent = row.value;
+            if (row.icon) {
+                var rowIconImg = document.createElement("img");
+                rowIconImg.className = "spoiler-icon spoiler-row-icon";
+                rowIconImg.src = moonPlacementIconSrc(row.icon);
+                rowIconImg.alt = "";
+                valEl.appendChild(rowIconImg);
+            }
+            valEl.appendChild(document.createTextNode(row.value));
             entryRow.appendChild(keyEl);
             entryRow.appendChild(valEl);
             table.appendChild(entryRow);
