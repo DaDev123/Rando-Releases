@@ -1091,12 +1091,30 @@
                 // (and so on) automatically creates a new page, reachable with the
                 // L/R arrows (or the L/R keys) and reflected by the dots on the side.
                 const featuresOrder = [
-                    "Item Randomization",
-                    "Entrance Randomizer",
-                    "Custom Logic Options",
-                    "Spoiler Log Viewer",
-                    "Co-op Support",
-                    "Moon Model Variety"
+                    "Ability Lock",
+                    "Randomize Moons",
+                    "Custom Moon Models",
+                    "Randomize Kingdom Order",
+                    "Custom Loading Zones",
+                    "Placement Logic",
+                    "Moon Requirements",
+                    "Seed Style",
+                    "Starting Equipment",
+                    "Item Pool",
+                    "Regional Coin Shops",
+                    "Hint System",
+                    "Toadette Medals",
+                    "Painting Unlock",
+                    "Randomize Paintings",
+                    "Cap & Moon Kingdoms",
+                    "Moon Rock Key",
+                    "Triple Moons Anywhere",
+                    "Visited Kingdoms on Map",
+                    "Random Seed Generation",
+                    "Quality of Life",
+                    "Music Randomization",
+                    "Skybox Randomization",
+                    "Random Sphynx Questions"
                 ];
 
                 // ---- Feature details live here. Add a new entry, then add its title to featuresOrder above. ----
@@ -1104,26 +1122,80 @@
                 // (lowercased, spaces/punctuation stripped), e.g. "Loading Zone
                 // Randomization" -> ../../img/features/loadingzonerandomization.png
                 const featuresData = {
-                    "Item Randomization": {
-                        desc: "Moons, coins, and other pickups are shuffled across every kingdom for a fresh playthrough every time."
+                    "Ability Lock": {
+                        desc: "Find Captures and Abilities as randomized unlocks hidden in Mushroom Kingdom Stars and Dark Side Starbits."
                     },
-                    "Entrance Randomizer": {
-                        desc: "Kingdom entrances and pipes can be shuffled, changing how you travel between areas."
+                    "Randomize Moons": {
+                        desc: "Randomize Power Moon locations throughout the entire game."
                     },
-                    "Custom Logic Options": {
-                        desc: "Fine-tune the randomizer's logic to match your preferred difficulty and playstyle."
+                    "Custom Moon Models": {
+                        desc: "Custom moon models reflect each kingdom's regional coin, making moon colors easier to distinguish. Many kingdoms also receive unique colors to replace the game's frequent yellow moons."
                     },
-                    "Spoiler Log Viewer": {
-                        desc: "Browse a full spoiler log right in the app, with search and section filtering built in."
+                    "Randomize Kingdom Order": {
+                        desc: "Randomize both your starting kingdom and the overall progression order."
                     },
-                    "Co-op Support": {
-                        desc: "Play the randomized seed together with a friend in two-player mode."
+                    "Custom Loading Zones": {
+                        desc: "Choose how entrances are shuffled: Standard, Small Chains, Long Chains, Limited, or fully Decoupled entrances and exits."
                     },
-                    "Moon Model Variety": {
-                        desc: "Community-made moon models add extra visual variety to the moon hunt."
+                    "Placement Logic": {
+                        desc: "Select the expected moon difficulty with Casual, Advanced, or Expert logic based on your movement skill."
+                    },
+                    "Moon Requirements": {
+                        desc: "Set the required moon count from 124 upward, with additional options to make moon availability more generous or more restrictive."
+                    },
+                    "Seed Style": {
+                        desc: "Choose a progression style such as Standard, Ability Rush, Focused Route, Explorer, or the completely random Mystery mode."
+                    },
+                    "Starting Equipment": {
+                        desc: "Configure exactly how many Captures and Abilities you begin the game with."
+                    },
+                    "Item Pool": {
+                        desc: "Adjust how many Captures and Abilities are placed into the randomized item pool."
+                    },
+                    "Regional Coin Shops": {
+                        desc: "Customize Regional Coin Shops with Captures, Abilities, and an optional Power Moon available for purchase."
+                    },
+                    "Hint System": {
+                        desc: "Purchase hints for any missing Capture or Ability through the Capture & Ability menu, or enable an option to buy them outright if you get stuck."
+                    },
+                    "Toadette Medals": {
+                        desc: "Configure the number of Toadette Medals required for progression."
+                    },
+                    "Painting Unlock": {
+                        desc: "Cloud Kingdom moons can optionally unlock a random painting when collected."
+                    },
+                    "Randomize Paintings": {
+                        desc: "Shuffle painting destinations, sending each painting to a different kingdom."
+                    },
+                    "Cap & Moon Kingdoms": {
+                        desc: "Configure Cap and Moon Kingdom moons to award Coins, Captures, and Abilities, or require them for progression and the Final Door."
+                    },
+                    "Moon Rock Key": {
+                        desc: "Every Moon Rock requires a randomized key that must be found before it can be activated."
+                    },
+                    "Triple Moons Anywhere": {
+                        desc: "Allow Multi Moons to appear at any Power Moon location throughout the game."
+                    },
+                    "Visited Kingdoms on Map": {
+                        desc: "Display visited-but-unlocked kingdoms on the Odyssey Globe, making it easier to track where loading zones have led."
+                    },
+                    "Random Seed Generation": {
+                        desc: "Generate a fresh, truly random seed for a unique adventure every playthrough."
+                    },
+                    "Quality of Life": {
+                        desc: "Includes numerous optional improvements, from faster cutscenes and streamlined moon objectives to automatic moon tracking and more."
+                    },
+                    "Music Randomization": {
+                        desc: "Randomize music throughout the game, either consistently or every time you enter a new area."
+                    },
+                    "Skybox Randomization": {
+                        desc: "Randomize skyboxes with options ranging from kingdom-only backgrounds to nearly every area in the game."
+                    },
+                    "Random Sphynx Questions": {
+                        desc: "Community-created questions replace the original Sphynx quizzes for a fresh challenge every seed."
                     }
                 };
-
+                
                 // Derives an image path from a feature's title, e.g.
                 // "Loading Zone Randomization" -> ../../img/features/loadingzonerandomization.png
                 function featureImagePath(title) {
