@@ -1140,6 +1140,8 @@
                 // No image path needed - it's derived automatically from the title
                 // (lowercased, spaces/punctuation stripped), e.g. "Loading Zone
                 // Randomization" -> ../../img/features/loadingzonerandomization.png
+                // Add ext: "gif" to a feature's entry to use an animated GIF
+                // (../../img/features/loadingzonerandomization.gif) instead.
                 const featuresData = {
                     "Ability Lock": {
                         desc: "Find Captures and Abilities as randomized unlocks hidden in Mushroom Kingdom Stars and Dark Side Starbits."
@@ -1149,6 +1151,7 @@
                     },
                     "Custom Moon Models": {
                         desc: "Custom moon models reflect each kingdom's regional coin, making moon colors easier to distinguish. Many kingdoms also receive unique colors to replace the game's frequent yellow moons."
+                        ext: "gif"
                     },
                     "Randomize Kingdom Order": {
                         desc: "Randomize both your starting kingdom and the overall progression order."
@@ -1217,9 +1220,11 @@
                 
                 // Derives an image path from a feature's title, e.g.
                 // "Loading Zone Randomization" -> ../../img/features/loadingzonerandomization.png
-                function featureImagePath(title) {
+                // Pass ext: "gif" in that feature's featuresData entry to use an
+                // animated GIF instead of a PNG for that card.
+                function featureImagePath(title, ext) {
                     const filename = title.toLowerCase().replace(/[^a-z0-9]/g, "");
-                    return `../../img/features/${filename}.png`;
+                    return `../../img/features/${filename}.${ext || "png"}`;
                 }
 
                 const featuresList = featuresOrder
@@ -1230,7 +1235,7 @@
                         }
                         return true;
                     })
-                    .map(title => ({ title, image: featureImagePath(title), ...featuresData[title] }));
+                    .map(title => ({ title, image: featureImagePath(title, featuresData[title].ext), ...featuresData[title] }));
 
                 const FEATURES_PER_PAGE = 4;
                 let currentFeaturesPage = 0;
