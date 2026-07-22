@@ -71,6 +71,9 @@ window.onload = function() {
         } else if (pageNum == 14) {
             closeActionGuide();
             return;
+        } else if (pageNum == 15) {
+            closeFeatures();
+            return;
         } else if (pageNum == 1 || pageNum == 4 || pageNum == 5) {
             // Controls / Basic Actions / Capture Actions are only ever
             // reached through the Action Guide overlay now, so Cancel/B
@@ -876,6 +879,7 @@ function closeSpoilerLog() {
     document.getElementsByClassName('page0')[0].style.opacity = 1;
     document.getElementsByClassName('btn-operation')[0].style.opacity = 1;
     document.getElementsByClassName('btn-operation')[2].style.opacity = 0;
+    document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "";
     document.getElementById('toOthers').style.backgroundColor = "";
     document.getElementById('toOthers').style.color = "";
     document.getElementById('toOthers').focus();
@@ -2282,6 +2286,7 @@ function closeDownloads() {
     document.getElementsByClassName('page0')[0].style.opacity = 1;
     document.getElementsByClassName('btn-operation')[0].style.opacity = 1;
     document.getElementsByClassName('btn-operation')[2].style.opacity = 0;
+    document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "";
     document.getElementById('toDownloads').style.backgroundColor = "";
     document.getElementById('toDownloads').style.color = "";
     document.getElementById('toDownloads').focus();
@@ -2315,6 +2320,7 @@ function closeCredits() {
     document.getElementsByClassName('page0')[0].style.opacity = 1;
     document.getElementsByClassName('btn-operation')[0].style.opacity = 1;
     document.getElementsByClassName('btn-operation')[2].style.opacity = 0;
+    document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "";
     document.getElementById('toCredits').style.backgroundColor = "";
     document.getElementById('toCredits').style.color = "";
     document.getElementById('toCredits').focus();
