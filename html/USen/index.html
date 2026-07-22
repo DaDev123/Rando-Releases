@@ -114,7 +114,6 @@
         /* Features overlay page (built the same way as the Action Guide overlay) */
         .features-page {
             display: none;
-            position: relative;
         }
 
         .features-page.active {
@@ -123,9 +122,11 @@
         }
 
         /* Pager lives on the side of the list (like the dots on the Controls
-           page) instead of taking up its own row, so all 4 cards fit. */
+           page) instead of taking up its own row, so all 4 cards fit.
+           Fixed to the viewport so it doesn't depend on / disturb the page's
+           own positioning. */
         .features-side-pager {
-            position: absolute;
+            position: fixed;
             top: 50%;
             right: 14px;
             transform: translateY(-50%);
@@ -174,14 +175,19 @@
             transform: scale(1.25);
         }
 
+        /* Fills a fixed band below the top-bar (same pattern as
+           .credits-container) and centers the feature cards vertically
+           within it, so the list is never jammed against the top and never
+           gets clipped regardless of how many cards are on the page. */
         .features-container {
-            height: 60vh;
-            max-height: 60vh;
+            height: 58vh;
+            max-height: 58vh;
             box-sizing: border-box;
             padding: 10px 56px 10px 24px;
-            display: grid;
-            grid-template-rows: repeat(4, 1fr);
-            gap: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 16px;
         }
 
         .feature-card {
@@ -189,7 +195,7 @@
             flex-direction: row;
             align-items: center;
             width: 100%;
-            min-height: 0;
+            flex: 0 0 auto;
             box-sizing: border-box;
             gap: 16px;
         }
@@ -209,8 +215,8 @@
 
         .feature-image {
             flex: 0 0 auto;
-            width: 72px;
-            height: 72px;
+            width: 60px;
+            height: 60px;
             object-fit: cover;
             border-radius: 8px;
         }
@@ -227,14 +233,14 @@
         .feature-title {
             margin: 0;
             color: #d4af37;
-            font-size: 19px;
+            font-size: 18px;
             font-weight: bold;
         }
 
         .feature-desc {
             margin: 0;
             color: #a8a8a8;
-            font-size: 13px;
+            font-size: 12.5px;
             line-height: 1.3;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -266,6 +272,23 @@
             </ul>
             <div class="toc-mov" id="toc-mov"></div>
         </div>
+        <script>
+            // Whenever the home page (page0) is shown again - no matter which
+            // page you're returning from (Credits, Spoiler Log, Downloads,
+            // Features, Action Guide) - clear the footer's page title so it
+            // doesn't keep showing the name of whatever page you just left.
+            (function () {
+                var homePage = document.getElementsByClassName('page0')[0];
+                var titleSpan = document.getElementById('action-guide');
+                if (!homePage || !titleSpan) { return; }
+                var observer = new MutationObserver(function () {
+                    if (homePage.style.display !== 'none') {
+                        titleSpan.textContent = '';
+                    }
+                });
+                observer.observe(homePage, { attributes: true, attributeFilter: ['style'] });
+            })();
+        </script>
         <div class="page page1">
             <a id="dummy-a-1" href="javascript:void(0);" nx-se-disabled=""></a>
             <div class="top-bar">
@@ -954,9 +977,6 @@
         </div>
         <div class="page page13 credits-page">
             <div class="top-bar">
-                <a href="javascript:void(0);" id="credits-back" onclick="closeCredits()" nx-se-disabled=""
-                    class="back-link"><img class="left-arrow-static" src="../../img/left-arrow.webp" /><span
-                        class="back-label fontDB">Back</span></a>
                 <span>Credits</span>
             </div>
             <div class="credits-container" id="credits-container"></div>
@@ -1065,6 +1085,32 @@
                 }
 
                 renderCredits();
+
+                // The top "L Back" link was removed for this page, so make the
+                // footer's "B Cancel" button do the same job (close Credits and
+                // return home) instead. Scoped to only fire while Credits is the
+                // page actually on screen, so it doesn't affect other pages that
+                // also use the same shared footer button.
+                (function () {
+                    var cancelBtn = document.getElementsByClassName('btn-operation')[2];
+                    if (!cancelBtn) { return; }
+
+                    function creditsIsOpen() {
+                        var creditsPage = document.querySelector('.credits-page');
+                        return !!creditsPage && getComputedStyle(creditsPage).display !== 'none';
+                    }
+
+                    cancelBtn.style.cursor = 'pointer';
+                    cancelBtn.addEventListener('click', function () {
+                        if (creditsIsOpen()) { closeCredits(); }
+                    });
+                    document.addEventListener('keydown', function (e) {
+                        if (!creditsIsOpen()) { return; }
+                        if (e.key === 'Escape' || e.key === 'Backspace' || e.key === 'b' || e.key === 'B') {
+                            closeCredits();
+                        }
+                    });
+                })();
             </script>
         </div>
 
