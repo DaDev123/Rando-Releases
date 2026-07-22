@@ -110,6 +110,127 @@
             padding: 0;
             pointer-events: none;
         }
+
+        /* Features overlay page (built the same way as the Action Guide overlay) */
+        .features-page {
+            display: none;
+        }
+
+        .features-page.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .features-pager {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 22px;
+            margin: 10px 0 18px 0;
+        }
+
+        .features-arrow {
+            width: 34px;
+            height: 34px;
+            object-fit: contain;
+            cursor: pointer;
+            transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+
+        .features-arrow:hover {
+            transform: scale(1.15);
+        }
+
+        .features-arrow.disabled {
+            opacity: 0.25;
+            pointer-events: none;
+        }
+
+        .features-dots {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .features-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #6f6f6f;
+            transition: background 0.15s ease, transform 0.15s ease;
+        }
+
+        .features-dot.active {
+            background: #d4af37;
+            transform: scale(1.25);
+        }
+
+        .features-container {
+            height: 58vh;
+            max-height: 58vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 22px;
+            box-sizing: border-box;
+            padding: 4px 24px;
+        }
+
+        .feature-card {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+            gap: 24px;
+        }
+
+        /* Odd cards: image left, whole block left-aligned */
+        .feature-card.feature-left {
+            justify-content: flex-start;
+            text-align: left;
+        }
+
+        /* Even cards: image right, whole block right-aligned */
+        .feature-card.feature-right {
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            text-align: right;
+        }
+
+        .feature-image {
+            flex: 0 0 auto;
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .feature-text {
+            flex: 1 1 auto;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .feature-title {
+            margin: 0;
+            color: #d4af37;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .feature-desc {
+            margin: 0;
+            color: #a8a8a8;
+            font-size: 16px;
+            line-height: 1.35;
+        }
     </style>
 </head>
 
@@ -124,6 +245,8 @@
                 <li><a href="javascript:void(0);" onclick="openSpoilerLog()" onblur="menuBlur(this)"
                         onfocus="menuFocus(this)" id="toOthers" nx-se-disabled=""><span>Spoiler
                             Log</span></a></li>
+                <li><a href="javascript:void(0);" onclick="openFeatures()" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toFeatures" nx-se-disabled=""><span>Features</span></a></li>
                 <li><a href="javascript:void(0);" onclick="openCredits()" onblur="menuBlur(this)"
                         onfocus="menuFocus(this)" id="toCredits" nx-se-disabled=""><span>Credits</span></a></li>
                 <li class="toc-gap" aria-hidden="true"></li>
@@ -932,6 +1055,173 @@
                 }
 
                 renderCredits();
+            </script>
+        </div>
+
+        <div class="page features-page" id="page-features">
+            <div class="top-bar">
+                <a href="javascript:void(0);" id="features-back" onclick="closeFeatures()" nx-se-disabled=""
+                    class="back-link"><img class="left-arrow-static" src="../../img/left-arrow.webp" /><span
+                        class="back-label fontDB">Back</span></a>
+                <span>Features</span>
+            </div>
+            <div class="features-pager">
+                <img class="features-arrow" id="features-arrow-left" src="../../img/left-arrow.webp"
+                    onclick="prevFeaturesPage()" />
+                <div class="features-dots" id="features-dots"></div>
+                <img class="features-arrow" id="features-arrow-right" src="../../img/right-arrow.webp"
+                    onclick="nextFeaturesPage()" />
+            </div>
+            <div class="features-container" id="features-container"></div>
+            <script>
+                // ---- EDIT THIS LIST TO CHANGE THE FEATURES SHOWN AND THEIR ORDER ----
+                // Just reorder / add / remove entries here. 4 features are shown per page;
+                // adding a 5th (and so on) automatically creates a new page, reachable
+                // with the L/R arrows (or the L/R keys) and reflected by the dots above.
+                const featuresList = [
+                    {
+                        title: "Item Randomization",
+                        desc: "Moons, coins, and other pickups are shuffled across every kingdom for a fresh playthrough every time.",
+                        image: "../../img/temp/capture1.webp"
+                    },
+                    {
+                        title: "Entrance Randomizer",
+                        desc: "Kingdom entrances and pipes can be shuffled, changing how you travel between areas.",
+                        image: "../../img/temp/capture2.webp"
+                    },
+                    {
+                        title: "Custom Logic Options",
+                        desc: "Fine-tune the randomizer's logic to match your preferred difficulty and playstyle.",
+                        image: "../../img/temp/capture3.webp"
+                    },
+                    {
+                        title: "Spoiler Log Viewer",
+                        desc: "Browse a full spoiler log right in the app, with search and section filtering built in.",
+                        image: "../../img/temp/capture4.webp"
+                    },
+                    {
+                        title: "Co-op Support",
+                        desc: "Play the randomized seed together with a friend in two-player mode.",
+                        image: "../../img/temp/capture5.webp"
+                    },
+                    {
+                        title: "Moon Model Variety",
+                        desc: "Community-made moon models add extra visual variety to the moon hunt.",
+                        image: "../../img/temp/capture6.webp"
+                    }
+                ];
+
+                const FEATURES_PER_PAGE = 4;
+                let currentFeaturesPage = 0;
+
+                function totalFeaturesPages() {
+                    return Math.max(1, Math.ceil(featuresList.length / FEATURES_PER_PAGE));
+                }
+
+                function renderFeaturesPage() {
+                    const container = document.getElementById("features-container");
+                    const start = currentFeaturesPage * FEATURES_PER_PAGE;
+                    const pageItems = featuresList.slice(start, start + FEATURES_PER_PAGE);
+
+                    container.innerHTML = pageItems.map((feature, i) => {
+                        const side = (start + i) % 2 === 0 ? "feature-left" : "feature-right";
+                        return `
+                            <div class="feature-card ${side}">
+                                <img class="feature-image" src="${feature.image}" alt="${feature.title}" />
+                                <div class="feature-text">
+                                    <p class="feature-title fontDB">${feature.title}</p>
+                                    <p class="feature-desc">${feature.desc}</p>
+                                </div>
+                            </div>
+                        `;
+                    }).join("");
+
+                    renderFeaturesDots();
+                    updateFeaturesArrows();
+                }
+
+                function renderFeaturesDots() {
+                    const dots = document.getElementById("features-dots");
+                    const total = totalFeaturesPages();
+                    let html = "";
+                    for (let i = 0; i < total; i++) {
+                        html += `<div class="features-dot${i === currentFeaturesPage ? " active" : ""}"></div>`;
+                    }
+                    dots.innerHTML = html;
+                }
+
+                function updateFeaturesArrows() {
+                    const total = totalFeaturesPages();
+                    const leftArrow = document.getElementById("features-arrow-left");
+                    const rightArrow = document.getElementById("features-arrow-right");
+                    if (total <= 1) {
+                        leftArrow.classList.add("disabled");
+                        rightArrow.classList.add("disabled");
+                    } else {
+                        leftArrow.classList.remove("disabled");
+                        rightArrow.classList.remove("disabled");
+                    }
+                }
+
+                function nextFeaturesPage() {
+                    const total = totalFeaturesPages();
+                    if (total <= 1) { return; }
+                    wsnd.play("seDecide");
+                    currentFeaturesPage = (currentFeaturesPage + 1) % total;
+                    renderFeaturesPage();
+                }
+
+                function prevFeaturesPage() {
+                    const total = totalFeaturesPages();
+                    if (total <= 1) { return; }
+                    wsnd.play("seDecide");
+                    currentFeaturesPage = (currentFeaturesPage - 1 + total) % total;
+                    renderFeaturesPage();
+                }
+
+                // L / R keys page between feature pages while this page is open.
+                document.addEventListener("keydown", function (e) {
+                    if (!document.getElementById("page-features").classList.contains("active")) { return; }
+                    if (e.key === "l" || e.key === "L" || e.key === "ArrowLeft") {
+                        prevFeaturesPage();
+                    } else if (e.key === "r" || e.key === "R" || e.key === "ArrowRight") {
+                        nextFeaturesPage();
+                    } else if (e.key === "Escape" || e.key === "Backspace") {
+                        closeFeatures();
+                    }
+                });
+
+                function openFeatures() {
+                    wsnd.play("seDecide");
+                    footerText();
+                    pageNum = 15;
+                    currentFeaturesPage = 0;
+                    document.getElementById('toFeatures').style.backgroundColor = "#fff";
+                    document.getElementById('toFeatures').style.color = "#525252";
+                    var featuresTimeout = setTimeout(function () {
+                        document.getElementsByClassName('page0')[0].style.opacity = 0;
+                        document.getElementsByClassName('page0')[0].style.display = "none";
+                        document.getElementById('page-features').classList.add('active');
+                        document.getElementsByClassName('btn-operation')[0].style.opacity = 0;
+                        document.getElementsByClassName('btn-operation')[2].style.opacity = 1;
+                        renderFeaturesPage();
+                        document.getElementById('features-back').focus();
+                        clearTimeout(featuresTimeout);
+                    }, 100);
+                }
+
+                function closeFeatures() {
+                    wsnd.play("seBack");
+                    pageNum = 0;
+                    document.getElementById('page-features').classList.remove('active');
+                    document.getElementsByClassName('page0')[0].style.display = "block";
+                    document.getElementsByClassName('page0')[0].style.opacity = 1;
+                    document.getElementsByClassName('btn-operation')[0].style.opacity = 1;
+                    document.getElementsByClassName('btn-operation')[2].style.opacity = 0;
+                    document.getElementById('toFeatures').style.backgroundColor = "";
+                    document.getElementById('toFeatures').style.color = "";
+                    document.getElementById('toFeatures').focus();
+                }
             </script>
         </div>
 
