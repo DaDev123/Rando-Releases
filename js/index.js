@@ -208,6 +208,14 @@ window.onload = function() {
     });
 
     document.onkeydown = function(e) {
+      var featuresPageEl = document.getElementById('page-features');
+      if (featuresPageEl && featuresPageEl.classList.contains('active')) {
+        // The Features page owns its own keydown listener (arrows, L/R,
+        // Escape/Backspace). Bail out here so we don't double-fire page
+        // turns (when btnActive is true) or preventDefault/steal focus
+        // out from under Cancel (when btnActive is false).
+        return;
+      }
       if(btnActive){
         if (e.keyCode == 39) { //右
             e.preventDefault();
