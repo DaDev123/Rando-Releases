@@ -1309,10 +1309,17 @@
                 document.addEventListener("keydown", function (e) {
                     if (!document.getElementById("page-features").classList.contains("active")) { return; }
                     if (e.key === "l" || e.key === "L" || e.key === "ArrowLeft") {
+                        e.preventDefault();
                         prevFeaturesPage();
                     } else if (e.key === "r" || e.key === "R" || e.key === "ArrowRight") {
+                        e.preventDefault();
                         nextFeaturesPage();
                     } else if (e.key === "Escape" || e.key === "Backspace") {
+                        // Without this, Backspace's default browser action
+                        // (navigate back in history) fires alongside
+                        // closeFeatures(), which can yank the user out of
+                        // the app entirely instead of just closing the tab.
+                        e.preventDefault();
                         closeFeatures();
                     }
                 });
