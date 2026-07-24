@@ -2197,9 +2197,26 @@ function kingdomIconKey(kingdomName) {
 }
 
 /** "Cascade Kingdom" -> "cascadepainting" (used for Painting Links rows). Returns null for unrecognized kingdoms. */
+/** Full spoiler-log kingdom name -> exact painting icon filename (no extension), matching the real img/spoiler asset names. */
+var PAINTING_ICON_FILENAMES = {
+    "Cascade Kingdom": "CascadePainting",
+    "Sand Kingdom": "SandPainting",
+    "Lake Kingdom": "LakePainting",
+    "Wooded Kingdom": "WoodedPainting",
+    "Cloud Kingdom": "CloudPainting",
+    "Lost Kingdom": "LostPainting",
+    "Metro Kingdom": "MetroPainting",
+    "Snow Kingdom": "SnowPainting",
+    "Seaside Kingdom": "SeasidePainting",
+    "Luncheon Kingdom": "LuncheonPainting",
+    "Ruined Kingdom": "RuinedPainting",
+    "Bowser's Kingdom": "BowserPainting",
+    "Moon Kingdom": "MoonPainting",
+    "Mushroom Kingdom": "MushroomPainting"
+};
+
 function paintingIconKey(kingdomName) {
-    var key = kingdomIconKey(kingdomName);
-    return key ? key + "painting" : null;
+    return PAINTING_ICON_FILENAMES[kingdomName] || null;
 }
 
 /**
@@ -3332,8 +3349,17 @@ function buildSpoilerModel(lines, sectionTitle) {
                     key: entry.check + multiTag,
                     value: "→  " + trueKingdom + extraDetail + rockKeyTag,
                     icon: moonPlacementRowIconKey(trueKingdom, extraDetail, entry.check),
+                    icon2: rockKeyTag ? "moonrockkey.png" : null,
                     frontIcon: moonPlacementFrontIconKey(currentGroupTitle, entry.check),
                     checkName: entry.check
+                });
+            } else if (sectionTitle === "Moon Requirements by Kingdom" && entry.key && entry.value) {
+                var reqKingdom = normalizeGroupTitle(entry.key);
+                rows.push({
+                    type: "entry",
+                    key: entry.key,
+                    value: entry.value,
+                    frontIcon: KNOWN_KINGDOM_NAMES.indexOf(reqKingdom) !== -1 ? kingdomIconKey(reqKingdom) : null
                 });
             } else if (sectionTitle === "Painting Links" && entry.key && entry.value) {
                 var fromParsed = extractPaintingKingdomAndTag(entry.key);
@@ -3455,6 +3481,13 @@ function renderSpoilerSection(section) {
                 rowIconImg.src = moonPlacementIconSrc(row.icon);
                 rowIconImg.alt = "";
                 valEl.appendChild(rowIconImg);
+            }
+            if (row.icon2) {
+                var rowIcon2Img = document.createElement("img");
+                rowIcon2Img.className = "spoiler-icon spoiler-row-icon";
+                rowIcon2Img.src = moonPlacementIconSrc(row.icon2);
+                rowIcon2Img.alt = "";
+                valEl.appendChild(rowIcon2Img);
             }
             valEl.appendChild(document.createTextNode(row.value));
             entryRow.appendChild(keyEl);
@@ -3812,8 +3845,8 @@ function buildSpoilerAutofillPanel() {
 function spoilerAutofillGroupHtml(groupId, label, headerIconFile, items) {
     var headerIconSrc = SPOILER_ICON_BASE + headerIconFile;
     var itemsHtml = items.map(function(item) {
-        var safeSearch = item.search.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
-        return '<div class="spoiler-autofill-item" tabindex="0" onclick="applySpoilerAutofill(\'' + safeSearch + '\')">' +
+        var safeSearch = item.search.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+        return '<div class="spoiler-autofill-item" tabindex="0" data-autofill-search="' + safeSearch + '" onclick="applySpoilerAutofill(this.getAttribute(\'data-autofill-search\'))">' +
             '<img src="' + item.icon + '" alt="" />' +
             '<span>' + item.label + '</span>' +
             '</div>';
