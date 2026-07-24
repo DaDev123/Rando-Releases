@@ -111,6 +111,117 @@
             margin-right: 8px;
         }
 
+        /* ---- Moon Placements autofill (Captures / Abilities / Moon Rock Key) ---- */
+        .spoiler-autofill-btn {
+            margin-left: 10px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.08);
+            color: inherit;
+            font-size: 0.9em;
+            cursor: pointer;
+            white-space: nowrap;
+            display: none;
+        }
+
+        .spoiler-autofill-btn:hover,
+        .spoiler-autofill-btn:focus {
+            background: rgba(255,255,255,0.18);
+        }
+
+        .spoiler-autofill-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 998;
+            display: none;
+        }
+
+        .spoiler-autofill-panel {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            width: 340px;
+            max-height: 60vh;
+            overflow-y: auto;
+            background: #2b2b2b;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            z-index: 999;
+            display: none;
+            padding: 8px 0;
+        }
+
+        .spoiler-autofill-section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #fff;
+            user-select: none;
+        }
+
+        .spoiler-autofill-section-header:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        .spoiler-autofill-section-header img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+        }
+
+        .spoiler-autofill-section-header .spoiler-autofill-caret {
+            margin-left: auto;
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+
+        .spoiler-autofill-grid {
+            display: none;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 8px 14px 14px;
+        }
+
+        .spoiler-autofill-grid.open {
+            display: flex;
+        }
+
+        .spoiler-autofill-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 9px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-size: 0.82em;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .spoiler-autofill-item:hover,
+        .spoiler-autofill-item:focus {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .spoiler-autofill-item img {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+        }
+
+        .spoiler-toolbar {
+            position: relative;
+        }
+
         /* Action Guide overlay page (duplicate of the home menu) */
         .action-guide-page {
             display: none;
@@ -942,7 +1053,12 @@
                             <input type="text" id="spoiler-search" class="spoiler-search"
                                 placeholder="Search this section..." oninput="filterSpoilerContent(this.value)" />
                             <span class="spoiler-count" id="spoiler-count"></span>
+                            <button type="button" id="spoiler-autofill-btn" class="spoiler-autofill-btn"
+                                onclick="toggleSpoilerAutofillPanel()" nx-se-disabled="">Autofill</button>
+                            <div class="spoiler-autofill-panel" id="spoiler-autofill-panel"></div>
                         </div>
+                        <div class="spoiler-autofill-backdrop" id="spoiler-autofill-backdrop"
+                            onclick="closeSpoilerAutofillPanel()"></div>
                         <div class="spoiler-content" id="spoiler-content"></div>
                     </div>
                 </div>
