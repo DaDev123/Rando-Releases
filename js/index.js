@@ -958,6 +958,7 @@ function parseSpoilerLog(text) {
 
     spoilerSections = mergeSphereSections(spoilerSections);
     relabelSeedOverviewSection(spoilerSections);
+    removeMoonRockKeysSection(spoilerSections);
 
     var listEl = document.getElementById('spoiler-section-list');
     listEl.innerHTML = "";
@@ -1013,29 +1014,72 @@ function mergeSphereSections(sections) {
 
 /**
  * The spoiler log's "Settings" section is renamed "Seed Overview" for
- * display, and its "Seed" line (wherever it appears in the raw log) is
- * moved to the top so it's the first thing shown.
+ * display. The "Seed" line - wherever it lives in the raw log, whether
+ * that's inside Settings already or off by itself in its own top-level
+ * section (e.g. under the log's title header) - is pulled out and
+ * placed at the very top of Seed Overview, above Moon Requirement. If
+ * pulling it out leaves its original section with no real content,
+ * that section is dropped entirely rather than shown as an empty tab,
+ * so there's no separate "just the Seed" tab anymore.
  */
 function relabelSeedOverviewSection(sections) {
+    var settingsIdx = -1;
     for (var s = 0; s < sections.length; s++) {
-        if (sections[s].title !== "Settings") {
-            continue;
+        if (sections[s].title === "Settings") {
+            settingsIdx = s;
+            break;
         }
-        sections[s].title = "Seed Overview";
+    }
+    if (settingsIdx !== -1) {
+        sections[settingsIdx].title = "Seed Overview";
+    }
 
-        var lines = sections[s].lines;
-        var seedIdx = -1;
+    var seedLine = null;
+    var seedSectionIdx = -1;
+    var seedLineIdx = -1;
+    for (var s2 = 0; s2 < sections.length && seedLine === null; s2++) {
+        var lines = sections[s2].lines;
         for (var i = 0; i < lines.length; i++) {
             if (/^\s*Seed\s*:/i.test(lines[i])) {
-                seedIdx = i;
+                seedLine = lines[i];
+                seedSectionIdx = s2;
+                seedLineIdx = i;
                 break;
             }
         }
-        if (seedIdx > 0) {
-            var seedLine = lines.splice(seedIdx, 1)[0];
-            lines.unshift(seedLine);
-        }
+    }
+
+    if (seedLine === null) {
         return;
+    }
+
+    sections[seedSectionIdx].lines.splice(seedLineIdx, 1);
+
+    if (settingsIdx !== -1) {
+        sections[settingsIdx].lines.unshift(seedLine);
+    }
+
+    if (seedSectionIdx !== settingsIdx) {
+        var hasContent = sections[seedSectionIdx].lines.some(function(l) {
+            return l.trim() !== "";
+        });
+        if (!hasContent) {
+            sections.splice(seedSectionIdx, 1);
+        }
+    }
+}
+
+/**
+ * Removes the standalone "Moon Rock Keys" section entirely. Each Moon
+ * Rock Key moon already shows up in "Moon Placements by Final
+ * Location" with a "(<Kingdom>'s Moon Rock Key)" tag added inline (see
+ * buildSpoilerModel), so the separate page is redundant.
+ */
+function removeMoonRockKeysSection(sections) {
+    for (var i = sections.length - 1; i >= 0; i--) {
+        if (sections[i].title === "Moon Rock Keys") {
+            sections.splice(i, 1);
+        }
     }
 }
 
@@ -2152,6 +2196,37 @@ function kingdomIconKey(kingdomName) {
     return KINGDOM_ICON_KEY[kingdomName] || null;
 }
 
+/** "Cascade Kingdom" -> "cascadepainting" (used for Painting Links rows). Returns null for unrecognized kingdoms. */
+function paintingIconKey(kingdomName) {
+    var key = kingdomIconKey(kingdomName);
+    return key ? key + "painting" : null;
+}
+
+/**
+ * Pulls "<Kingdom Name>" and an optional trailing "[...]" tag out of a
+ * Painting Links entry side like "Cascade Kingdom
+ * (WaterfallWorldHomeStage::stage_change::Go::raw)" or "Luncheon
+ * Kingdom (LavaWorldHomeStage::stage_change::Come::raw) [Free -
+ * unlocked from the start]", dropping the internal stage-code
+ * parenthetical entirely. Returns {kingdom: null, tag: ""} if the text
+ * doesn't match the expected shape.
+ */
+function extractPaintingKingdomAndTag(text) {
+    var m = text.match(/^(.+?)\s*\([^()]*\)\s*(\[[^\]]*\])?\s*$/);
+    if (!m) {
+        return { kingdom: null, tag: "" };
+    }
+    return { kingdom: m[1].trim(), tag: m[2] ? "  " + m[2].trim() : "" };
+}
+
+/** The 14 kingdoms that actually receive a Moon Rock Key (excludes Mushroom Kingdom, Dark Side, and Darker Side). */
+var MOON_ROCK_KEY_KINGDOMS = [
+    "Cap Kingdom", "Cascade Kingdom", "Sand Kingdom", "Lake Kingdom",
+    "Wooded Kingdom", "Cloud Kingdom", "Lost Kingdom", "Metro Kingdom",
+    "Snow Kingdom", "Seaside Kingdom", "Luncheon Kingdom", "Ruined Kingdom",
+    "Bowser's Kingdom", "Moon Kingdom"
+];
+
 /**
  * Detects a Dark Side numbered "Art" area reference (e.g. "Dark Side Art
  * 3", "Art 7") in a piece of text and returns the short key of the
@@ -3251,14 +3326,29 @@ function buildSpoilerModel(lines, sectionTitle) {
                 var trueKingdom = MOON_HOME_KINGDOM[entry.moon] || extractKingdomOnly(entry.source);
                 var extraDetail = extractExtraDetail(entry.source);
                 var multiTag = MOON_IS_MULTI[entry.moon] ? "  ✦ Multi Moon" : "";
+                var rockKeyTag = /Moon Rock Key$/.test(entry.moon) ? "  (" + entry.moon + ")" : "";
                 rows.push({
                     type: "entry",
                     key: entry.check + multiTag,
-                    value: "→  " + trueKingdom + extraDetail,
+                    value: "→  " + trueKingdom + extraDetail + rockKeyTag,
                     icon: moonPlacementRowIconKey(trueKingdom, extraDetail, entry.check),
                     frontIcon: moonPlacementFrontIconKey(currentGroupTitle, entry.check),
                     checkName: entry.check
                 });
+            } else if (sectionTitle === "Painting Links" && entry.key && entry.value) {
+                var fromParsed = extractPaintingKingdomAndTag(entry.key);
+                var toParsed = extractPaintingKingdomAndTag(entry.value);
+                if (fromParsed.kingdom && toParsed.kingdom) {
+                    rows.push({
+                        type: "entry",
+                        key: fromParsed.kingdom,
+                        value: "→  " + toParsed.kingdom + toParsed.tag,
+                        frontIcon: paintingIconKey(fromParsed.kingdom),
+                        icon: paintingIconKey(toParsed.kingdom)
+                    });
+                } else {
+                    rows.push({ type: "entry", key: entry.key, value: entry.value });
+                }
             } else {
                 rows.push({ type: "entry", key: entry.key, value: entry.value });
             }
@@ -3292,6 +3382,8 @@ function renderSpoilerSection(section) {
 
     var listy = model.rows.length > 0 &&
         (model.entryCount + countItemRows(model.rows)) / model.nonBlankCount >= 0.5;
+
+    setSpoilerAutofillAvailable(section.title === "Moon Placements by Final Location");
 
     if (!listy) {
         contentEl.className = "spoiler-content raw-mode";
@@ -3658,4 +3750,144 @@ function captureMov(num) {
 
 function playReportCount(obj) {
     window.nx.playReport.incrementCounter(parseInt(obj));
+}
+
+/**
+ * ---- Moon Placements autofill panel (Captures / Abilities / Moon Rock Key) ----
+ *
+ * Only shown on the "Moon Placements by Final Location" page, next to
+ * the "N entries" count. Lets the player jump straight to every check
+ * that grants a given capture/ability, or to a given kingdom's Moon
+ * Rock Key moon, without typing.
+ */
+
+/** Header icon for each of the 3 autofill groups. Adjust these filenames if the actual img/spoiler assets differ. */
+var AUTOFILL_SECTION_ICON = {
+    captures: "capturegoomba.png",
+    abilities: "AbilityGP.png",
+    moonRockKey: "cap.png"
+};
+
+var spoilerAutofillBuilt = false;
+var spoilerAutofillAvailable = false;
+
+/** Shows/hides the Autofill button based on whether the active section supports it (called from renderSpoilerSection). */
+function setSpoilerAutofillAvailable(available) {
+    spoilerAutofillAvailable = available;
+    var btn = document.getElementById('spoiler-autofill-btn');
+    if (btn) {
+        btn.style.display = available ? "inline-block" : "none";
+    }
+    if (!available) {
+        closeSpoilerAutofillPanel();
+    }
+}
+
+function buildSpoilerAutofillPanel() {
+    if (spoilerAutofillBuilt) {
+        return;
+    }
+    var panel = document.getElementById('spoiler-autofill-panel');
+    if (!panel) {
+        return;
+    }
+
+    var captureNames = Object.keys(CAPTURE_ICON_FILENAMES);
+    var abilityNames = Object.keys(ABILITY_ICON_FILENAMES);
+
+    panel.innerHTML =
+        spoilerAutofillGroupHtml("captures", "Captures", AUTOFILL_SECTION_ICON.captures, captureNames.map(function(name) {
+            return { label: name, icon: moonPlacementIconSrc(captureIconName(name)), search: name };
+        })) +
+        spoilerAutofillGroupHtml("abilities", "Abilities", AUTOFILL_SECTION_ICON.abilities, abilityNames.map(function(name) {
+            return { label: name, icon: moonPlacementIconSrc(abilityIconName(name)), search: name };
+        })) +
+        spoilerAutofillGroupHtml("moonRockKey", "Moon Rock Key", AUTOFILL_SECTION_ICON.moonRockKey, MOON_ROCK_KEY_KINGDOMS.map(function(name) {
+            return { label: name, icon: moonPlacementIconSrc(kingdomIconKey(name)), search: name + "'s Moon Rock Key" };
+        }));
+
+    spoilerAutofillBuilt = true;
+}
+
+function spoilerAutofillGroupHtml(groupId, label, headerIconFile, items) {
+    var headerIconSrc = SPOILER_ICON_BASE + headerIconFile;
+    var itemsHtml = items.map(function(item) {
+        var safeSearch = item.search.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+        return '<div class="spoiler-autofill-item" tabindex="0" onclick="applySpoilerAutofill(\'' + safeSearch + '\')">' +
+            '<img src="' + item.icon + '" alt="" />' +
+            '<span>' + item.label + '</span>' +
+            '</div>';
+    }).join("");
+
+    return '<div class="spoiler-autofill-section">' +
+        '<div class="spoiler-autofill-section-header" onclick="toggleSpoilerAutofillGroup(\'' + groupId + '\')">' +
+        '<img src="' + headerIconSrc + '" alt="" />' +
+        '<span>' + label + '</span>' +
+        '<span class="spoiler-autofill-caret" id="spoiler-autofill-caret-' + groupId + '">▼</span>' +
+        '</div>' +
+        '<div class="spoiler-autofill-grid" id="spoiler-autofill-grid-' + groupId + '">' + itemsHtml + '</div>' +
+        '</div>';
+}
+
+function toggleSpoilerAutofillGroup(groupId) {
+    wsnd.play("UiCursor");
+    var grid = document.getElementById('spoiler-autofill-grid-' + groupId);
+    var caret = document.getElementById('spoiler-autofill-caret-' + groupId);
+    if (!grid) {
+        return;
+    }
+    var open = grid.classList.toggle("open");
+    if (caret) {
+        caret.textContent = open ? "▲" : "▼";
+    }
+}
+
+function toggleSpoilerAutofillPanel() {
+    if (!spoilerAutofillAvailable) {
+        return;
+    }
+    var panel = document.getElementById('spoiler-autofill-panel');
+    if (!panel) {
+        return;
+    }
+    if (panel.style.display === "block") {
+        closeSpoilerAutofillPanel();
+    } else {
+        openSpoilerAutofillPanel();
+    }
+}
+
+function openSpoilerAutofillPanel() {
+    buildSpoilerAutofillPanel();
+    wsnd.play("seDecide");
+    var panel = document.getElementById('spoiler-autofill-panel');
+    var backdrop = document.getElementById('spoiler-autofill-backdrop');
+    if (panel) {
+        panel.style.display = "block";
+    }
+    if (backdrop) {
+        backdrop.style.display = "block";
+    }
+}
+
+function closeSpoilerAutofillPanel() {
+    var panel = document.getElementById('spoiler-autofill-panel');
+    var backdrop = document.getElementById('spoiler-autofill-backdrop');
+    if (panel) {
+        panel.style.display = "none";
+    }
+    if (backdrop) {
+        backdrop.style.display = "none";
+    }
+}
+
+/** Called when a capture/ability/kingdom item is clicked: fills the search box and applies the filter. */
+function applySpoilerAutofill(searchText) {
+    wsnd.play("seDecide");
+    var searchBox = document.getElementById('spoiler-search');
+    if (searchBox) {
+        searchBox.value = searchText;
+    }
+    filterSpoilerContent(searchText);
+    closeSpoilerAutofillPanel();
 }
