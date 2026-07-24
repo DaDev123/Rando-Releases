@@ -2315,10 +2315,10 @@ var CAPTURE_ICON_FILENAMES = {
     "Chain Chomp": "capturechainchomp.png",
     "Big Chain Chomp": "capturebigchainchomp.png",
     "Broode's Chain Chomp": "capturegoldenchainchomp.png",
-    "T-Rex": "trex.png",
+    "T-Rex": "capturetrex.png",
     "Binoculars": "capturebinoculars.png",
     "Bullet Bill": "capturebulletbill.png",
-    "Moe-Eye": "capturemoeeye.png",
+    "Moe-Eye": "capturemoe-eye.png",
     "Cactus": "capturecactus.png",
     "Goomba": "capturegoomba.png",
     "Knucklotec's Fist": "captureknucklotecsfist.png",
@@ -2344,7 +2344,7 @@ var CAPTURE_ICON_FILENAMES = {
     "Ty-foo": "capturetyfoo.png",
     "Shiverian Racer": "captureshiverianracer.png",
     "Cheep Cheep (Snow Kingdom)": "capturesnowcheepcheep.png",
-    "Gushen": "gushen.png",
+    "Gushen": "capturegushen.png",
     "Lava Bubble": "capturelavabubble.png",
     "Volbonan": "capturevolbonan.png",
     "Hammer Bro": "capturehammerbro.png",
@@ -2357,7 +2357,7 @@ var CAPTURE_ICON_FILENAMES = {
     "Banzai Bill": "capturebanzaibill.png",
     "Chargin' Chuck": "capturecharginchuck.png",
     "Bowser": "capturebowser.png",
-    "Letter": "captureletter.png",
+    "Letter": "captureletters.png",
     "Puzzle Part (Metro Kingdom)": "capturepuzzlepartmetro.png",
     "Picture Match Part (Mario)": "capturepicturematchpartmario.png",
     "Yoshi": "captureyoshi.png"
@@ -3370,7 +3370,8 @@ function buildSpoilerModel(lines, sectionTitle) {
                         key: fromParsed.kingdom,
                         value: "→  " + toParsed.kingdom + toParsed.tag,
                         frontIcon: paintingIconKey(fromParsed.kingdom),
-                        icon: paintingIconKey(toParsed.kingdom)
+                        icon: paintingIconKey(toParsed.kingdom),
+                        isPainting: true
                     });
                 } else {
                     rows.push({ type: "entry", key: entry.key, value: entry.value });
@@ -3467,7 +3468,7 @@ function renderSpoilerSection(section) {
             keyEl.className = "spoiler-row-key";
             if (row.frontIcon) {
                 var frontIconImg = document.createElement("img");
-                frontIconImg.className = "spoiler-icon spoiler-row-front-icon";
+                frontIconImg.className = "spoiler-icon spoiler-row-front-icon" + (row.isPainting ? " spoiler-painting-icon" : "");
                 frontIconImg.src = moonPlacementIconSrc(row.frontIcon);
                 frontIconImg.alt = "";
                 keyEl.appendChild(frontIconImg);
@@ -3477,7 +3478,7 @@ function renderSpoilerSection(section) {
             valEl.className = "spoiler-row-value";
             if (row.icon) {
                 var rowIconImg = document.createElement("img");
-                rowIconImg.className = "spoiler-icon spoiler-row-icon";
+                rowIconImg.className = "spoiler-icon spoiler-row-icon" + (row.isPainting ? " spoiler-painting-icon" : "");
                 rowIconImg.src = moonPlacementIconSrc(row.icon);
                 rowIconImg.alt = "";
                 valEl.appendChild(rowIconImg);
@@ -3798,7 +3799,7 @@ function playReportCount(obj) {
 var AUTOFILL_SECTION_ICON = {
     captures: "capturegoomba.png",
     abilities: "AbilityGP.png",
-    moonRockKey: "cap.png"
+    moonRockKey: "moonrockkey.png"
 };
 
 var spoilerAutofillBuilt = false;
