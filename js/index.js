@@ -2500,8 +2500,8 @@ function moonPlacementFrontIconKey(locationKingdom, checkText) {
  * specific capture/ability icon; set to 0 to use the specific icon
  * (default).
  */
-var USE_GENERIC_MUSHROOM_ICON = 1;
-var USE_GENERIC_DARK_ICON = 1;
+var USE_GENERIC_MUSHROOM_ICON = 0;
+var USE_GENERIC_DARK_ICON = 0;
 
 /**
  * Icon key(s) to use for a "Moon Placements by Location" row's
