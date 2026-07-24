@@ -2282,6 +2282,71 @@ function extractParenName(extraDetail) {
     return m ? m[1].trim() : "";
 }
 
+/**
+ * Extracts the full, balanced contents of a moon's trailing "(...)"
+ * detail text, e.g. " (Binoculars, Chargin' Chuck, Puzzle Part (Metro
+ * Kingdom))" -> "Binoculars, Chargin' Chuck, Puzzle Part (Metro
+ * Kingdom)". Unlike extractParenName, this captures the whole outermost
+ * parenthetical instead of stopping at the first nested ")" - needed for
+ * Multi Moons that list several captures/abilities. Returns "" if there
+ * isn't a balanced parenthetical.
+ */
+function extractOuterParenContent(extraDetail) {
+    if (!extraDetail) {
+        return "";
+    }
+    var start = extraDetail.indexOf("(");
+    if (start === -1) {
+        return "";
+    }
+    var depth = 0;
+    for (var i = start; i < extraDetail.length; i++) {
+        var ch = extraDetail.charAt(i);
+        if (ch === "(") {
+            depth++;
+        } else if (ch === ")") {
+            depth--;
+            if (depth === 0) {
+                return extraDetail.substring(start + 1, i);
+            }
+        }
+    }
+    return "";
+}
+
+/**
+ * Splits a parenthetical's inner text on top-level commas only - i.e.
+ * commas not nested inside another pair of parens - since some
+ * capture names (e.g. "Puzzle Part (Metro Kingdom)") contain their own
+ * parens as part of the name and must stay intact as one item.
+ */
+function splitTopLevelCommas(text) {
+    if (!text) {
+        return [];
+    }
+    var parts = [];
+    var depth = 0;
+    var current = "";
+    for (var i = 0; i < text.length; i++) {
+        var ch = text.charAt(i);
+        if (ch === "(") {
+            depth++;
+        } else if (ch === ")") {
+            depth--;
+        }
+        if (ch === "," && depth === 0) {
+            parts.push(current.trim());
+            current = "";
+        } else {
+            current += ch;
+        }
+    }
+    if (current.trim() !== "") {
+        parts.push(current.trim());
+    }
+    return parts;
+}
+
 /** Exact ability name -> icon filename (these don't follow one consistent pattern, e.g. "Ground Pound" -> "AbilityGP.png"). */
 var ABILITY_ICON_FILENAMES = {
     "Neutral Throw": "AbilityNeutralThrow.png",
@@ -2438,30 +2503,38 @@ function moonPlacementFrontIconKey(locationKingdom, checkText) {
 var USE_GENERIC_MUSHROOM_ICON = 1;
 var USE_GENERIC_DARK_ICON = 1;
 
+/**
+ * Icon key(s) to use for a "Moon Placements by Location" row's
+ * destination side. Returns an array, always in the same order the
+ * captures/abilities are listed in the source text - Multi Moons that
+ * grant several at once (e.g. "Mushroom Kingdom (Binoculars, Chargin'
+ * Chuck, Puzzle Part (Metro Kingdom))") show one icon per item instead
+ * of just the first.
+ */
 function moonPlacementRowIconKey(trueKingdom, extraDetail, checkText) {
     if (trueKingdom === "Dark Side" || trueKingdom === "Darker Side") {
         if (!USE_GENERIC_DARK_ICON) {
-            var ability = extractParenName(extraDetail);
-            if (ability) {
-                return abilityIconName(ability);
+            var abilities = splitTopLevelCommas(extractOuterParenContent(extraDetail));
+            if (abilities.length > 0) {
+                return abilities.map(abilityIconName);
             }
             var areaKey = darkSideArtAreaIconKey(checkText) || darkSideArtAreaIconKey(extraDetail);
             if (areaKey) {
-                return areaKey;
+                return [areaKey];
             }
         }
-        return "dark";
+        return ["dark"];
     }
     if (trueKingdom === "Mushroom Kingdom") {
         if (!USE_GENERIC_MUSHROOM_ICON) {
-            var capture = extractParenName(extraDetail);
-            if (capture) {
-                return captureIconName(capture);
+            var captures = splitTopLevelCommas(extractOuterParenContent(extraDetail));
+            if (captures.length > 0) {
+                return captures.map(captureIconName);
             }
         }
-        return "mushroom";
+        return ["mushroom"];
     }
-    return kingdomIconKey(trueKingdom);
+    return [kingdomIconKey(trueKingdom)];
 }
 
 /**
@@ -3348,7 +3421,7 @@ function buildSpoilerModel(lines, sectionTitle) {
                     type: "entry",
                     key: entry.check + multiTag,
                     value: "→  " + trueKingdom + extraDetail + rockKeyTag,
-                    icon: moonPlacementRowIconKey(trueKingdom, extraDetail, entry.check),
+                    icons: moonPlacementRowIconKey(trueKingdom, extraDetail, entry.check),
                     icon2: rockKeyTag ? "moonrockkey.png" : null,
                     frontIcon: moonPlacementFrontIconKey(currentGroupTitle, entry.check),
                     checkName: entry.check
@@ -3482,6 +3555,15 @@ function renderSpoilerSection(section) {
                 rowIconImg.src = moonPlacementIconSrc(row.icon);
                 rowIconImg.alt = "";
                 valEl.appendChild(rowIconImg);
+            }
+            if (row.icons) {
+                for (var ii = 0; ii < row.icons.length; ii++) {
+                    var multiIconImg = document.createElement("img");
+                    multiIconImg.className = "spoiler-icon spoiler-row-icon";
+                    multiIconImg.src = moonPlacementIconSrc(row.icons[ii]);
+                    multiIconImg.alt = "";
+                    valEl.appendChild(multiIconImg);
+                }
             }
             if (row.icon2) {
                 var rowIcon2Img = document.createElement("img");
