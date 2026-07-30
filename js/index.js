@@ -902,6 +902,15 @@ function closeSpoilerLog() {
 
 var spoilerSections = [];
 var spoilerActiveIndex = 0;
+/**
+ * Every capture/ability tag (lowercased) present in the currently
+ * rendered section - rebuilt each time renderSpoilerSection runs, from
+ * the actual row.tags data rather than the static icon-filename tables.
+ * This guarantees exact-match search covers every capture and ability
+ * this specific log actually uses, not just the ones with a hand-picked
+ * entry in CAPTURE_ICON_FILENAMES/ABILITY_ICON_FILENAMES.
+ */
+var spoilerKnownTags = {};
 
 function loadSpoilerFile(file) {
     if (!file) {
@@ -2460,6 +2469,23 @@ function captureIconName(name) {
 }
 
 /**
+ * Lowercased set of every known capture and ability name (from
+ * CAPTURE_ICON_FILENAMES/ABILITY_ICON_FILENAMES). Used by
+ * filterSpoilerContent to detect when a *typed* search query is a
+ * capture/ability name on its own - not just when it's clicked from the
+ * autofill panel - so e.g. typing "Vault" only shows the moon that
+ * actually grants the Vault capture, not every check whose title merely
+ * contains the word "Vault" ("Sphynx's Treasure Vault", "Vaulting Up a
+ * High-Rise", etc.).
+ */
+var KNOWN_CAPTURE_ABILITY_NAMES_LOWER = (function() {
+    var set = {};
+    Object.keys(CAPTURE_ICON_FILENAMES).forEach(function(n) { set[n.toLowerCase()] = true; });
+    Object.keys(ABILITY_ICON_FILENAMES).forEach(function(n) { set[n.toLowerCase()] = true; });
+    return set;
+})();
+
+/**
  * Icon key to use for a "Moon Placements by Location" group header, i.e.
  * the kingdom the checks are physically located in. Plain kingdom name;
  * always "darkside" for Dark Side/Darker Side.
@@ -3510,6 +3536,7 @@ function renderSpoilerSection(section) {
     var toolbar = document.getElementById('spoiler-toolbar');
     var countEl = document.getElementById('spoiler-count');
     var model = buildSpoilerModel(section.lines, section.title);
+    spoilerKnownTags = {};
 
     var listy = model.rows.length > 0 &&
         (model.entryCount + countItemRows(model.rows)) / model.nonBlankCount >= 0.5;
@@ -3570,6 +3597,9 @@ function renderSpoilerSection(section) {
             entryRow.setAttribute("data-parent-group", currentMajorGroupId);
             if (row.tags && row.tags.length > 0) {
                 entryRow.setAttribute("data-tags", "|" + row.tags.join("|") + "|");
+                for (var ti = 0; ti < row.tags.length; ti++) {
+                    spoilerKnownTags[row.tags[ti]] = true;
+                }
             }
             var keyEl = document.createElement("span");
             keyEl.className = "spoiler-row-key";
@@ -3650,6 +3680,16 @@ function filterSpoilerContent(query, exact) {
     }
     var q = query.trim().toLowerCase();
 
+    // A query that IS a known capture/ability name (typed by hand, not
+    // just clicked from the autofill panel) should behave the same way
+    // as clicking that item there: exact tag match only, so it can't
+    // also pick up unrelated checks whose title merely contains that
+    // word (e.g. "Vault" matching "Sphynx's Treasure Vault"). Checked
+    // against every tag actually present in this section first (covers
+    // every capture/ability in the loaded log), falling back to the
+    // static icon-name tables for good measure.
+    var useExact = exact || (q !== "" && (spoilerKnownTags.hasOwnProperty(q) || KNOWN_CAPTURE_ABILITY_NAMES_LOWER.hasOwnProperty(q)));
+
     var searchable = [];
     var rows = contentEl.getElementsByClassName('spoiler-row');
     var items = contentEl.getElementsByClassName('spoiler-list-item');
@@ -3662,7 +3702,7 @@ function filterSpoilerContent(query, exact) {
     for (var k = 0; k < searchable.length; k++) {
         var el = searchable[k];
         var match;
-        if (exact) {
+        if (useExact) {
             // Exact tag match only (e.g. Captures/Abilities autofill): a
             // capture named "Bowser" must match only rows tagged exactly
             // "bowser", not every "Bowser's Kingdom" location row that
