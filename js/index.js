@@ -2116,9 +2116,21 @@ function extractKingdomOnly(source) {
 function extractExtraDetail(source) {
     var parenIdx = source.indexOf(" (");
     if (parenIdx > 0) {
-        return source.substring(parenIdx);
+        return source.substring(parenIdx).replace(/\[duplicate\]/gi, "[Dupe]");
     }
     return "";
+}
+
+/**
+ * Strips a trailing "[...]" tag (e.g. "Long Jump [duplicate]" or "Long
+ * Jump [Dupe]") off a capture/ability name before it's used to look up
+ * an icon file. Without this, tagged items fail to match
+ * CAPTURE_ICON_FILENAMES/ABILITY_ICON_FILENAMES and fall through to the
+ * auto-generated filename fallback, which bakes the tag text into the
+ * filename and points at an image that doesn't exist (a broken icon).
+ */
+function stripBracketTag(name) {
+    return name ? name.replace(/\s*\[[^\]]*\]\s*$/, "").trim() : name;
 }
 
 /**
@@ -2511,10 +2523,27 @@ var USE_GENERIC_DARK_ICON = 0;
  * Chuck, Puzzle Part (Metro Kingdom))") show one icon per item instead
  * of just the first.
  */
+/**
+ * Returns the raw capture/ability names listed in a moon's trailing
+ * "(...)" detail text, with any "[Dupe]"/"[duplicate]" tag stripped off
+ * each one - e.g. " (Long Jump [duplicate])" -> ["Long Jump"]. This is
+ * the shared source of truth for both icon lookup (moonPlacementRowIconKey)
+ * and search tagging (buildSpoilerModel), so a tagged item's icon and
+ * its exact-match search behavior both key off the same clean name.
+ * Only meaningful for Dark Side/Darker Side (abilities) and Mushroom
+ * Kingdom (captures) rows; returns [] for everything else.
+ */
+function moonPlacementRowItemNames(trueKingdom, extraDetail) {
+    if (trueKingdom === "Dark Side" || trueKingdom === "Darker Side" || trueKingdom === "Mushroom Kingdom") {
+        return splitTopLevelCommas(extractOuterParenContent(extraDetail)).map(stripBracketTag);
+    }
+    return [];
+}
+
 function moonPlacementRowIconKey(trueKingdom, extraDetail, checkText) {
     if (trueKingdom === "Dark Side" || trueKingdom === "Darker Side") {
         if (!USE_GENERIC_DARK_ICON) {
-            var abilities = splitTopLevelCommas(extractOuterParenContent(extraDetail));
+            var abilities = moonPlacementRowItemNames(trueKingdom, extraDetail);
             if (abilities.length > 0) {
                 return abilities.map(abilityIconName);
             }
@@ -2527,7 +2556,7 @@ function moonPlacementRowIconKey(trueKingdom, extraDetail, checkText) {
     }
     if (trueKingdom === "Mushroom Kingdom") {
         if (!USE_GENERIC_MUSHROOM_ICON) {
-            var captures = splitTopLevelCommas(extractOuterParenContent(extraDetail));
+            var captures = moonPlacementRowItemNames(trueKingdom, extraDetail);
             if (captures.length > 0) {
                 return captures.map(captureIconName);
             }
@@ -3417,6 +3446,7 @@ function buildSpoilerModel(lines, sectionTitle) {
                 var extraDetail = extractExtraDetail(entry.source);
                 var multiTag = MOON_IS_MULTI[entry.moon] ? "  ✦ Multi Moon" : "";
                 var rockKeyTag = /Moon Rock Key$/.test(entry.moon) ? "  (" + entry.moon + ")" : "";
+                var itemNames = moonPlacementRowItemNames(trueKingdom, extraDetail);
                 rows.push({
                     type: "entry",
                     key: entry.check + multiTag,
@@ -3424,7 +3454,8 @@ function buildSpoilerModel(lines, sectionTitle) {
                     icons: moonPlacementRowIconKey(trueKingdom, extraDetail, entry.check),
                     icon2: rockKeyTag ? "moonrockkey.png" : null,
                     frontIcon: moonPlacementFrontIconKey(currentGroupTitle, entry.check),
-                    checkName: entry.check
+                    checkName: entry.check,
+                    tags: itemNames.map(function(n) { return n.toLowerCase(); })
                 });
             } else if (sectionTitle === "Moon Requirements by Kingdom" && entry.key && entry.value) {
                 var reqKingdom = normalizeGroupTitle(entry.key);
@@ -3537,6 +3568,9 @@ function renderSpoilerSection(section) {
             entryRow.setAttribute("data-search", (row.key + " " + row.value).toLowerCase());
             entryRow.setAttribute("data-group", currentGroupId);
             entryRow.setAttribute("data-parent-group", currentMajorGroupId);
+            if (row.tags && row.tags.length > 0) {
+                entryRow.setAttribute("data-tags", "|" + row.tags.join("|") + "|");
+            }
             var keyEl = document.createElement("span");
             keyEl.className = "spoiler-row-key";
             if (row.frontIcon) {
@@ -3608,7 +3642,7 @@ function countItemRows(rows) {
     return count;
 }
 
-function filterSpoilerContent(query) {
+function filterSpoilerContent(query, exact) {
     var contentEl = document.getElementById('spoiler-content');
     var countEl = document.getElementById('spoiler-count');
     if (!contentEl) {
@@ -3627,7 +3661,17 @@ function filterSpoilerContent(query) {
 
     for (var k = 0; k < searchable.length; k++) {
         var el = searchable[k];
-        var match = q === "" || el.getAttribute("data-search").indexOf(q) !== -1;
+        var match;
+        if (exact) {
+            // Exact tag match only (e.g. Captures/Abilities autofill): a
+            // capture named "Bowser" must match only rows tagged exactly
+            // "bowser", not every "Bowser's Kingdom" location row that
+            // happens to contain that substring.
+            var tagStr = el.getAttribute("data-tags");
+            match = q === "" || (!!tagStr && tagStr.indexOf("|" + q + "|") !== -1);
+        } else {
+            match = q === "" || el.getAttribute("data-search").indexOf(q) !== -1;
+        }
         el.style.display = match ? "" : "none";
         if (match) {
             visibleCount++;
@@ -3913,13 +3957,13 @@ function buildSpoilerAutofillPanel() {
 
     panel.innerHTML =
         spoilerAutofillGroupHtml("captures", "Captures", AUTOFILL_SECTION_ICON.captures, captureNames.map(function(name) {
-            return { label: name, icon: moonPlacementIconSrc(captureIconName(name)), search: name };
+            return { label: name, icon: moonPlacementIconSrc(captureIconName(name)), search: name, exact: true };
         })) +
         spoilerAutofillGroupHtml("abilities", "Abilities", AUTOFILL_SECTION_ICON.abilities, abilityNames.map(function(name) {
-            return { label: name, icon: moonPlacementIconSrc(abilityIconName(name)), search: name };
+            return { label: name, icon: moonPlacementIconSrc(abilityIconName(name)), search: name, exact: true };
         })) +
         spoilerAutofillGroupHtml("moonRockKey", "Moon Rock Key", AUTOFILL_SECTION_ICON.moonRockKey, MOON_ROCK_KEY_KINGDOMS.map(function(name) {
-            return { label: name, icon: moonPlacementIconSrc(kingdomIconKey(name)), search: name + "'s Moon Rock Key" };
+            return { label: name, icon: moonPlacementIconSrc(kingdomIconKey(name)), search: name + "'s Moon Rock Key", exact: false };
         }));
 
     spoilerAutofillBuilt = true;
@@ -3929,7 +3973,7 @@ function spoilerAutofillGroupHtml(groupId, label, headerIconFile, items) {
     var headerIconSrc = SPOILER_ICON_BASE + headerIconFile;
     var itemsHtml = items.map(function(item) {
         var safeSearch = item.search.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
-        return '<div class="spoiler-autofill-item" tabindex="0" data-autofill-search="' + safeSearch + '" onclick="applySpoilerAutofill(this.getAttribute(\'data-autofill-search\'))">' +
+        return '<div class="spoiler-autofill-item" tabindex="0" data-autofill-search="' + safeSearch + '" data-autofill-exact="' + (item.exact ? "1" : "0") + '" onclick="applySpoilerAutofill(this.getAttribute(\'data-autofill-search\'), this.getAttribute(\'data-autofill-exact\') === \'1\')">' +
             '<img src="' + item.icon + '" alt="" />' +
             '<span>' + item.label + '</span>' +
             '</div>';
@@ -3998,12 +4042,12 @@ function closeSpoilerAutofillPanel() {
 }
 
 /** Called when a capture/ability/kingdom item is clicked: fills the search box and applies the filter. */
-function applySpoilerAutofill(searchText) {
+function applySpoilerAutofill(searchText, exact) {
     wsnd.play("seDecide");
     var searchBox = document.getElementById('spoiler-search');
     if (searchBox) {
         searchBox.value = searchText;
     }
-    filterSpoilerContent(searchText);
+    filterSpoilerContent(searchText, exact);
     closeSpoilerAutofillPanel();
 }
