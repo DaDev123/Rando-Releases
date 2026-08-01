@@ -210,10 +210,10 @@ window.onload = function() {
     document.onkeydown = function(e) {
       var featuresPageEl = document.getElementById('page-features');
       if (featuresPageEl && featuresPageEl.classList.contains('active')) {
-        // The Features page owns its own keydown listener (arrows, L/R,
-        // Escape/Backspace). Bail out here so we don't double-fire page
-        // turns (when btnActive is true) or preventDefault/steal focus
-        // out from under Cancel (when btnActive is false).
+        // The Features page owns its own keydown listener (just
+        // Escape/Backspace now that it's a single scrollable grid).
+        // Bail out here so we don't preventDefault/steal focus out
+        // from under Cancel (when btnActive is false).
         return;
       }
       if(btnActive){
@@ -266,7 +266,7 @@ window.onload = function() {
 
 
 function customFunctionL() {
-    if (pageNum == 6 || pageNum == 12 || pageNum == 13) {
+    if (pageNum == 6 || pageNum == 12 || pageNum == 13 || pageNum == 15) {
         return;
     } else if (pageNum == 1) {
         wsnd.play("UiTurnPage");
@@ -331,9 +331,6 @@ function customFunctionL() {
         }
         document.getElementById('capture' + (captureNum - 1)).focus();
 
-    } else if (pageNum == 15) {
-        prevFeaturesPage();
-
     } else if (pageNum > 5) {
         wsnd.play("UiTurnPage");
         clearTimeout(playReport9to14);
@@ -380,7 +377,7 @@ function customFunctionL() {
 }
 
 function customFunctionR() {
-    if (pageNum == 6 || pageNum == 12 || pageNum == 13) {
+    if (pageNum == 6 || pageNum == 12 || pageNum == 13 || pageNum == 15) {
         return;
     } else if (pageNum == 1) {
         wsnd.play("UiTurnPage");
@@ -443,9 +440,6 @@ function customFunctionR() {
             capturenNum = 0;
         }
         document.getElementById('capture' + (capturenNum + 1)).focus();
-
-    } else if (pageNum == 15) {
-        nextFeaturesPage();
 
     } else if (pageNum > 5) {
         wsnd.play("UiTurnPage");
@@ -3431,6 +3425,42 @@ function sortEntriesByFixedOrder(rows) {
     return rows;
 }
 
+/**
+ * Within each contiguous run of Painting Links entry rows, moves the row
+ * tagged "[Free - unlocked from the start]" to the front of that run so it
+ * always appears first, leaving every other row in its original relative
+ * order.
+ */
+function sortPaintingsFreeFirst(rows) {
+    var segStart = -1;
+    for (var i = 0; i <= rows.length; i++) {
+        var isPaintingRow = i < rows.length && rows[i].type === "entry" && rows[i].isPainting;
+        if (isPaintingRow) {
+            if (segStart === -1) {
+                segStart = i;
+            }
+        } else if (segStart !== -1) {
+            var seg = rows.slice(segStart, i);
+            var freeIdx = -1;
+            for (var k = 0; k < seg.length; k++) {
+                if (/\[Free/i.test(seg[k].value || "")) {
+                    freeIdx = k;
+                    break;
+                }
+            }
+            if (freeIdx > 0) {
+                var freeRow = seg.splice(freeIdx, 1)[0];
+                seg.unshift(freeRow);
+            }
+            for (var j = 0; j < seg.length; j++) {
+                rows[segStart + j] = seg[j];
+            }
+            segStart = -1;
+        }
+    }
+    return rows;
+}
+
 function buildSpoilerModel(lines, sectionTitle) {
     var rows = [];
     var entryCount = 0;
@@ -3528,7 +3558,7 @@ function buildSpoilerModel(lines, sectionTitle) {
         currentGroupTitle = groupTitle;
     }
 
-    return { rows: sortEntriesByFixedOrder(rows), entryCount: entryCount, nonBlankCount: nonBlankCount };
+    return { rows: sortPaintingsFreeFirst(sortEntriesByFixedOrder(rows)), entryCount: entryCount, nonBlankCount: nonBlankCount };
 }
 
 function renderSpoilerSection(section) {
