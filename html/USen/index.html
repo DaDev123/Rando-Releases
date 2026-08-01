@@ -12,27 +12,26 @@
     <script src="../../js/nx.js"></script>
     <style>
         .credits-container {
+            height: 65vh;
             max-height: 65vh;
-            overflow-y: auto;
-            overflow-x: hidden;
+            overflow: hidden;
             padding: 4px 10px 4px 4px;
             display: flex;
             flex-flow: row wrap;
-            align-content: flex-start;
+            align-content: center;
             align-items: stretch;
             justify-content: center;
             gap: 14px;
             box-sizing: border-box;
         }
 
-        /* Fixed-ish basis (not 1/N of the row) so cards stay a sane, readable
-           size and simply wrap onto new centered rows as more people are
-           added - this is what lets 5 people and 16 people both look
-           intentional with no leftover dead space. */
+        /* Basis shrinks as more people are added (via --credit-basis, set in
+           JS from the live count) so everyone always fits on this one page -
+           no scrolling, no dead space, whether it's 5 people or 16. */
         .credit-item {
-            flex: 0 1 210px;
+            flex: 0 1 var(--credit-basis, 210px);
             max-width: 240px;
-            min-width: 170px;
+            min-width: 130px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -274,11 +273,11 @@
             opacity: 1;
         }
 
-        /* Every feature gets one rounded square tile (icon + title) in a
-           grid that fills available width and wraps onto new centered rows
-           as tiles are added, so it scales cleanly from a couple dozen
-           tiles up to 50 with no leftover dead space. If there are more
-           rows than fit in the page, the grid scrolls. */
+        /* Every feature gets one rounded square tile (icon + title). JS
+           computes how many columns/rows keep the grid reasonably square
+           and sizes tiles (via --feature-cols/--feature-rows) so all of
+           them always fit on this one page - no scrolling - whether
+           there are a dozen tiles or the full 50. */
         .features-container {
             position: absolute;
             top: 75px;
@@ -288,13 +287,12 @@
             box-sizing: border-box;
             padding: 10px 20px 20px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
-            grid-auto-rows: minmax(128px, 1fr);
+            grid-template-columns: repeat(var(--feature-cols, 6), 1fr);
+            grid-template-rows: repeat(var(--feature-rows, 4), 1fr);
             justify-content: center;
-            align-content: start;
+            align-content: center;
             gap: 16px;
-            overflow-y: auto;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
         .feature-card {
@@ -305,7 +303,7 @@
             justify-content: center;
             gap: 10px;
             width: 100%;
-            aspect-ratio: 1 / 1;
+            height: 100%;
             box-sizing: border-box;
             padding: 14px 10px;
             border-radius: 16px;
@@ -1200,6 +1198,18 @@
                             return true;
                         })
                         .map(name => ({ name, ...creditsPeople[name] }));
+
+                    // Pick a row length that keeps rows reasonably full, then size each
+                    // card to that row width so everyone fits on this one page - no
+                    // scrolling - whether there are 5 people or 16.
+                    const count = creditsData.length;
+                    const cols = Math.max(1, Math.min(count, Math.ceil(Math.sqrt(count * 2.1))));
+                    const rows = Math.ceil(count / cols);
+                    const containerWidth = container.clientWidth || 1180;
+                    const gap = 14;
+                    const basisPx = Math.max(130, Math.min(240, Math.floor((containerWidth - gap * (cols - 1)) / cols)));
+                    container.style.setProperty('--credit-basis', basisPx + 'px');
+
                     container.innerHTML = creditsData.map(person => `
                         <div class="credit-item">
                             <div class="credit-header">
@@ -1362,13 +1372,32 @@
                     })
                     .map(title => ({ title, image: featureImagePath(title, featuresData[title].ext), ...featuresData[title] }));
 
-                // Supports up to 50 tiles (featuresList can safely grow that far);
-                // the grid itself scrolls if there are more rows than fit on screen.
+                // Supports up to 50 tiles; rows/cols are computed below so
+                // every tile always fits on this one page - no scrolling.
                 const FEATURES_MAX = 50;
 
                 function renderFeatures() {
                     const container = document.getElementById("features-container");
                     const items = featuresList.slice(0, FEATURES_MAX);
+
+                    // Pick a grid shape that's wider than it is tall (tiles
+                    // read better that way) and fits the container's actual
+                    // aspect ratio, so tiles size up to fill the page
+                    // exactly instead of leaving unused rows/columns.
+                    const count = items.length;
+                    const containerWidth = container.clientWidth || 1240;
+                    const containerHeight = container.clientHeight || 555;
+                    const aspect = containerWidth / containerHeight;
+                    let cols = Math.max(1, Math.round(Math.sqrt(count * aspect)));
+                    let rows = Math.max(1, Math.ceil(count / cols));
+                    // Shrink cols until every row would actually have at least
+                    // one tile in it (avoids a mostly-empty final row).
+                    while (cols > 1 && (cols - 1) * rows >= count) {
+                        cols -= 1;
+                        rows = Math.ceil(count / cols);
+                    }
+                    container.style.setProperty('--feature-cols', cols);
+                    container.style.setProperty('--feature-rows', rows);
 
                     container.innerHTML = items.map(feature => `
                         <div class="feature-card" tabindex="0">
