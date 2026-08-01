@@ -3823,6 +3823,7 @@ function openCredits() {
         document.getElementsByClassName('page0')[0].style.display = "none";
         document.getElementsByClassName('page13')[0].style.display = "block";
         document.getElementsByClassName('page13')[0].style.opacity = 1;
+        if (typeof renderCredits === "function") { renderCredits(); }
         document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "Credits";
         document.getElementsByClassName('btn-operation')[0].style.opacity = 0;
         document.getElementsByClassName('btn-operation')[2].style.opacity = 1;
