@@ -262,6 +262,35 @@
             position: relative;
         }
 
+        /* Home page button list was starting to run off the bottom of the
+           screen once the Randomizer Action Guide button was added, so
+           shift the whole list up a bit. Adjust the px value to taste. */
+        .page0 .toc {
+            transform: translateY(-40px);
+        }
+
+        /* The AbilityXXX.png icons are much higher-res than the game's own
+           thumb-area assets, so they render way oversized by default -
+           force them down to the same thumbnail footprint. */
+        #page-randomizer-movement .thumb-area a img {
+            width: 56px !important;
+            height: 56px !important;
+            object-fit: contain !important;
+        }
+
+        /* Center each row instead of left-aligning, and force an explicit
+           break after the 11th icon so it's always 11 on top / 10 on the
+           bottom instead of however wide icons happen to wrap. */
+        #page-randomizer-movement .thumb-area {
+            justify-content: center !important;
+        }
+
+        #page-randomizer-movement .thumb-row-break {
+            flex-basis: 100%;
+            width: 0;
+            height: 0;
+        }
+
         /* Action Guide overlay page (duplicate of the home menu) */
         .action-guide-page {
             display: none;
@@ -1135,6 +1164,7 @@
                         src="../../img/spoiler/AbilityRollBoost.png" /></a>
                 <a id="rmove11" href="javascript:void(0);" onfocus="randomizerAbilityMov(11)" nx-se-disabled=""><img
                         src="../../img/spoiler/AbilityGP.png" /></a>
+                <div class="thumb-row-break" aria-hidden="true"></div>
                 <a id="rmove12" href="javascript:void(0);" onfocus="randomizerAbilityMov(12)" nx-se-disabled=""><img
                         src="../../img/spoiler/AbilityGPJump.png" /></a>
                 <a id="rmove13" href="javascript:void(0);" onfocus="randomizerAbilityMov(13)" nx-se-disabled=""><img
