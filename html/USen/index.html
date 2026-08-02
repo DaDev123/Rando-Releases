@@ -285,16 +285,18 @@
 
         /* Center each row instead of left-aligning, and force an explicit
            break after the 11th icon so it's always 11 on top / 10 on the
-           bottom instead of however wide icons happen to wrap. Also center
-           the whole grid horizontally within the page (it was previously
-           anchored to the left edge of its container). */
+           bottom instead of however wide icons happen to wrap. position:fixed
+           anchors this to the actual 1280px-wide viewport rather than any
+           offset ancestor, so centering is no longer thrown off by the
+           parent's own positioning. */
         #page-randomizer-movement .thumb-area {
             display: flex !important;
             flex-wrap: wrap !important;
             justify-content: center !important;
-            width: 100% !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
+            position: fixed !important;
+            left: 0 !important;
+            width: 1280px !important;
+            margin: 0 auto !important;
         }
 
         #page-randomizer-movement .thumb-row-break {
@@ -1157,7 +1159,7 @@
                 <h2><span>Ledge Grab</span></h2><span class="action-ms">Hold <img src="../../img/L-stick-white.webp" data-ms="true" /> towards a ledge</span>
                 <h2><span>Climb</span></h2><span class="action-ms"><img src="../../img/L-stick-white.webp" data-ms="true" /></span>
                 <h2><span>Swing</span></h2><span class="action-ms">Sway <img src="../../img/L-stick-white.webp" data-ms="true" /> back and forth + Press <img src="../../img/btn-B-white.webp" data-ms="true" /></span>
-                <span class="action-ms-right">Throw Cappy straight ahead.</span>
+                <span class="action-ms-right">Throw Cappy ahead.</span>
                 <span class="action-ms-right">Throw Cappy upward.</span>
                 <span class="action-ms-right">Throw Cappy downward.</span>
                 <span class="action-ms-right">Throw Cappy in a circle.</span>
@@ -1168,16 +1170,16 @@
                 <span class="action-ms-right">Roll along the ground.</span>
                 <span class="action-ms-right">Gain speed while rolling.</span>
                 <span class="action-ms-right">Slam straight downward.</span>
-                <span class="action-ms-right">Bounce upward after a Ground Pound.</span>
+                <span class="action-ms-right">Jump high after Ground Pounding.</span>
                 <span class="action-ms-right">Dive forward through the air.</span>
                 <span class="action-ms-right">Jump a second time.</span>
                 <span class="action-ms-right">Chain three jumps together.</span>
-                <span class="action-ms-right">Flip high after changing direction.</span>
+                <span class="action-ms-right">Flip high when changing direction.</span>
                 <span class="action-ms-right">Spin in place.</span>
                 <span class="action-ms-right">Kick off a wall.</span>
                 <span class="action-ms-right">Grab onto ledges.</span>
-                <span class="action-ms-right">Climb while hanging.</span>
-                <span class="action-ms-right">Swing around poles and trees.</span>
+                <span class="action-ms-right">Climb up poles and trees.</span>
+                <span class="action-ms-right">Swing while hanging.</span>
             </div>
             <a class="dummy-a-randomizer" id="dummy-a-randomizer" href="javascript:void(0);" nx-se-disabled=""></a>
             <div class="thumb-area">
