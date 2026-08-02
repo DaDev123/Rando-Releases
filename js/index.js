@@ -4055,9 +4055,10 @@ function randomizerAbilityMov(num) {
     var rightDesc = document.getElementsByClassName('joycon-side-desc')[2].getElementsByTagName('span')[0];
     randomizerTitle.innerHTML = document.getElementsByClassName('action-desc')[2].getElementsByTagName('h2')[num - 1].innerHTML;
     leftDesc.innerHTML = document.getElementsByClassName('action-desc')[2].getElementsByClassName('action-ms')[num - 1].innerHTML;
-    // No two-player controller variant for abilities, unlike the Basic
-    // Actions/Capture Actions panels - both sides just show the same text.
-    rightDesc.innerHTML = leftDesc.innerHTML;
+    // Right side gets its own independent description text (see the
+    // "action-ms-right" entries in the Randomizer Movement action-desc
+    // block), instead of mirroring the left side.
+    rightDesc.innerHTML = document.getElementsByClassName('action-desc')[2].getElementsByClassName('action-ms-right')[num - 1].innerHTML;
     document.getElementById('rmove' + num).getElementsByTagName('img')[0].style.animationName = "focus-thmb-up1";
 
     randomizerMoveTimeout2 = setTimeout(function() {
