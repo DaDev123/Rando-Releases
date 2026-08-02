@@ -5,10 +5,41 @@ var page0seBackCheck = true;
 var btnActive = false;
 var action1SE = false;
 var capture1SE = false;
+var randomizerMove1SE = false;
 var modeSE=true;
-var playReport4, playReport5, playReport6, playReport7, playReport8, playReport9to14, playReport15to38, playReport39to62;
-var basicTimeout2, basicTimeout3, captureTimeout2, captureTimeout3;
+var playReport4, playReport5, playReport6, playReport7, playReport8, playReport9to14, playReport15to38, playReport39to62, playReportRandomizer;
+var basicTimeout2, basicTimeout3, captureTimeout2, captureTimeout3, randomizerMoveTimeout2, randomizerMoveTimeout3;
 var imgload1 = new Image();
+
+/**
+ * The 21 abilities specific to the randomizer, in the same order as the
+ * #rmove1..#rmove21 thumbnails on the Randomizer Movement Controls page.
+ * "video" builds the file name under video/randomizerabilities/
+ * (e.g. "Long Jump" -> "abilitylongjump.webp").
+ */
+var RANDOMIZER_ABILITIES = [
+    { name: "Neutral Throw", video: "abilityneutralthrow" },
+    { name: "Up Throw", video: "abilityupthrow" },
+    { name: "Down Throw", video: "abilitydownthrow" },
+    { name: "Spin Throw", video: "abilityspinthrow" },
+    { name: "Vault", video: "abilityvault" },
+    { name: "Crouch", video: "abilitycrouch" },
+    { name: "Backflip", video: "abilitybackflip" },
+    { name: "Long Jump", video: "abilitylongjump" },
+    { name: "Roll", video: "abilityroll" },
+    { name: "Roll Boost", video: "abilityrollboost" },
+    { name: "Ground Pound", video: "abilitygroundpound" },
+    { name: "Ground Pound Jump", video: "abilitygroundpoundjump" },
+    { name: "Dive", video: "abilitydive" },
+    { name: "Double Jump", video: "abilitydoublejump" },
+    { name: "Triple Jump", video: "abilitytriplejump" },
+    { name: "Side Flip", video: "abilitysideflip" },
+    { name: "Spin", video: "abilityspin" },
+    { name: "Wall Jump", video: "abilitywalljump" },
+    { name: "Ledge Grab", video: "abilityledgegrab" },
+    { name: "Climb", video: "abilityclimb" },
+    { name: "Swing", video: "abilityswing" }
+];
 
 
 window.onload = function() {
@@ -74,6 +105,37 @@ window.onload = function() {
         } else if (pageNum == 15) {
             closeFeatures();
             return;
+        } else if (pageNum == 16) {
+            closeRandomizerActionGuide();
+            return;
+        } else if (pageNum == 17) {
+            // Randomizer Movement Controls is only ever reached through the
+            // Randomizer Action Guide overlay, so Cancel/B returns there -
+            // mirrors the pageNum==4 handling below, but for the
+            // id-addressed randomizer page and the randomizer overlay.
+            wsnd.play("seBack");
+            page0seBackCheck = false;
+            timeout0 = setTimeout(function() {
+                page0seBackCheck = true;
+                clearTimeout(timeout0);
+            }, 500);
+            document.getElementById('page-randomizer-movement').style.opacity = 0;
+            document.getElementById('page-randomizer-movement').style.display = "none";
+            document.getElementsByClassName("action-mov")[2].style.display = "none";
+            document.getElementsByClassName("action-mov")[2].style.opacity = 0;
+            document.getElementsByClassName('action-mov')[2].style.boxShadow = "";
+            document.getElementsByClassName("joycon-lr-desc")[2].style.display = "none";
+            document.getElementsByClassName("joycon-side-desc")[2].style.display = "none";
+            randomizerMove1SE = false;
+            clearTimeout(playReportRandomizer);
+            document.getElementsByClassName('btn-operation')[0].style.opacity = 0;
+            document.getElementsByClassName('btn-operation')[1].style.opacity = 0;
+            document.getElementsByClassName('btn-operation')[2].style.opacity = 1;
+            document.getElementById('page-randomizer-action-guide').classList.add('active');
+            document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "Randomizer Action Guide";
+            document.getElementById('toRandomizerController').focus();
+            pageNum = 16;
+            return;
         } else if (pageNum == 1 || pageNum == 4 || pageNum == 5) {
             // Controls / Basic Actions / Capture Actions are only ever
             // reached through the Action Guide overlay now, so Cancel/B
@@ -120,7 +182,7 @@ window.onload = function() {
             document.getElementsByClassName('btn-operation')[1].style.opacity = 0;
             document.getElementsByClassName('btn-operation')[2].style.opacity = 1;
             document.getElementById('page-action-guide').classList.add('active');
-            document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "Action Guide";
+            document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "Classic Action Guide";
             document.getElementById(actionGuideFocusId).focus();
             pageNum = 14;
             return;
@@ -331,6 +393,16 @@ function customFunctionL() {
         }
         document.getElementById('capture' + (captureNum - 1)).focus();
 
+    } else if (pageNum == 17) {
+        if (document.activeElement.id == "dummy-a-randomizer") {
+            document.getElementById('dummy-a-randomizer').focus();
+        }
+        var rMoveNum = parseFloat(document.activeElement.id.slice(5));
+        if (rMoveNum == 1) {
+            rMoveNum = 22;
+        }
+        document.getElementById('rmove' + (rMoveNum - 1)).focus();
+
     } else if (pageNum > 5) {
         wsnd.play("UiTurnPage");
         clearTimeout(playReport9to14);
@@ -440,6 +512,16 @@ function customFunctionR() {
             capturenNum = 0;
         }
         document.getElementById('capture' + (capturenNum + 1)).focus();
+
+    } else if (pageNum == 17) {
+        if (document.activeElement.id == "dummy-a-randomizer") {
+            document.getElementById('dummy-a-randomizer').focus();
+        }
+        var rMoveNumR = parseFloat(document.activeElement.id.slice(5));
+        if (rMoveNumR > 20) {
+            rMoveNumR = 0;
+        }
+        document.getElementById('rmove' + (rMoveNumR + 1)).focus();
 
     } else if (pageNum > 5) {
         wsnd.play("UiTurnPage");
@@ -858,6 +940,34 @@ function page5Open(e) {
         }, 100);
     }, 2000);
 
+}
+
+function randomizerMovementOpen() {
+    pageNum = 0.5;
+    document.getElementsByClassName("page0")[0].style.display = "none";
+    document.getElementById('page-randomizer-movement').style.display = "block";
+    document.getElementById('dummy-a-randomizer').focus();
+
+    document.getElementsByClassName('page0')[0].style.opacity = 0;
+    document.getElementById('page-randomizer-movement').style.opacity = 1;
+
+    document.getElementsByClassName("action-mov")[2].style.display = "block";
+
+    document.getElementsByClassName('btn-operation')[0].style.opacity = 0;
+    document.getElementsByClassName('btn-operation')[1].style.opacity = 1;
+    document.getElementsByClassName('btn-operation')[2].style.opacity = 0;
+    document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "Randomizer Movement Controls";
+
+    document.getElementsByClassName("action-mov")[2].style.opacity = 1;
+    document.getElementsByClassName("joycon-lr-desc")[2].style.display = "block";
+    document.getElementsByClassName("joycon-side-desc")[2].style.display = "block";
+    document.getElementById('page-randomizer-movement').style.display = "block"; //連打対策
+    document.getElementById('rmove1').focus();
+    pageNum = 17;
+
+    // NOTE: intentionally not calling playReportCount() here - the existing
+    // counter IDs (4/5/6/7/8...) are already assigned to other pages, and
+    // this page needs its own free counter ID once one is picked.
 }
 
 function openSpoilerLog() {
@@ -3926,6 +4036,43 @@ function basicMov(num) {
     var basicTimeout1 = setTimeout(function() {
         basicTitle.style.opacity = 1;
         clearTimeout(basicTimeout1);
+    }, 100);
+}
+
+function randomizerAbilityMov(num) {
+    if (randomizerMove1SE) {
+        wsnd.play("UiCursor");
+    } else {
+        randomizerMove1SE = true;
+    }
+    clearTimeout(randomizerMoveTimeout2);
+    clearTimeout(randomizerMoveTimeout3);
+    var ability = RANDOMIZER_ABILITIES[num - 1];
+    var videoUrl = "url(../../video/randomizerabilities/" + ability.video + ".webp)";
+    document.getElementById('randomizer-basic-title').getElementsByTagName('span')[0].style.opacity = 0;
+    var randomizerTitle = document.getElementById('randomizer-basic-title').getElementsByTagName('span')[0];
+    var leftDesc = document.getElementsByClassName('joycon-lr-desc')[2].getElementsByTagName('span')[0];
+    var rightDesc = document.getElementsByClassName('joycon-side-desc')[2].getElementsByTagName('span')[0];
+    randomizerTitle.innerHTML = document.getElementsByClassName('action-desc')[2].getElementsByTagName('h2')[num - 1].innerHTML;
+    leftDesc.innerHTML = document.getElementsByClassName('action-desc')[2].getElementsByClassName('action-ms')[num - 1].innerHTML;
+    // No two-player controller variant for abilities, unlike the Basic
+    // Actions/Capture Actions panels - both sides just show the same text.
+    rightDesc.innerHTML = leftDesc.innerHTML;
+    document.getElementById('rmove' + num).getElementsByTagName('img')[0].style.animationName = "focus-thmb-up1";
+
+    randomizerMoveTimeout2 = setTimeout(function() {
+        imgload1.src = "../../video/randomizerabilities/" + ability.video + ".webp";
+        randomizerMoveTimeout3 = setTimeout(function() {
+            document.getElementsByClassName("action-mov")[2].style.backgroundImage = videoUrl;
+            imgload1.src = null;
+            clearTimeout(randomizerMoveTimeout3);
+        }, 200);
+        clearTimeout(randomizerMoveTimeout2);
+    }, 100);
+
+    var randomizerMoveTimeout1 = setTimeout(function() {
+        randomizerTitle.style.opacity = 1;
+        clearTimeout(randomizerMoveTimeout1);
     }, 100);
 }
 
