@@ -441,6 +441,14 @@
     <div class=" contents">
         <div class="page page0">
             <div class="toc-background-image"></div>
+            <div class="theme-toggle">
+                <span class="theme-toggle-label">Light Mode</span>
+                <label class="theme-toggle-switch">
+                    <input type="checkbox" id="themeToggleInput" onchange="toggleTheme(this.checked)" />
+                    <span class="theme-toggle-slider"></span>
+                </label>
+                <span class="theme-toggle-label">Dark Mode</span>
+            </div>
             <h1><span data-msgcom="true" data-msgid="textbox_id-10901">SMO Randomizer</span></h1>
             <ul class="toc">
                 <li><a href="javascript:void(0);" onclick="openDownloads()" onblur="menuBlur(this)"
@@ -1928,6 +1936,20 @@
     <!--★<script src="../../js/playreport.js"></script>-->
     <script src="../../js/wsnd.min.js"></script>
     <script src="../../js/index.js"></script>
+    <script>
+        function toggleTheme(isDark) {
+            document.documentElement.classList.toggle('dark-mode', isDark);
+            try { localStorage.setItem('smoRandomizerTheme', isDark ? 'dark' : 'light'); } catch (e) {}
+        }
+        (function () {
+            var saved = 'light';
+            try { saved = localStorage.getItem('smoRandomizerTheme') || 'light'; } catch (e) {}
+            var isDark = saved === 'dark';
+            var input = document.getElementById('themeToggleInput');
+            if (input) { input.checked = isDark; }
+            document.documentElement.classList.toggle('dark-mode', isDark);
+        })();
+    </script>
 
     <!-- textbox_id_counter-916 -->
 </body>
