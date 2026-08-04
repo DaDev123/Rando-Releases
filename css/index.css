@@ -1613,3 +1613,89 @@ footer {
     font-size: 14px;
     text-align: center;
 }
+/*Dark Mode----------------------------------------------------------------*/
+
+html.dark-mode body,
+html.dark-mode .page,
+html.dark-mode .top-bar,
+html.dark-mode .action-label,
+html.dark-mode .action-right > img,
+html.dark-mode .silver,
+html.dark-mode .thumb-area > a,
+html.dark-mode .mode-change,
+html.dark-mode footer,
+html.dark-mode .toc > li > a:focus,
+html.dark-mode .bottom-white-area,
+html.dark-mode .bottom-red-area,
+html.dark-mode .download-item,
+html.dark-mode .credit-item,
+html.dark-mode .spoiler-sidebar,
+html.dark-mode .spoiler-toolbar,
+html.dark-mode .spoiler-content-wrapper,
+html.dark-mode .downloads-page,
+html.dark-mode .credits-page,
+html.dark-mode .spoiler-page {
+    background-color: #000 !important;
+}
+
+html.dark-mode .spoiler-row-value {
+    color: #fff !important;
+}
+
+/* Theme toggle switch */
+.theme-toggle {
+    position: absolute;
+    top: 40px;
+    left: 70px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 50;
+    transform: rotate(-3deg);
+}
+.theme-toggle-label {
+    font-family: "FontDB", sans-serif;
+    font-size: 16px;
+    color: #fff;
+}
+.theme-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 54px;
+    height: 28px;
+}
+.theme-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.theme-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #fff;
+    border-radius: 28px;
+    transition: 0.2s;
+    box-shadow: inset 0 0 0 2px #B59D00;
+}
+.theme-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    top: 4px;
+    background-color: #B59D00;
+    border-radius: 50%;
+    transition: 0.2s;
+}
+.theme-toggle-switch input:checked + .theme-toggle-slider {
+    background-color: #000;
+}
+.theme-toggle-switch input:checked + .theme-toggle-slider:before {
+    transform: translateX(26px);
+    background-color: #fff;
+}
