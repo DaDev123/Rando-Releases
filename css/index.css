@@ -1625,15 +1625,20 @@ html.dark-mode .mode-change,
 html.dark-mode footer,
 html.dark-mode .bottom-white-area,
 html.dark-mode .bottom-red-area,
-html.dark-mode .credit-item,
 html.dark-mode .downloads-page,
 html.dark-mode .credits-page,
 html.dark-mode .spoiler-page {
     background-color: #000 !important;
 }
 
-html.dark-mode .download-item {
+html.dark-mode .download-item,
+html.dark-mode .credit-item {
     background-color: #454545 !important;
+}
+
+html.dark-mode .credit-name,
+html.dark-mode .credit-desc {
+    color: #fff !important;
 }
 
 html.dark-mode .spoiler-sidebar,
