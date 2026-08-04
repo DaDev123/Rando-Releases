@@ -1633,7 +1633,7 @@ html.dark-mode .spoiler-page {
 }
 
 html.dark-mode .download-item {
-    background-color: #4d4d4d !important;
+    background-color: #454545 !important;
 }
 
 html.dark-mode .spoiler-sidebar,
@@ -1661,9 +1661,19 @@ html.dark-mode .spoiler-search {
 html.dark-mode .spoiler-content {
     color: #fff !important;
 }
+html.dark-mode .download-title,
+html.dark-mode .download-desc {
+    color: #fff !important;
+}
+
+html.dark-mode .spoiler-row,
+html.dark-mode .spoiler-list-item {
+    background-color: #2e2e2e !important;
+    color: #fff !important;
+}
 html.dark-mode .spoiler-row:nth-child(even),
 html.dark-mode .spoiler-list-item:nth-child(even) {
-    background-color: #262626 !important;
+    background-color: #454545 !important;
 }
 html.dark-mode .spoiler-row:hover {
     background-color: #4d4200 !important;
