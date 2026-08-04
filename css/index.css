@@ -1625,15 +1625,55 @@ html.dark-mode .mode-change,
 html.dark-mode footer,
 html.dark-mode .bottom-white-area,
 html.dark-mode .bottom-red-area,
-html.dark-mode .download-item,
 html.dark-mode .credit-item,
-html.dark-mode .spoiler-sidebar,
-html.dark-mode .spoiler-toolbar,
-html.dark-mode .spoiler-content-wrapper,
 html.dark-mode .downloads-page,
 html.dark-mode .credits-page,
 html.dark-mode .spoiler-page {
     background-color: #000 !important;
+}
+
+html.dark-mode .download-item {
+    background-color: #4d4d4d !important;
+}
+
+html.dark-mode .spoiler-sidebar,
+html.dark-mode .spoiler-toolbar,
+html.dark-mode .spoiler-content-wrapper {
+    background-color: #1a1a1a !important;
+}
+
+html.dark-mode .spoiler-section-item {
+    color: #fff !important;
+}
+html.dark-mode .spoiler-section-item:hover,
+html.dark-mode .spoiler-section-item.active {
+    background-color: #4d4200 !important;
+}
+html.dark-mode .spoiler-filename,
+html.dark-mode .spoiler-count {
+    color: #ccc !important;
+}
+html.dark-mode .spoiler-search {
+    background-color: #2a2a2a !important;
+    color: #fff !important;
+    border-color: #555 !important;
+}
+html.dark-mode .spoiler-content {
+    color: #fff !important;
+}
+html.dark-mode .spoiler-row:nth-child(even),
+html.dark-mode .spoiler-list-item:nth-child(even) {
+    background-color: #262626 !important;
+}
+html.dark-mode .spoiler-row:hover {
+    background-color: #4d4200 !important;
+}
+html.dark-mode .spoiler-row-key {
+    color: #eee !important;
+}
+html.dark-mode .spoiler-group-header.major {
+    background-color: #2a2a2a !important;
+    color: #fff !important;
 }
 
 html.dark-mode .spoiler-row-value {
