@@ -1621,7 +1621,6 @@ html.dark-mode .top-bar,
 html.dark-mode .action-label,
 html.dark-mode .action-right > img,
 html.dark-mode .silver,
-html.dark-mode .thumb-area > a,
 html.dark-mode .mode-change,
 html.dark-mode footer,
 html.dark-mode .bottom-white-area,
@@ -1639,6 +1638,15 @@ html.dark-mode .spoiler-page {
 
 html.dark-mode .spoiler-row-value {
     color: #fff !important;
+}
+
+/* Movement-controls thumbnail strip: boxes become visible grey squares,
+   and the selected/focused thumbnail keeps its gold highlight. */
+html.dark-mode .thumb-area > a {
+    background-color: #4d4d4d !important;
+}
+html.dark-mode .thumb-area > a:focus {
+    background-color: #B59D00 !important;
 }
 
 /* Theme toggle switch */
