@@ -1,0 +1,372 @@
+@charset "utf-8";
+/* ==========================================================================
+   MOBILE RESPONSIVE OVERRIDES — SMO Randomizer site
+   Load this AFTER index.css (and after style-CNzh.css / style-TWzh.css if
+   those are loaded on your locale). It only touches layout at narrow
+   viewports; nothing here changes the desktop experience.
+
+   HOW TO USE:
+   1. Save this file as css/mobile-responsive.css in the repo.
+   2. In index.html <head>, add this line right after the existing
+      <link rel="stylesheet" href="../../css/index.css" /> line:
+        <link rel="stylesheet" href="../../css/mobile-responsive.css" />
+   3. Change the viewport meta tag from:
+        <meta name="viewport" content="user-scalable=no" />
+      to:
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+
+   This does NOT modify index.js — page switching, spoiler log filtering,
+   basicMov()/captureMov() etc. all still work exactly as before. This file
+   only overrides position/size/display of things at small screens.
+   ========================================================================== */
+
+@media (max-width: 760px) {
+
+  /* ---- 1. Root canvas: stop being a fixed 1280x720 box ------------------ */
+  html, body {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto !important;
+  }
+  .contents {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .page {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100dvh;
+    box-sizing: border-box;
+    padding: 64px 16px 90px 16px; /* room for top-bar + footer */
+    display: none;
+  }
+  .page.page0,
+  .page.active {
+    display: block;
+  }
+  /* page0 is shown by default with no .active class on first load */
+  .page0 { display: block; }
+
+  /* ---- 2. Shared chrome: top-bar / page-circle / footer ----------------- */
+  .top-bar {
+    position: fixed !important;
+    top: 0; left: 0;
+    width: 100% !important;
+    height: 56px !important;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .top-bar > span {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    font-size: 22px !important;
+    line-height: 1.2 !important;
+    padding: 0 50px;
+    text-align: center;
+  }
+  .left-arrow, .right-arrow { display: none !important; }
+
+  .page-circle {
+    position: static !important;
+    width: auto !important;
+    margin: 4px 0 10px 0;
+  }
+
+  .back-link {
+    position: static !important;
+    display: inline-flex !important;
+    align-items: center;
+    height: auto !important;
+    margin-bottom: 8px;
+  }
+
+  footer#page0Footer {
+    position: fixed !important;
+    bottom: 0; left: 0;
+    width: 100% !important;
+    z-index: 20;
+    background: #fff;
+    box-shadow: 0 -2px 6px rgba(0,0,0,0.15);
+  }
+  .btn-operation {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    min-height: 56px;
+    flex-wrap: wrap;
+  }
+  .btn-operation .footer-L { display: none; } /* stick icon is meaningless on touch */
+  .footer-B, .footer-A {
+    width: 34px !important;
+    height: 34px !important;
+  }
+  .footer-back, .footer-choose, .footer-ok {
+    font-size: 16px !important;
+    padding: 6px;
+  }
+  /* footer-B / footer-back already have click handlers wired in wsnd.min.js —
+     just give them a real touch target */
+  .footer-B, .footer-back {
+    min-height: 44px;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+  }
+
+  /* dark-mode toggle on the home page */
+  .theme-toggle {
+    position: static !important;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  /* ---- 3. Home menu / Features / Classic & Randomizer Action Guide ------
+     All four share the same rotated .toc list structure. Un-rotate it and
+     stack it as a plain full-width menu. ------------------------------- */
+  .page0 > h1,
+  .action-guide-page h1 {
+    position: static !important;
+    transform: none !important;
+    font-size: 30px !important;
+    text-align: center;
+    margin: 8px 0 16px 0 !important;
+  }
+  .toc-background-image { display: none !important; }
+  .toc,
+  .action-guide-page .toc {
+    position: static !important;
+    transform: none !important;
+    list-style: none;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .toc-gap { height: 6px; }
+  .toc > li > a {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    height: 52px !important;
+    font-size: 20px !important;
+    padding-left: 0 !important;
+    background-color: #fff;
+    color: #525252 !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  }
+  .toc-mov, .amiibo-arrow1, .amiibo-arrow2 { display: none !important; }
+
+  .features-container,
+  #features-container {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  /* ---- 4. Play style select (page3) -------------------------------------- */
+  .page3 h2, .page3 h3 {
+    position: static !important;
+    text-align: center;
+    font-size: 22px !important;
+  }
+  .page3 img.single-mario, .page3 img.two-play-mario,
+  .page3 img.play-style-plus, .page3 img.two-play-cap {
+    display: none !important; /* decorative character art, not needed once stacked */
+  }
+  .bottom-white-area {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    display: block;
+    padding: 16px !important;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+  }
+  .bottom-white-area img { max-width: 60px; height: auto; margin: 4px !important; }
+
+  /* ---- 5. Control legend pages (page1 single-player, page2 two-player) --
+     .action-label / .system-label already bundle icon+text as one unit —
+     just unstick them from absolute coordinates and stack them. --------- */
+  .page1, .page2 {
+    background-image: none !important;
+  }
+  .page1 img.single-play-hand,
+  .page2 img.two-play-hand1, .page2 img.two-play-hand2,
+  .page2 .gold-bar-mario, .page2 .gold-bar-cap,
+  .amiibo-figure-mini,
+  .control-mario-image,
+  canvas.call-out,
+  .red-circle, .gray-circle, .red-ellipse {
+    display: none !important;
+  }
+  .action-label, .system-label {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 52px;
+    display: flex !important;
+    align-items: center;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+  }
+  .action-label > span, .system-label > span {
+    display: block !important;
+    width: auto !important;
+    flex: 1 1 auto;
+    height: auto !important;
+    padding: 10px 14px !important;
+    font-size: 17px !important;
+    line-height: 1.3 !important;
+  }
+  .action-left > img, .action-right > img,
+  .system-label > img {
+    position: static !important;
+    float: none !important;
+    padding: 0 12px !important;
+  }
+  .sub-btn {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 4px;
+    margin-left: 6px;
+  }
+  .sub-btn > p, .sub-btn > img {
+    position: static !important;
+    width: auto !important;
+  }
+
+  /* ---- 6. Basic Actions / Capture Actions (page4, page5) + the shared
+     Randomizer Movement / Randomizer Action-Guide thumb-grid pages ------ */
+  .top-red-area, .top-red-area2 {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    background-image: none !important;
+    padding: 8px 0;
+  }
+  .dark-red-area { width: 100% !important; height: auto !important; }
+  .dark-red-area img { max-width: 130px; height: auto; margin: 4px 8px; }
+  .joycon-lr-desc, .joycon-side-desc {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    left: auto !important;
+    text-align: center;
+    padding: 8px 0;
+  }
+  .joycon-lr-desc > span, .joycon-side-desc > span {
+    display: block !important;
+    margin: 8px 0 !important;
+    font-size: 17px !important;
+    line-height: 1.5 !important;
+    text-align: center !important;
+  }
+
+  .thumb-area,
+  #page-randomizer-movement .thumb-area {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    left: auto !important;
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)) !important;
+    gap: 6px !important;
+  }
+  .thumb-area > a {
+    float: none !important;
+    width: 100% !important;
+    height: 64px !important;
+    aspect-ratio: 1 / 1;
+  }
+  .thumb-row-break { display: none !important; }
+
+  /* decorative "cap" icons pinned to old fixed thumb coordinates —
+     they'll no longer line up once the grid reflows */
+  [class$="-cap"][class^="action"] { display: none !important; }
+
+  #page-randomizer-movement .thumb-area {
+    position: static !important; /* overrides the inline-style !important block */
+  }
+
+  /* ---- 7. Spoiler Log / Downloads / Credits ------------------------------ */
+  .downloads-container, .credits-container, .spoiler-container {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    top: auto !important;
+    left: auto !important;
+  }
+  .download-item {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 10px;
+  }
+  .download-btn { align-self: stretch; text-align: center; }
+
+  .credits-container {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    max-height: none !important;
+    gap: 10px !important;
+  }
+  .credit-item {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .spoiler-viewer { flex-direction: column !important; }
+  .spoiler-sidebar {
+    width: 100% !important;
+    max-height: 160px;
+    border-right: none !important;
+    border-bottom: 2px solid #e2e2e2;
+  }
+  .spoiler-section-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 8px !important;
+  }
+  .spoiler-section-item {
+    display: inline-block !important;
+    padding: 8px 12px !important;
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    border-left-width: 1px !important;
+  }
+  .spoiler-toolbar { flex-wrap: wrap; padding: 10px 14px !important; }
+  .spoiler-search { max-width: none !important; width: 100%; }
+  .spoiler-row, .spoiler-list-item {
+    display: block !important;
+  }
+  .spoiler-empty { padding: 0 20px !important; }
+}
+
+/* ==========================================================================
+   Small phones — tighten spacing a bit further
+   ========================================================================== */
+@media (max-width: 380px) {
+  .page { padding: 60px 10px 84px 10px; }
+  .toc > li > a { font-size: 17px !important; height: 46px !important; }
+  .action-label > span, .system-label > span { font-size: 15px !important; }
+}
