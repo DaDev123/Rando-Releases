@@ -438,41 +438,62 @@
 
         /* Dark/Light mode toggle now uses icon images instead of text labels */
         .theme-toggle-icon {
-            width: 28px;
-            height: 28px;
+            width: 22px;
+            height: 22px;
             object-fit: contain;
             display: inline-block;
             vertical-align: middle;
+            flex: 0 0 auto;
         }
 
-        /* "Last updated" text under the Downloads button on the main menu */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* "Last updated" text next to the Downloads button on the main menu */
         .toc-last-updated {
-            display: block;
+            display: inline-block;
             font-size: 11px;
             color: #fff;
             opacity: 0.85;
-            margin-top: 2px;
             font-weight: normal;
+            margin-left: 10px;
+            vertical-align: middle;
+            white-space: nowrap;
         }
 
-        /* "Last updated" text below the download entries on the Downloads page itself */
+        /* "Last updated" text next to the download entries on the Downloads page itself */
         .downloads-last-updated {
             display: block;
-            text-align: center;
+            text-align: right;
             color: #d4af37;
             font-size: 13px;
-            margin-top: 14px;
+            margin-top: 10px;
+            padding-right: 4px;
         }
 
-        /* Centered gold description under the Skybox Testing download entry */
+        /* Centered gold description under the Skybox Testing download entry.
+           position:relative + a top offset guards against the external
+           stylesheet positioning .downloads-container/.top-bar absolutely,
+           which was pushing this paragraph up behind them. */
+        .skybox-page .downloads-container {
+            position: relative;
+            z-index: 1;
+        }
+
         .skybox-desc {
+            position: relative;
+            z-index: 1;
             color: #d4af37;
             text-align: center;
             font-size: 14px;
             line-height: 1.5;
             max-width: 900px;
-            margin: 18px auto 0;
+            margin: 24px auto 0;
             padding: 0 20px;
+            clear: both;
         }
     </style>
 </head>
@@ -1362,15 +1383,30 @@
                     return months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
                 }
 
-                function setDownloadsLastUpdatedText(text) {
+                // Turns an ISO date into "today" / "yesterday" / "N days ago",
+                // falling back to the full date once it's more than a month old.
+                function formatRelativeDate(isoDate) {
+                    var d = new Date(isoDate);
+                    var now = new Date();
+                    var startOfDay = function (dt) { return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()); };
+                    var diffDays = Math.round((startOfDay(now) - startOfDay(d)) / 86400000);
+
+                    if (diffDays <= 0) { return "today"; }
+                    if (diffDays === 1) { return "yesterday"; }
+                    if (diffDays < 30) { return diffDays + " days ago"; }
+                    return formatCommitDate(isoDate);
+                }
+
+                function setDownloadsLastUpdatedText(isoDate, isError) {
                     var homeEl = document.getElementById("downloads-last-updated-home");
                     var pageEl = document.getElementById("downloads-last-updated-page");
+                    var text = isError ? isoDate : formatRelativeDate(isoDate);
                     if (homeEl) { homeEl.textContent = "Last updated " + text; }
                     if (pageEl) { pageEl.textContent = "Last updated " + text; }
                 }
 
                 function fetchDownloadsLastUpdated() {
-                    var cacheKey = "smoDownloadsLastUpdated";
+                    var cacheKey = "smoDownloadsLastUpdatedISO";
                     try {
                         var cached = sessionStorage.getItem(cacheKey);
                         if (cached) {
@@ -1386,15 +1422,15 @@
                         .then(function (res) { return res.json(); })
                         .then(function (data) {
                             if (Array.isArray(data) && data.length > 0 && data[0].commit) {
-                                var formatted = formatCommitDate(data[0].commit.committer.date);
-                                setDownloadsLastUpdatedText(formatted);
-                                try { sessionStorage.setItem(cacheKey, formatted); } catch (e) {}
+                                var isoDate = data[0].commit.committer.date;
+                                setDownloadsLastUpdatedText(isoDate);
+                                try { sessionStorage.setItem(cacheKey, isoDate); } catch (e) {}
                             } else {
-                                setDownloadsLastUpdatedText("unavailable");
+                                setDownloadsLastUpdatedText("unavailable", true);
                             }
                         })
                         .catch(function () {
-                            setDownloadsLastUpdatedText("unavailable");
+                            setDownloadsLastUpdatedText("unavailable", true);
                         });
                 }
 
