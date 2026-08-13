@@ -462,20 +462,31 @@
 
         .theme-toggle {
             display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+        }
+
+        .theme-toggle-row {
+            display: flex;
             align-items: center;
             gap: 8px;
         }
 
         /* Shown/hidden entirely via the SHOWBROKENBUTTONNOTE flag near the
            top of <head> - see the inline script right after this element
-           in the body. */
+           in the body. Tilt is copied at runtime from the "SMO
+           Randomizer" title (see the same script) so it always matches
+           whatever rotation that title actually has, even though that
+           rotation itself is defined in the external stylesheet. */
         .broken-button-note {
-            margin: 6px 0 0;
+            margin: 0;
             font-size: 11px;
             color: #fff;
             opacity: 0.75;
-            text-align: right;
+            text-align: left;
             white-space: nowrap;
+            transform-origin: left top;
         }
 
         /* "Last updated" text next to the Downloads button on the main menu */
@@ -547,20 +558,36 @@
         <div class="page page0">
             <div class="toc-background-image"></div>
             <div class="theme-toggle">
-                <img class="theme-toggle-icon" src="../../img/features/LightMode.png" alt="Light Mode" />
-                <label class="theme-toggle-switch">
-                    <input type="checkbox" id="themeToggleInput" onchange="toggleTheme(this.checked)" />
-                    <span class="theme-toggle-slider"></span>
-                </label>
-                <img class="theme-toggle-icon" src="../../img/features/DarkMode.png" alt="Dark Mode" />
+                <div class="theme-toggle-row">
+                    <img class="theme-toggle-icon" src="../../img/features/LightMode.png" alt="Light Mode" />
+                    <label class="theme-toggle-switch">
+                        <input type="checkbox" id="themeToggleInput" onchange="toggleTheme(this.checked)" />
+                        <span class="theme-toggle-slider"></span>
+                    </label>
+                    <img class="theme-toggle-icon" src="../../img/features/DarkMode.png" alt="Dark Mode" />
+                </div>
+                <p class="broken-button-note" id="brokenButtonNote">If none of the buttons work, Toggle Light/Dark Mode</p>
             </div>
-            <p class="broken-button-note" id="brokenButtonNote">If none of the buttons work, Toggle Light/Dark Mode</p>
             <script>
                 // Controlled by SHOWBROKENBUTTONNOTE (set near the top of
                 // <head>) - flip it to 0 to hide this note, 1 to show it.
-                if (typeof SHOWBROKENBUTTONNOTE === "undefined" || SHOWBROKENBUTTONNOTE != 1) {
-                    document.getElementById('brokenButtonNote').style.display = "none";
-                }
+                (function() {
+                    var noteEl = document.getElementById('brokenButtonNote');
+                    if (!noteEl) { return; }
+                    if (typeof SHOWBROKENBUTTONNOTE === "undefined" || SHOWBROKENBUTTONNOTE != 1) {
+                        noteEl.style.display = "none";
+                        return;
+                    }
+                    // Match the same tilt as the "SMO Randomizer" title,
+                    // whatever it happens to be set to in the stylesheet.
+                    var titleEl = document.querySelector('.page0 h1');
+                    if (titleEl) {
+                        var titleTransform = window.getComputedStyle(titleEl).transform;
+                        if (titleTransform && titleTransform !== "none") {
+                            noteEl.style.transform = titleTransform;
+                        }
+                    }
+                })();
             </script>
             <h1><span data-msgcom="true" data-msgid="textbox_id-10901">SMO Randomizer</span></h1>
             <ul class="toc">
