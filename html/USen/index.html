@@ -435,6 +435,45 @@
         .feature-card:focus .feature-tooltip {
             opacity: 1;
         }
+
+        /* Dark/Light mode toggle now uses icon images instead of text labels */
+        .theme-toggle-icon {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* "Last updated" text under the Downloads button on the main menu */
+        .toc-last-updated {
+            display: block;
+            font-size: 11px;
+            color: #fff;
+            opacity: 0.85;
+            margin-top: 2px;
+            font-weight: normal;
+        }
+
+        /* "Last updated" text below the download entries on the Downloads page itself */
+        .downloads-last-updated {
+            display: block;
+            text-align: center;
+            color: #d4af37;
+            font-size: 13px;
+            margin-top: 14px;
+        }
+
+        /* Centered gold description under the Skybox Testing download entry */
+        .skybox-desc {
+            color: #d4af37;
+            text-align: center;
+            font-size: 14px;
+            line-height: 1.5;
+            max-width: 900px;
+            margin: 18px auto 0;
+            padding: 0 20px;
+        }
     </style>
 </head>
 
@@ -443,17 +482,19 @@
         <div class="page page0">
             <div class="toc-background-image"></div>
             <div class="theme-toggle">
-                <span class="theme-toggle-label">Light Mode</span>
+                <img class="theme-toggle-icon" src="../../img/features/DarkMode.png" alt="Dark Mode" />
                 <label class="theme-toggle-switch">
                     <input type="checkbox" id="themeToggleInput" onchange="toggleTheme(this.checked)" />
                     <span class="theme-toggle-slider"></span>
                 </label>
-                <span class="theme-toggle-label">Dark Mode</span>
+                <img class="theme-toggle-icon" src="../../img/features/LightMode.png" alt="Light Mode" />
             </div>
             <h1><span data-msgcom="true" data-msgid="textbox_id-10901">SMO Randomizer</span></h1>
             <ul class="toc">
                 <li><a href="javascript:void(0);" onclick="openDownloads()" onblur="menuBlur(this)"
-                        onfocus="menuFocus(this)" id="toDownloads" nx-se-disabled=""><span>Downloads</span></a></li>
+                        onfocus="menuFocus(this)" id="toDownloads" nx-se-disabled=""><span>Downloads</span><span
+                            class="toc-last-updated" id="downloads-last-updated-home">Last updated ...</span></a>
+                </li>
                 <li><a href="javascript:void(0);" onclick="openSpoilerLog()" onblur="menuBlur(this)"
                         onfocus="menuFocus(this)" id="toOthers" nx-se-disabled=""><span>Spoiler
                             Log</span></a></li>
@@ -461,6 +502,9 @@
                         onfocus="menuFocus(this)" id="toFeatures" nx-se-disabled=""><span>Features</span></a></li>
                 <li><a href="javascript:void(0);" onclick="openCredits()" onblur="menuBlur(this)"
                         onfocus="menuFocus(this)" id="toCredits" nx-se-disabled=""><span>Credits</span></a></li>
+                <li><a href="javascript:void(0);" onclick="openSkyboxTesting()" onblur="menuBlur(this)"
+                        onfocus="menuFocus(this)" id="toSkyboxTesting" nx-se-disabled=""><span>Skybox
+                            Testing?</span></a></li>
                 <li class="toc-gap" aria-hidden="true"></li>
                 <li><a href="javascript:void(0);" onclick="openRandomizerActionGuide()" onblur="menuBlur(this)"
                         onfocus="menuFocus(this)" id="toRandomizerActionGuide" nx-se-disabled=""><span>Randomizer
@@ -1301,6 +1345,119 @@
                         onclick="wsnd.play('seDecide')">Download</a>
                 </div>
             </div>
+            <span class="downloads-last-updated" id="downloads-last-updated-page">Last updated ...</span>
+            <script>
+                // ---- Grabs the most recent commit that touched the "downloads" folder ----
+                const GITHUB_CONFIG = {
+                    owner: "DaDev123",
+                    repo: "Rando-Releases",
+                    branch: "main",
+                    path: "downloads"
+                };
+
+                function formatCommitDate(isoDate) {
+                    var d = new Date(isoDate);
+                    var months = ["January", "February", "March", "April", "May", "June", "July",
+                        "August", "September", "October", "November", "December"];
+                    return months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+                }
+
+                function setDownloadsLastUpdatedText(text) {
+                    var homeEl = document.getElementById("downloads-last-updated-home");
+                    var pageEl = document.getElementById("downloads-last-updated-page");
+                    if (homeEl) { homeEl.textContent = "Last updated " + text; }
+                    if (pageEl) { pageEl.textContent = "Last updated " + text; }
+                }
+
+                function fetchDownloadsLastUpdated() {
+                    var cacheKey = "smoDownloadsLastUpdated";
+                    try {
+                        var cached = sessionStorage.getItem(cacheKey);
+                        if (cached) {
+                            setDownloadsLastUpdatedText(cached);
+                            return;
+                        }
+                    } catch (e) {}
+
+                    var url = "https://api.github.com/repos/" + GITHUB_CONFIG.owner + "/" + GITHUB_CONFIG.repo +
+                        "/commits?path=" + GITHUB_CONFIG.path + "&sha=" + GITHUB_CONFIG.branch + "&per_page=1";
+
+                    fetch(url)
+                        .then(function (res) { return res.json(); })
+                        .then(function (data) {
+                            if (Array.isArray(data) && data.length > 0 && data[0].commit) {
+                                var formatted = formatCommitDate(data[0].commit.committer.date);
+                                setDownloadsLastUpdatedText(formatted);
+                                try { sessionStorage.setItem(cacheKey, formatted); } catch (e) {}
+                            } else {
+                                setDownloadsLastUpdatedText("unavailable");
+                            }
+                        })
+                        .catch(function () {
+                            setDownloadsLastUpdatedText("unavailable");
+                        });
+                }
+
+                fetchDownloadsLastUpdated();
+            </script>
+        </div>
+        <div class="page page14 skybox-page">
+            <div class="top-bar">
+                <a href="javascript:void(0);" id="skybox-back" onclick="closeSkyboxTesting()" nx-se-disabled=""
+                    class="back-link"><img class="left-arrow-static" src="../../img/left-arrow.webp" /><span
+                        class="back-label fontDB">Back</span></a>
+                <span>Skybox Testing?</span>
+            </div>
+            <div class="downloads-container">
+                <div class="download-item">
+                    <div class="download-info">
+                        <p class="download-title fontDB">Skybox Testing for Nintendo Switch</p>
+                        <p class="download-desc">Randomizer Skybox Testing mod for SMO on Nintendo Switch.</p>
+                    </div>
+                    <a class="download-btn" href="../../downloads/SkyboxTesting.zip" download
+                        onclick="wsnd.play('seDecide')">Download</a>
+                </div>
+            </div>
+            <p class="skybox-desc">Do you wanna help build a database of skyboxes for Super Mario Odyssey?
+                Certain skyboxes can cause lag and other issues in specific circumstances, so mapping out which
+                skyboxes are used where can help identify and avoid these problems. This build lets testers
+                explore different areas, identify problematic skyboxes, and submit them directly to the
+                database.</p>
+            <script>
+                function openSkyboxTesting() {
+                    wsnd.play("seDecide");
+                    footerText();
+                    document.getElementById('toSkyboxTesting').style.backgroundColor = "#525252";
+                    document.getElementById('toSkyboxTesting').style.color = "#fff";
+                    var skyboxTimeout = setTimeout(function() {
+                        document.getElementsByClassName('page0')[0].style.opacity = 0;
+                        document.getElementsByClassName('page0')[0].style.display = "none";
+                        document.getElementsByClassName('page14')[0].style.display = "block";
+                        document.getElementsByClassName('page14')[0].style.opacity = 1;
+                        document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "Skybox Testing?";
+                        document.getElementsByClassName('btn-operation')[0].style.opacity = 0;
+                        document.getElementsByClassName('btn-operation')[2].style.opacity = 1;
+                        document.getElementById('skybox-back').focus();
+                        pageNum = 18;
+                        clearTimeout(skyboxTimeout);
+                    }, 100);
+                }
+
+                function closeSkyboxTesting() {
+                    wsnd.play("seBack");
+                    document.getElementsByClassName('page14')[0].style.opacity = 0;
+                    document.getElementsByClassName('page14')[0].style.display = "none";
+                    document.getElementsByClassName('page0')[0].style.display = "block";
+                    document.getElementsByClassName('page0')[0].style.opacity = 1;
+                    document.getElementsByClassName('btn-operation')[0].style.opacity = 1;
+                    document.getElementsByClassName('btn-operation')[2].style.opacity = 0;
+                    document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "";
+                    document.getElementById('toSkyboxTesting').style.backgroundColor = "";
+                    document.getElementById('toSkyboxTesting').style.color = "";
+                    document.getElementById('toSkyboxTesting').focus();
+                    pageNum = 0;
+                }
+            </script>
         </div>
         <div class="page page13 credits-page">
             <div class="top-bar">
@@ -1943,8 +2100,8 @@
             try { localStorage.setItem('smoRandomizerTheme', isDark ? 'dark' : 'light'); } catch (e) {}
         }
         (function () {
-            var saved = 'light';
-            try { saved = localStorage.getItem('smoRandomizerTheme') || 'light'; } catch (e) {}
+            var saved = 'dark';
+            try { saved = localStorage.getItem('smoRandomizerTheme') || 'dark'; } catch (e) {}
             var isDark = saved === 'dark';
             var input = document.getElementById('themeToggleInput');
             if (input) { input.checked = isDark; }
