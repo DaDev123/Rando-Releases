@@ -515,8 +515,18 @@
            description block can center itself in whatever space is left
            below the top-bar and download card, regardless of the fixed
            pixel sizing the external stylesheet gives .page/.top-bar. */
+        /* Was "display: flex" unconditionally, which has the same CSS
+           specificity as the base .page{display:none} rule and comes
+           later in the cascade - so it won, and this page rendered
+           full-screen and position:fixed from the moment the app
+           loaded, on top of every button, blocking all clicks until
+           something (like flipping the theme switch) forced a reflow.
+           openSkyboxTesting()/closeSkyboxTesting() already set this via
+           inline style (which always beats a class rule), so restoring
+           the default to "none" here just fixes the *initial* state -
+           the open/close functions still work exactly as before. */
         .skybox-page {
-            display: flex;
+            display: none;
             flex-direction: column;
         }
 
