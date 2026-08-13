@@ -267,7 +267,7 @@
            screen once the Randomizer Action Guide button was added, so
            shift the whole list up a bit. Adjust the px value to taste. */
         .page0 .toc {
-            transform: translateY(-40px);
+            transform: translateY(-65px);
         }
 
         /* The AbilityXXX.png icons are much higher-res than the game's own
@@ -474,26 +474,44 @@
             padding-right: 4px;
         }
 
-        /* Centered gold description under the Skybox Testing download entry.
-           position:relative + a top offset guards against the external
-           stylesheet positioning .downloads-container/.top-bar absolutely,
-           which was pushing this paragraph up behind them. */
+        /* The Skybox Testing page is laid out as a flex column so the
+           description block can center itself in whatever space is left
+           below the top-bar and download card, regardless of the fixed
+           pixel sizing the external stylesheet gives .page/.top-bar. */
+        .skybox-page {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .skybox-page .top-bar {
+            flex: 0 0 auto;
+        }
+
         .skybox-page .downloads-container {
+            flex: 0 0 auto;
             position: relative;
             z-index: 1;
         }
 
         .skybox-desc {
+            flex: 1 1 auto;
             position: relative;
             z-index: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
             color: #d4af37;
             text-align: center;
-            font-size: 14px;
-            line-height: 1.5;
-            max-width: 900px;
-            margin: 24px auto 0;
+            font-size: 17px;
+            line-height: 1.6;
+        }
+
+        .skybox-desc p {
+            margin: 0;
+            max-width: 800px;
             padding: 0 20px;
-            clear: both;
         }
     </style>
 </head>
@@ -503,12 +521,12 @@
         <div class="page page0">
             <div class="toc-background-image"></div>
             <div class="theme-toggle">
-                <img class="theme-toggle-icon" src="../../img/features/DarkMode.png" alt="Dark Mode" />
+                <img class="theme-toggle-icon" src="../../img/features/LightMode.png" alt="Light Mode" />
                 <label class="theme-toggle-switch">
                     <input type="checkbox" id="themeToggleInput" onchange="toggleTheme(this.checked)" />
                     <span class="theme-toggle-slider"></span>
                 </label>
-                <img class="theme-toggle-icon" src="../../img/features/LightMode.png" alt="Light Mode" />
+                <img class="theme-toggle-icon" src="../../img/features/DarkMode.png" alt="Dark Mode" />
             </div>
             <h1><span data-msgcom="true" data-msgid="textbox_id-10901">SMO Randomizer</span></h1>
             <ul class="toc">
@@ -1454,11 +1472,13 @@
                         onclick="wsnd.play('seDecide')">Download</a>
                 </div>
             </div>
-            <p class="skybox-desc">Do you wanna help build a database of skyboxes for Super Mario Odyssey?
-                Certain skyboxes can cause lag and other issues in specific circumstances, so mapping out which
-                skyboxes are used where can help identify and avoid these problems. This build lets testers
-                explore different areas, identify problematic skyboxes, and submit them directly to the
-                database.</p>
+            <div class="skybox-desc">
+                <p>Do you wanna help build a database of skyboxes for Super Mario Odyssey?</p>
+                <p>Certain skyboxes can cause lag and other issues in specific circumstances, so mapping out
+                    which skyboxes are used where can help identify and avoid these problems.</p>
+                <p>This build lets testers explore different areas, identify problematic skyboxes, and submit
+                    them directly to the database.</p>
+            </div>
             <script>
                 function openSkyboxTesting() {
                     wsnd.play("seDecide");
