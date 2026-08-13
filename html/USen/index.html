@@ -268,6 +268,26 @@
            shift the whole list up a bit. Adjust the px value to taste. */
         .page0 .toc {
             transform: translateY(-65px);
+            position: relative;
+            z-index: 5;
+        }
+
+        /* Purely decorative - was intercepting clicks meant for the menu
+           links underneath it, which only "unstuck" after interacting with
+           the theme toggle happened to force a repaint. Never let it (or
+           the toggle) sit above the actual menu buttons. */
+        .toc-background-image {
+            pointer-events: none;
+        }
+
+        .page0 .toc li a {
+            position: relative;
+            z-index: 5;
+        }
+
+        .theme-toggle {
+            position: relative;
+            z-index: 3;
         }
 
         /* The AbilityXXX.png icons are much higher-res than the game's own
