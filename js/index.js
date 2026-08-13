@@ -1,3 +1,34 @@
+// Every button handler on the homepage (openDownloads, openCredits,
+// openSpoilerLog, openFeatures, openSkyboxTesting, openActionGuide,
+// openRandomizerActionGuide, etc.) starts with an unguarded call to
+// wsnd.play(...) before doing anything else - including the code that
+// actually shows the next page. wsnd.load() (called later, inside
+// window.onload) loads the audio files asynchronously, so there's a
+// window right after the page loads where wsnd hasn't finished
+// initializing yet. If a button is clicked during that window,
+// wsnd.play() throws, and because nothing catches it, the rest of the
+// handler (the part that actually opens the page) never runs - the
+// button silently does nothing. Flipping the Light/Dark switch doesn't
+// fix anything by itself; it just costs enough time for wsnd to finish
+// loading in the background, so the *next* click you make happens to
+// land after the race is over. Wrapping wsnd.play() here - once, right
+// after wsnd.min.js defines it - means a slow/failed sound can never
+// again take the rest of a click handler down with it.
+(function protectWsndPlay() {
+    if (typeof window.wsnd === "undefined" || typeof wsnd.play !== "function") {
+        return;
+    }
+    var realPlay = wsnd.play.bind(wsnd);
+    wsnd.play = function() {
+        try {
+            realPlay.apply(wsnd, arguments);
+        } catch (e) {
+            // Swallow it - a missing/late sound effect should never stop
+            // the button from doing the thing it was clicked to do.
+        }
+    };
+})();
+
 var pageNum = 0.5;
 var urltext = location.href;
 var tftext = urltext.split("?");
