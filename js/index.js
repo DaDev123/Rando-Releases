@@ -44,6 +44,25 @@ var RANDOMIZER_ABILITIES = [
 
 window.onload = function() {
 
+    // Turn the menu buttons on right away. Everything else in this
+    // function touches optional/external stuff (the nx.js Switch API,
+    // audio files, background video images) that can fail to load
+    // depending on where this page is hosted. Previously, if any of
+    // that startup code threw before firstpage() ran, btnActive got
+    // stuck at false forever and every button stayed dead until
+    // something unrelated (like flipping the theme switch, which
+    // forces the page to redraw) happened to paper over it. Calling
+    // firstpage() first - and wrapping the fragile bits below in
+    // try/catch - means the buttons activate ~1s after load no matter
+    // what else fails.
+    if (pageNum != 7) {
+        firstpage();
+        var page0Timeout = setTimeout(function() {
+            pageNum = 0;
+            clearTimeout(page0Timeout);
+        }, 1000);
+    }
+
     var tocMovNum = Math.floor(Math.random() * 20) + 1;
     if (tocMovNum == 2) {
         tocMovNum = "2-nohand";
@@ -52,15 +71,24 @@ window.onload = function() {
     } else if (tocMovNum == 12) {
         tocMovNum = tocMovNum.toString(10) + "-nohand";
     }
-    document.getElementById('toc-mov').style.backgroundImage = "url(../../video/action" + tocMovNum + ".webp)";
-    window.nx.playReport.setCounterSetIdentifier(0); /*0版*/
-    wsnd.load({
-        "seBack": "../../audio/UiBack.wav",
-        "seDecide": "../../audio/UiDecide.wav",
-        "UiCursor": "../../audio/UiCursor.wav",
-        "UiTurnPage": "../../audio/UiTurnPage.wav",
-        "UiToModeSelect": "../../audio/UiToModeSelect.wav"
-    });
+    var tocMovEl = document.getElementById('toc-mov');
+    if (tocMovEl) {
+        tocMovEl.style.backgroundImage = "url(../../video/action" + tocMovNum + ".webp)";
+    }
+
+    try {
+        window.nx.playReport.setCounterSetIdentifier(0); /*0版*/
+    } catch (e) {}
+
+    try {
+        wsnd.load({
+            "seBack": "../../audio/UiBack.wav",
+            "seDecide": "../../audio/UiDecide.wav",
+            "UiCursor": "../../audio/UiCursor.wav",
+            "UiTurnPage": "../../audio/UiTurnPage.wav",
+            "UiToModeSelect": "../../audio/UiToModeSelect.wav"
+        });
+    } catch (e) {}
 
     function TouchEventFunc(e) {
         // Allow download buttons to work
@@ -73,22 +101,21 @@ window.onload = function() {
     document.addEventListener("touchmove", TouchEventFunc);
     document.addEventListener("touchend", TouchEventFunc);
 
-    window.nx.footer.unsetAssign('x');
-    window.nx.footer.setAssign('L', '', customFunctionL, {
-        se: ''
-    });
-    window.nx.footer.setAssign('R', '', customFunctionR, {
-        se: ''
-    });
-    urlChange();
-    if (pageNum != 7) {
-        firstpage();
-        var page0Timeout = setTimeout(function() {
-            pageNum = 0;
-            clearTimeout(page0Timeout);
-        }, 1000);
-    }
+    try {
+        window.nx.footer.unsetAssign('x');
+        window.nx.footer.setAssign('L', '', customFunctionL, {
+            se: ''
+        });
+        window.nx.footer.setAssign('R', '', customFunctionR, {
+            se: ''
+        });
+    } catch (e) {}
 
+    try {
+        urlChange();
+    } catch (e) {}
+
+    try {
     window.nx.footer.setAssign('B', '', function() {
         if (pageNum == 6) {
             closeSpoilerLog();
@@ -271,6 +298,7 @@ window.onload = function() {
     }, {
         se: ''
     });
+    } catch (e) {}
 
     document.onkeydown = function(e) {
       var featuresPageEl = document.getElementById('page-features');
@@ -4131,7 +4159,11 @@ function captureMov(num) {
 
 
 function playReportCount(obj) {
-    window.nx.playReport.incrementCounter(parseInt(obj));
+    // Analytics-only call to the Switch nx.js API - never let a missing/
+    // failed nx.js block whatever button action triggered this.
+    try {
+        window.nx.playReport.incrementCounter(parseInt(obj));
+    } catch (e) {}
 }
 
 /**
