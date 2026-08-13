@@ -3,6 +3,12 @@
 <html>
 
 <head>
+    <script>
+        // Set to 0 to hide the "If none of the buttons work, Toggle
+        // Light/Dark Mode" note under the theme switch on the homepage.
+        // Set to 1 (default) to show it.
+        var SHOWBROKENBUTTONNOTE = 1;
+    </script>
     <meta charset="utf-8" />
     <title data-msgcom="true">SMO Randomizer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
@@ -460,6 +466,18 @@
             gap: 8px;
         }
 
+        /* Shown/hidden entirely via the SHOWBROKENBUTTONNOTE flag near the
+           top of <head> - see the inline script right after this element
+           in the body. */
+        .broken-button-note {
+            margin: 6px 0 0;
+            font-size: 11px;
+            color: #fff;
+            opacity: 0.75;
+            text-align: right;
+            white-space: nowrap;
+        }
+
         /* "Last updated" text next to the Downloads button on the main menu */
         .toc-last-updated {
             display: inline-block;
@@ -536,6 +554,14 @@
                 </label>
                 <img class="theme-toggle-icon" src="../../img/features/DarkMode.png" alt="Dark Mode" />
             </div>
+            <p class="broken-button-note" id="brokenButtonNote">If none of the buttons work, Toggle Light/Dark Mode</p>
+            <script>
+                // Controlled by SHOWBROKENBUTTONNOTE (set near the top of
+                // <head>) - flip it to 0 to hide this note, 1 to show it.
+                if (typeof SHOWBROKENBUTTONNOTE === "undefined" || SHOWBROKENBUTTONNOTE != 1) {
+                    document.getElementById('brokenButtonNote').style.display = "none";
+                }
+            </script>
             <h1><span data-msgcom="true" data-msgid="textbox_id-10901">SMO Randomizer</span></h1>
             <ul class="toc">
                 <li><a href="javascript:void(0);" onclick="openDownloads()" onblur="menuBlur(this)"
