@@ -105,6 +105,9 @@ window.onload = function() {
         } else if (pageNum == 15) {
             closeFeatures();
             return;
+        } else if (pageNum == 18) {
+            closeSkyboxTesting();
+            return;
         } else if (pageNum == 16) {
             closeRandomizerActionGuide();
             return;
@@ -328,7 +331,7 @@ window.onload = function() {
 
 
 function customFunctionL() {
-    if (pageNum == 6 || pageNum == 12 || pageNum == 13 || pageNum == 15) {
+    if (pageNum == 6 || pageNum == 12 || pageNum == 13 || pageNum == 15 || pageNum == 18) {
         return;
     } else if (pageNum == 1) {
         wsnd.play("UiTurnPage");
@@ -449,7 +452,7 @@ function customFunctionL() {
 }
 
 function customFunctionR() {
-    if (pageNum == 6 || pageNum == 12 || pageNum == 13 || pageNum == 15) {
+    if (pageNum == 6 || pageNum == 12 || pageNum == 13 || pageNum == 15 || pageNum == 18) {
         return;
     } else if (pageNum == 1) {
         wsnd.play("UiTurnPage");
