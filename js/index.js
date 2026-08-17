@@ -1396,9 +1396,9 @@ function mergeMoonRequirementsInOrder(sections) {
             var nameB = choiceMatch[2].trim();
             var reqA = reqByKingdom[normalizeGroupTitle(nameA)];
             var reqB = reqByKingdom[normalizeGroupTitle(nameB)];
-            var partA = nameA + (reqA ? " (" + reqA + ")" : "");
-            var partB = nameB + (reqB ? " (" + reqB + ")" : "");
-            mergedLines.push(partA + " OR " + partB + ": player choice");
+            mergedLines.push("@@CHOICEGROUP@@" + nameA + " OR " + nameB + " (player choice)");
+            mergedLines.push(nameA + ": " + (reqA ? reqA : "\u2014"));
+            mergedLines.push(nameB + ": " + (reqB ? reqB : "\u2014"));
         } else {
             var reqText = reqByKingdom[normalizeGroupTitle(kingdomText)];
             mergedLines.push(kingdomText + ": " + (reqText ? reqText : "\u2014"));
@@ -3899,6 +3899,7 @@ function buildSpoilerModel(lines, sectionTitle) {
     var bulletPattern = /^[-*•]\s+/;
     var numberedPattern = /^\d+\.\s+/;
     var sphereMarker = /^@@SPHERE@@(.+)$/;
+    var choiceGroupMarker = /^@@CHOICEGROUP@@(.+)$/;
     var currentGroupTitle = "";
 
     for (var i = 0; i < lines.length; i++) {
@@ -3908,6 +3909,12 @@ function buildSpoilerModel(lines, sectionTitle) {
             continue;
         }
         nonBlankCount++;
+
+        var choiceGroupMatch = trimmed.match(choiceGroupMarker);
+        if (choiceGroupMatch) {
+            rows.push({ type: "group", text: choiceGroupMatch[1], major: false, isChoice: true });
+            continue;
+        }
 
         var sphereMatch = trimmed.match(sphereMarker);
         if (sphereMatch) {
