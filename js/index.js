@@ -1292,14 +1292,21 @@ function mergeFinalObjectiveIntoSeedOverview(sections) {
         return;
     }
 
-    var finalLines = sections[finalIdx].lines.slice();
+    var rawLines = sections[finalIdx].lines.filter(function(l) {
+        return l.trim() !== "";
+    });
 
     // Reword the old "Proven" explanation line to the new phrasing if present.
-    for (var i = 0; i < finalLines.length; i++) {
-        if (/Cloud Kingdom and Wedding Hall Checkpoint.*reachable after the suggested path/i.test(finalLines[i])) {
-            finalLines[i] = "The final kingdom (Cloud Kingdom) and Wedding Hall Checkpoint are reachable along the suggested path.";
+    for (var i = 0; i < rawLines.length; i++) {
+        if (/Cloud Kingdom and Wedding Hall Checkpoint.*reachable after the suggested path/i.test(rawLines[i])) {
+            rawLines[i] = "The final kingdom (Cloud Kingdom) and Wedding Hall Checkpoint are reachable along the suggested path.";
         }
     }
+
+    // Collapse into a single combined block (rather than 3 separate lines)
+    // so it renders as one plain-text entry instead of 3 separate group
+    // headers in Seed Overview.
+    var finalLines = rawLines.length > 0 ? [rawLines.join(" — ")] : [];
 
     if (overviewIdx !== -1) {
         if (sections[overviewIdx].lines.length > 0) {
@@ -1313,9 +1320,9 @@ function mergeFinalObjectiveIntoSeedOverview(sections) {
 
 /**
  * Merges "Kingdom Order" and "Moon Requirements by Kingdom" into a
- * single "Moon Requirements in Order" section (kept as the 2nd tab),
- * listing each kingdom in play order together with its moon
- * requirement. The two original tabs are removed.
+ * single "Moon Requirements" section (kept as the 2nd tab), listing
+ * each kingdom in play order together with its moon requirement. The
+ * two original tabs are removed.
  */
 function mergeMoonRequirementsInOrder(sections) {
     var orderIdx = -1;
@@ -1391,14 +1398,14 @@ function mergeMoonRequirementsInOrder(sections) {
             var reqB = reqByKingdom[normalizeGroupTitle(nameB)];
             var partA = nameA + (reqA ? " (" + reqA + ")" : "");
             var partB = nameB + (reqB ? " (" + reqB + ")" : "");
-            mergedLines.push(partA + " OR " + partB + " (player choice)");
+            mergedLines.push(partA + " OR " + partB + ": player choice");
         } else {
             var reqText = reqByKingdom[normalizeGroupTitle(kingdomText)];
-            mergedLines.push(kingdomText + (reqText ? ": " + reqText : ""));
+            mergedLines.push(kingdomText + ": " + (reqText ? reqText : "\u2014"));
         }
     }
 
-    var mergedSection = { title: "Moon Requirements in Order", lines: mergedLines };
+    var mergedSection = { title: "Moon Requirements", lines: mergedLines };
 
     // Replace whichever of the two original sections comes first with
     // the merged section, and remove the other one (and keep position
@@ -2668,7 +2675,11 @@ function extractPaintingKingdomAndTag(text) {
     if (!m) {
         return { kingdom: null, tag: "" };
     }
-    return { kingdom: m[1].trim(), tag: m[2] ? "  " + m[2].trim() : "" };
+    var tag = m[2] ? m[2].trim() : "";
+    if (/^\[Free\b/i.test(tag)) {
+        tag = "[Free on Game Start]";
+    }
+    return { kingdom: m[1].trim(), tag: tag ? "  " + tag : "" };
 }
 
 /** The 14 kingdoms that actually receive a Moon Rock Key (excludes Mushroom Kingdom, Dark Side, and Darker Side). */
@@ -3933,7 +3944,7 @@ function buildSpoilerModel(lines, sectionTitle) {
                     checkName: entry.check,
                     tags: itemNames.map(function(n) { return n.toLowerCase(); })
                 });
-            } else if (sectionTitle === "Moon Requirements in Order" && entry.key && entry.value) {
+            } else if (sectionTitle === "Moon Requirements" && entry.key && entry.value) {
                 var reqKingdom = normalizeGroupTitle(entry.key);
                 rows.push({
                     type: "entry",
