@@ -1134,6 +1134,11 @@ function parseSpoilerLog(text) {
     spoilerSections = mergeSphereSections(spoilerSections);
     relabelSeedOverviewSection(spoilerSections);
     removeMoonRockKeysSection(spoilerSections);
+    mergeMoonRequirementsInOrder(spoilerSections);
+    mergeSuggestedProgressPathIntoSpheres(spoilerSections);
+    mergeFinalObjectiveIntoSeedOverview(spoilerSections);
+    removeEmptyEnemyCaptureAssignmentSection(spoilerSections);
+    renameSpoilerSections(spoilerSections);
 
     var listEl = document.getElementById('spoiler-section-list');
     listEl.innerHTML = "";
@@ -1141,8 +1146,16 @@ function parseSpoilerLog(text) {
         var item = document.createElement('a');
         item.href = "javascript:void(0);";
         item.className = "spoiler-section-item";
-        item.textContent = spoilerSections[s].title;
         item.setAttribute('data-index', s.toString(10));
+        var iconImg = document.createElement('img');
+        iconImg.className = "spoiler-icon spoiler-section-icon";
+        iconImg.src = SPOILER_ICON_BASE + sectionTitleToIconKey(spoilerSections[s].title) + ".png";
+        iconImg.onerror = function() { this.style.display = "none"; };
+        iconImg.alt = "";
+        item.appendChild(iconImg);
+        var labelSpan = document.createElement('span');
+        labelSpan.textContent = spoilerSections[s].title;
+        item.appendChild(labelSpan);
         item.onclick = (function(idx) {
             return function() {
                 showSpoilerSection(idx);
@@ -1256,6 +1269,241 @@ function removeMoonRockKeysSection(sections) {
             sections.splice(i, 1);
         }
     }
+}
+
+/**
+ * Moves the "Final Objective" section's content to the bottom of Seed
+ * Overview (with a blank-line separator), rewording it to the new
+ * standard phrasing if it matches the old pattern, then removes the
+ * standalone "Final Objective" tab entirely.
+ */
+function mergeFinalObjectiveIntoSeedOverview(sections) {
+    var finalIdx = -1;
+    var overviewIdx = -1;
+    for (var s = 0; s < sections.length; s++) {
+        if (sections[s].title === "Final Objective") {
+            finalIdx = s;
+        }
+        if (sections[s].title === "Seed Overview") {
+            overviewIdx = s;
+        }
+    }
+    if (finalIdx === -1) {
+        return;
+    }
+
+    var finalLines = sections[finalIdx].lines.slice();
+
+    // Reword the old "Proven" explanation line to the new phrasing if present.
+    for (var i = 0; i < finalLines.length; i++) {
+        if (/Cloud Kingdom and Wedding Hall Checkpoint.*reachable after the suggested path/i.test(finalLines[i])) {
+            finalLines[i] = "The final kingdom (Cloud Kingdom) and Wedding Hall Checkpoint are reachable along the suggested path.";
+        }
+    }
+
+    if (overviewIdx !== -1) {
+        if (sections[overviewIdx].lines.length > 0) {
+            sections[overviewIdx].lines.push("");
+        }
+        sections[overviewIdx].lines = sections[overviewIdx].lines.concat(finalLines);
+    }
+
+    sections.splice(finalIdx, 1);
+}
+
+/**
+ * Merges "Kingdom Order" and "Moon Requirements by Kingdom" into a
+ * single "Moon Requirements in Order" section (kept as the 2nd tab),
+ * listing each kingdom in play order together with its moon
+ * requirement. The two original tabs are removed.
+ */
+function mergeMoonRequirementsInOrder(sections) {
+    var orderIdx = -1;
+    var reqIdx = -1;
+    for (var s = 0; s < sections.length; s++) {
+        if (sections[s].title === "Kingdom Order") {
+            orderIdx = s;
+        }
+        if (sections[s].title === "Moon Requirements by Kingdom") {
+            reqIdx = s;
+        }
+    }
+    if (orderIdx === -1 && reqIdx === -1) {
+        return;
+    }
+
+    var orderLines = orderIdx !== -1 ? sections[orderIdx].lines : [];
+    var reqLines = reqIdx !== -1 ? sections[reqIdx].lines : [];
+
+    // Build a lookup of kingdom name -> moon requirement text from the
+    // "Moon Requirements by Kingdom" section (lines like "  Cascade Kingdom: 7 moons").
+    var reqByKingdom = {};
+    var startingKingdomLine = null;
+    for (var i = 0; i < reqLines.length; i++) {
+        var line = reqLines[i];
+        var m = line.match(/^\s*([^:]+?)\s*:\s*(.+)$/);
+        if (!m) {
+            continue;
+        }
+        if (/^STARTING KINGDOM$/i.test(m[1].trim())) {
+            startingKingdomLine = m[2].trim();
+            continue;
+        }
+        reqByKingdom[normalizeGroupTitle(m[1].trim())] = m[2].trim();
+    }
+
+    var mergedLines = [];
+
+    // Preserve the "Starting Location" line from Kingdom Order, if present.
+    var startingLocText = null;
+    for (var j = 0; j < orderLines.length; j++) {
+        var startMatch = orderLines[j].match(/^\s*Starting Location\s*:\s*(.+)$/i);
+        if (startMatch) {
+            startingLocText = startMatch[1].trim();
+            break;
+        }
+    }
+    if (!startingLocText && startingKingdomLine) {
+        startingLocText = startingKingdomLine;
+    }
+    if (startingLocText) {
+        mergedLines.push("Starting Location: " + startingLocText);
+        mergedLines.push("");
+    }
+
+    // Walk the numbered kingdom order list, appending each kingdom's
+    // moon requirement (when known) after its name. Numbering is
+    // dropped since these are already presented in play order.
+    var numberedPattern = /^\s*\d+\.\s+(.+)$/;
+    for (var k = 0; k < orderLines.length; k++) {
+        var orderLine = orderLines[k];
+        var nm = orderLine.match(numberedPattern);
+        if (!nm) {
+            continue;
+        }
+        var kingdomText = nm[1].trim();
+
+        var choiceMatch = kingdomText.match(/^(.+?)\s+OR\s+(.+?)\s*\(player choice\)$/i);
+        if (choiceMatch) {
+            var nameA = choiceMatch[1].trim();
+            var nameB = choiceMatch[2].trim();
+            var reqA = reqByKingdom[normalizeGroupTitle(nameA)];
+            var reqB = reqByKingdom[normalizeGroupTitle(nameB)];
+            var partA = nameA + (reqA ? " (" + reqA + ")" : "");
+            var partB = nameB + (reqB ? " (" + reqB + ")" : "");
+            mergedLines.push(partA + " OR " + partB + " (player choice)");
+        } else {
+            var reqText = reqByKingdom[normalizeGroupTitle(kingdomText)];
+            mergedLines.push(kingdomText + (reqText ? ": " + reqText : ""));
+        }
+    }
+
+    var mergedSection = { title: "Moon Requirements in Order", lines: mergedLines };
+
+    // Replace whichever of the two original sections comes first with
+    // the merged section, and remove the other one (and keep position
+    // as the 2nd tab, matching where "Kingdom Order" used to sit).
+    var insertAt = orderIdx !== -1 ? orderIdx : reqIdx;
+    var toRemove = [orderIdx, reqIdx].filter(function(x) { return x !== -1; }).sort(function(a, b) { return b - a; });
+    for (var r = 0; r < toRemove.length; r++) {
+        sections.splice(toRemove[r], 1);
+    }
+    sections.splice(insertAt, 0, mergedSection);
+}
+
+/**
+ * Moves the "Suggested Progress Path" section's raw diagnostic content
+ * to the bottom of the "Spheres" (Intended Progress Path) section, then
+ * removes the standalone "Suggested Progress Path" tab.
+ */
+function mergeSuggestedProgressPathIntoSpheres(sections) {
+    var pathIdx = -1;
+    var spheresIdx = -1;
+    for (var s = 0; s < sections.length; s++) {
+        if (sections[s].title === "Suggested Progress Path") {
+            pathIdx = s;
+        }
+        if (sections[s].title === "Spheres") {
+            spheresIdx = s;
+        }
+    }
+    if (pathIdx === -1) {
+        return;
+    }
+
+    var pathLines = sections[pathIdx].lines.slice();
+
+    if (spheresIdx !== -1) {
+        if (sections[spheresIdx].lines.length > 0) {
+            sections[spheresIdx].lines.push("");
+        }
+        sections[spheresIdx].lines = sections[spheresIdx].lines.concat(pathLines);
+    }
+
+    sections.splice(pathIdx, 1);
+}
+
+/**
+ * Hides the "Enemy/Capture Assignment" tab entirely when the
+ * "Changed placements" list is just "(none)" - meaning no
+ * enemy/capture placements were actually randomized away from
+ * vanilla for this seed, so there's nothing worth showing.
+ */
+function removeEmptyEnemyCaptureAssignmentSection(sections) {
+    for (var i = sections.length - 1; i >= 0; i--) {
+        if (sections[i].title !== "Enemy/Capture Assignment") {
+            continue;
+        }
+        var lines = sections[i].lines;
+        var changedIdx = -1;
+        for (var j = 0; j < lines.length; j++) {
+            if (/^\s*Changed placements/i.test(lines[j])) {
+                changedIdx = j;
+                break;
+            }
+        }
+        if (changedIdx === -1) {
+            continue;
+        }
+        var nextMeaningful = null;
+        for (var k = changedIdx + 1; k < lines.length; k++) {
+            if (lines[k].trim() !== "") {
+                nextMeaningful = lines[k].trim();
+                break;
+            }
+        }
+        if (nextMeaningful !== null && /^\(none\)$/i.test(nextMeaningful)) {
+            sections.splice(i, 1);
+        }
+    }
+}
+
+/**
+ * Display-name renames applied to section titles as a final pass.
+ */
+var SPOILER_SECTION_RENAMES = {
+    "Entrance Randomizer": "Loading Zones",
+    "Moon Placements by Final Location": "Final Moon Placements",
+    "Critical Path Moon Placements": "Critical Moon Placements",
+    "Spheres": "Intended Progress Path"
+};
+
+function renameSpoilerSections(sections) {
+    for (var i = 0; i < sections.length; i++) {
+        if (SPOILER_SECTION_RENAMES.hasOwnProperty(sections[i].title)) {
+            sections[i].title = SPOILER_SECTION_RENAMES[sections[i].title];
+        }
+    }
+}
+
+/**
+ * Converts a section title into a snake/lowercase icon key by
+ * stripping all non-alphanumeric characters, e.g. "Intended Progress
+ * Path" -> "intendedprogresspath". Used to auto-assign each sidebar
+ * tab an icon from img/spoiler, named after the tab's own title.
+ */
+function sectionTitleToIconKey(title) {
+    return title.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
 function showSpoilerSection(idx) {
@@ -3685,7 +3933,7 @@ function buildSpoilerModel(lines, sectionTitle) {
                     checkName: entry.check,
                     tags: itemNames.map(function(n) { return n.toLowerCase(); })
                 });
-            } else if (sectionTitle === "Moon Requirements by Kingdom" && entry.key && entry.value) {
+            } else if (sectionTitle === "Moon Requirements in Order" && entry.key && entry.value) {
                 var reqKingdom = normalizeGroupTitle(entry.key);
                 rows.push({
                     type: "entry",
@@ -3743,7 +3991,7 @@ function renderSpoilerSection(section) {
     var listy = model.rows.length > 0 &&
         (model.entryCount + countItemRows(model.rows)) / model.nonBlankCount >= 0.5;
 
-    setSpoilerAutofillAvailable(section.title === "Moon Placements by Final Location");
+    setSpoilerAutofillAvailable(section.title === "Final Moon Placements");
 
     if (!listy) {
         contentEl.className = "spoiler-content raw-mode";
