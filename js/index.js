@@ -4738,39 +4738,13 @@ function basicMov(num) {
     }
 
     if ((num > 5 && num < 13) || num > 22) {
-        var basicCheck;
-        if (num > 5 && num < 13) {
-            basicCheck = 0;
-        } else if (num == 23) {
-            basicCheck = 1;
-        } else if (num == 24) {
-            basicCheck = 2;
-        }
-        if (tftext[2][basicCheck] == 0) {
-            document.getElementsByClassName("action-mov")[0].style.backgroundImage = "url(../../img/temp/mov-not-open.webp)";
-            document.getElementById('action' + num).getElementsByTagName('img')[0].style.animationName = "";
-            basicTitle.innerHTML = "?"
-            leftDesc.innerHTML = "";
-            rightDesc.innerHTML = "";
-        } else {
-            basicTimeout2 = setTimeout(function() {
-                imgload1.src = "../../video/action" + num + ".webp";
-                basicTimeout3 = setTimeout(function() {
-                    document.getElementsByClassName("action-mov")[0].style.backgroundImage = "url(../../video/action" + num + ".webp)";
-                    releasePreloader(imgload1);
-                    clearTimeout(basicTimeout3);
-                }, 200);
-                clearTimeout(basicTimeout2);
-            }, 100);
-            playReport15to38 = setTimeout(function() {
-                playReportCount(num + 14);
-                var removeplayReport15to38 = setTimeout(function() {
-                    clearTimeout(playReport15to38, removeplayReport15to38);
-                }, 100);
-            }, 2000);
-
-        }
-    } else {
+        // The original manual gated these thumbnails behind a "not open
+        // yet" placeholder using tftext[2][...], populated from URL query
+        // params on Nintendo's own hosting. This fork's tftext is just
+        // location.href.split("?") - never more than a couple of entries -
+        // so that check always threw a TypeError before it could run.
+        // Nothing here is progressively unlocked, so both branches did the
+        // same thing anyway; just do it once, unconditionally.
         basicTimeout2 = setTimeout(function() {
             imgload1.src = "../../video/action" + num + ".webp";
             basicTimeout3 = setTimeout(function() {
@@ -4878,34 +4852,42 @@ function captureMov(num) {
     var captureTitle = document.getElementById('capture-title').getElementsByTagName('span')[0];
     var leftDesc = document.getElementsByClassName('joycon-lr-desc')[1].getElementsByTagName('span')[0];
     var rightDesc = document.getElementsByClassName('joycon-side-desc')[1].getElementsByTagName('span')[0];
-    var regExp = new RegExp("../../img/", "g");
+    // Per-<img> instead of a blind string replace so the R-stick icon (which
+    // has no "two-play-r-stick-white.png" asset) can be special-cased into
+    // its two-player stand-in pair right as the "two-play-" prefix would
+    // otherwise be applied, rather than patching a broken src afterward.
+    // Mirrors captureMovMotion()'s same fix for the Motion-Free Capture page.
+    var imgRegExp = /<img\b[^>]*?src="\.\.\/\.\.\/img\/([^"]+)"[^>]*?\/?>/g;
     captureTitle.innerHTML = document.getElementsByClassName('action-desc')[1].getElementsByTagName('h2')[num - 1].innerHTML;
     leftDesc.innerHTML = document.getElementsByClassName('action-desc')[1].getElementsByClassName('capture-ms')[num - 1].innerHTML;
-    rightDesc.innerHTML = document.getElementsByClassName('action-desc')[1].getElementsByClassName('capture-ms')[num - 1].innerHTML.replace(regExp, "../../img/two-play-");
+    rightDesc.innerHTML = document.getElementsByClassName('action-desc')[1].getElementsByClassName('capture-ms')[num - 1].innerHTML.replace(imgRegExp, function(tag, filename) {
+        if (filename === "r-stick-white.png") {
+            return tag.replace(filename, "two-play-stick-white-static.png") + "+" + tag.replace(filename, "two-play-x-button-white.png");
+        }
+        return tag.replace("../../img/", "../../img/two-play-");
+    });
     document.getElementById('capture' + num).getElementsByTagName('img')[0].style.animationName = "focus-thmb-up1";
 
-    if (tftext[3][num - 1] == 0) {
-        document.getElementsByClassName("action-mov")[1].style.backgroundImage = "url(../../img/temp/mov-not-open.webp)";
-        document.getElementById('capture' + num).getElementsByTagName('img')[0].style.animationName = "";
-    } else {
-        captureTimeout2 = setTimeout(function() {
-            imgload1.src = "../../video/capture" + num + ".webp";
-            captureTimeout3 = setTimeout(function() {
-                document.getElementsByClassName("action-mov")[1].style.backgroundImage = "url(../../video/capture" + num + ".webp)";
-                releasePreloader(imgload1);
-                clearTimeout(captureTimeout3);
-            }, 200);
+    // See basicMov()'s comment above - tftext[3][...] always threw here
+    // (this fork's tftext never has that many entries), so this always
+    // takes the "unlocked" path anyway; just do it unconditionally.
+    captureTimeout2 = setTimeout(function() {
+        imgload1.src = "../../video/capture" + num + ".webp";
+        captureTimeout3 = setTimeout(function() {
+            document.getElementsByClassName("action-mov")[1].style.backgroundImage = "url(../../video/capture" + num + ".webp)";
+            releasePreloader(imgload1);
+            clearTimeout(captureTimeout3);
+        }, 200);
 
-            clearTimeout(captureTimeout2);
+        clearTimeout(captureTimeout2);
+    }, 100);
+
+    playReport39to62 = setTimeout(function() {
+        playReportCount(num + 38);
+        var removeplayReport39to62 = setTimeout(function() {
+            clearTimeout(playReport39to62, removeplayReport39to62);
         }, 100);
-
-        playReport39to62 = setTimeout(function() {
-            playReportCount(num + 38);
-            var removeplayReport39to62 = setTimeout(function() {
-                clearTimeout(playReport39to62, removeplayReport39to62);
-            }, 100);
-        }, 2000);
-    }
+    }, 2000);
 
     var captureTimeout1 = setTimeout(function() {
         document.getElementById('capture-title').getElementsByTagName('span')[0].style.opacity = 1;
@@ -4952,26 +4934,24 @@ function captureMovMotion(num) {
     });
     document.getElementById('capture' + num + '-motion').getElementsByTagName('img')[0].style.animationName = "focus-thmb-up1";
 
-    if (tftext[3][num - 1] == 0) {
-        mov.style.backgroundImage = "url(../../img/temp/mov-not-open.webp)";
-        document.getElementById('capture' + num + '-motion').getElementsByTagName('img')[0].style.animationName = "";
-    } else {
-        captureMotionTimeout2 = setTimeout(function() {
-            imgload1.src = "../../video/capture" + num + ".webp";
-            captureMotionTimeout3 = setTimeout(function() {
-                mov.style.backgroundImage = "url(../../video/capture" + num + ".webp)";
-                releasePreloader(imgload1);
-                clearTimeout(captureMotionTimeout3);
-            }, 200);
+    // See basicMov()'s comment - tftext[3][...] always threw here (this
+    // fork's tftext never has that many entries), so this always took the
+    // "unlocked" path anyway; just do it unconditionally.
+    captureMotionTimeout2 = setTimeout(function() {
+        imgload1.src = "../../video/capture" + num + ".webp";
+        captureMotionTimeout3 = setTimeout(function() {
+            mov.style.backgroundImage = "url(../../video/capture" + num + ".webp)";
+            releasePreloader(imgload1);
+            clearTimeout(captureMotionTimeout3);
+        }, 200);
 
-            clearTimeout(captureMotionTimeout2);
-        }, 100);
+        clearTimeout(captureMotionTimeout2);
+    }, 100);
 
-        // NOTE: intentionally not calling playReportCount() here - the
-        // existing counter IDs (39-62) are already assigned to page5's
-        // captures, and this page needs its own free counter IDs once
-        // some are picked.
-    }
+    // NOTE: intentionally not calling playReportCount() here - the
+    // existing counter IDs (39-62) are already assigned to page5's
+    // captures, and this page needs its own free counter IDs once some
+    // are picked.
 
     var captureMotionTimeout1 = setTimeout(function() {
         captureTitle.style.opacity = 1;
