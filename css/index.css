@@ -2,12 +2,30 @@
 
 /*共通スタイル-----------------------------------------------------------------*/
 
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  /* Remove the default blue outline */
+  outline: none;
+  border-radius: 4px;
+}
+
 html {
     margin: 0;
     padding: 0;
     overflow: hidden;
     width: 1280px;
     height: 720px;
+}
+
+/* Toggled by initCursorAutoHide() in js/index.js on the first keydown
+   (real keyboard or the gamepad shim's synthetic D-pad/button events) and
+   removed again on the next real mouse movement/click. The universal
+   selector + !important is needed to beat the handful of cursor:pointer
+   rules on buttons/links elsewhere in this stylesheet. */
+html.hide-cursor,
+html.hide-cursor * {
+    cursor: none !important;
 }
 body {
     margin: 0;
@@ -598,10 +616,10 @@ footer {
 .action-guide-page h1 {
     position: absolute;
     top: 96px;
-    left: 70px;
+    left: 40px;
     font-family: "FontEB";
     color: #fff;
-    font-size: 53px;
+    font-size: 38px;
     padding: 0;
     margin: 0;
     transform: rotate(-3deg);
@@ -612,7 +630,7 @@ footer {
 .page0>h1 {
     position: absolute;
     top: 96px;
-    left: 70px;
+    left: 60px;
     font-family: "FontEB";
     color: #fff;
     font-size: 53px;
@@ -1274,29 +1292,6 @@ footer {
 .downloads-page .top-bar> span, .credits-page .top-bar> span, .spoiler-page .top-bar> span {
     color: #B59D00;
 }
-.back-link {
-    position: absolute;
-    top: 20px;
-    left: 40px;
-    display: block;
-    height: 35px;
-    text-decoration: none;
-    z-index: 2;
-}
-.back-link> .left-arrow-static {
-    position: relative;
-    top: 4px;
-    margin-right: 10px;
-}
-.back-link> .back-label {
-    font-size: 24px;
-    color: #898989;
-    vertical-align: middle;
-}
-.back-link:focus> .back-label, .back-link:hover> .back-label {
-    color: #B59D00;
-}
-
 .downloads-container, .credits-container {
     position: absolute;
     top: 100px;
@@ -1460,8 +1455,10 @@ footer {
     border-left: 4px solid transparent;
     box-sizing: border-box;
 }
-.spoiler-section-item:hover {
+.spoiler-section-item:hover,
+.spoiler-section-item:focus {
     background-color: #f3ecc9;
+    outline: none;
 }
 .spoiler-section-item.active {
     background-color: #f3ecc9;
@@ -1651,6 +1648,7 @@ html.dark-mode .spoiler-section-item {
     color: #fff !important;
 }
 html.dark-mode .spoiler-section-item:hover,
+html.dark-mode .spoiler-section-item:focus,
 html.dark-mode .spoiler-section-item.active {
     background-color: #4d4200 !important;
 }

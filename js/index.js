@@ -15,7 +15,23 @@
 // after wsnd.min.js defines it - means a slow/failed sound can never
 // again take the rest of a click handler down with it.
 (function protectWsndPlay() {
-    if (typeof window.wsnd === "undefined" || typeof wsnd.play !== "function") {
+    // wsnd.min.js builds an AudioContext at load time. If the browser has
+    // no Web Audio support (or blocks it), that constructor throws, the
+    // script aborts, and the global `wsnd` is never created at all - at
+    // which point every handler dies on `ReferenceError: wsnd is not
+    // defined` before reaching the code that opens the page, and the
+    // whole menu appears frozen. A silent no-op stand-in keeps the UI
+    // fully usable; the only thing lost is the sound effect.
+    if (typeof window.wsnd === "undefined" || window.wsnd === null) {
+        window.wsnd = {
+            play: function() {},
+            load: function() {},
+            stop: function() {}
+        };
+        return;
+    }
+    if (typeof wsnd.play !== "function") {
+        wsnd.play = function() {};
         return;
     }
     var realPlay = wsnd.play.bind(wsnd);
@@ -29,6 +45,25 @@
     };
 })();
 
+(function initCursorAutoHide() {
+    // Hides the mouse cursor as soon as the last input was a key press -
+    // real keyboard, or the gamepad shim in nx.js, which dispatches the
+    // D-pad/stick/A/B presses as synthetic keydown events too, so a
+    // controller hides it exactly the same way. Shown again the moment
+    // the mouse actually moves or is clicked, so it never lingers on
+    // screen while someone's navigating without it, but never gets stuck
+    // hidden for a mouse/touch user either.
+    var root = document.documentElement;
+    document.addEventListener("keydown", function() {
+        root.classList.add("hide-cursor");
+    }, true);
+    ["mousemove", "mousedown"].forEach(function(evt) {
+        document.addEventListener(evt, function() {
+            root.classList.remove("hide-cursor");
+        }, true);
+    });
+})();
+
 var pageNum = 0.5;
 var urltext = location.href;
 var tftext = urltext.split("?");
@@ -36,11 +71,85 @@ var page0seBackCheck = true;
 var btnActive = false;
 var action1SE = false;
 var capture1SE = false;
+var captureMotion1SE = false;
 var randomizerMove1SE = false;
 var modeSE=true;
 var playReport4, playReport5, playReport6, playReport7, playReport8, playReport9to14, playReport15to38, playReport39to62, playReportRandomizer;
-var basicTimeout2, basicTimeout3, captureTimeout2, captureTimeout3, randomizerMoveTimeout2, randomizerMoveTimeout3;
+var basicTimeout2, basicTimeout3, captureTimeout2, captureTimeout3, captureMotionTimeout2, captureMotionTimeout3, randomizerMoveTimeout2, randomizerMoveTimeout3;
 var imgload1 = new Image();
+
+/**
+ * Release the shared preloader without issuing a bogus request.
+ *
+ * The old code assigned null to the preloader's src. Assigning null
+ * stringifies it, so the browser resolves the *string* "null" against the
+ * current directory and fires a real GET for html/USen/null - which 404s.
+ * That happened on every single thumbnail focus, which is where the
+ * constant stream of /null requests came from. Removing the attribute
+ * drops the reference (letting the decoded image be collected) without
+ * asking the network for anything.
+ */
+function releasePreloader(img) {
+    img.onload = null;
+    img.onerror = null;
+    img.removeAttribute("src");
+}
+
+/**
+ * Shown in the movie panel when a clip is missing, instead of leaving a
+ * black box and re-404ing the same URL every time the thumb is focused.
+ */
+var MOVIE_FALLBACK = "../../img/temp/mov-not-open.webp";
+
+/**
+ * Remembers URLs that already failed once, so a missing clip costs a
+ * single 404 for the whole session rather than one per focus.
+ */
+var missingMovies = Object.create(null);
+
+/**
+ * Preload `url`, then hand the caller the URL that should actually be
+ * painted - the real clip if it loaded, the fallback still if it didn't.
+ *
+ * Replaces the old "set src, wait a fixed 200ms, paint whatever" pattern.
+ * The 200ms timer is kept as a safety net rather than as the primary
+ * mechanism: some embedded browsers never fire load/error for images
+ * served from cache, and a panel that stays black forever would be worse
+ * than one that paints slightly early.
+ */
+function preloadMovie(url, done) {
+    if (missingMovies[url]) {
+        done(MOVIE_FALLBACK);
+        return;
+    }
+    var loader = new Image();
+    var settled = false;
+    var safety;
+
+    function finish(resolved) {
+        if (settled) {
+            return;
+        }
+        settled = true;
+        clearTimeout(safety);
+        loader.onload = loader.onerror = null;
+        done(resolved);
+    }
+
+    loader.onload = function() {
+        finish(url);
+    };
+    loader.onerror = function() {
+        // Remember the miss so this clip costs one 404 for the whole
+        // session instead of one per thumbnail focus.
+        missingMovies[url] = true;
+        finish(MOVIE_FALLBACK);
+    };
+    loader.src = url;
+    safety = setTimeout(function() {
+        finish(url);
+    }, 200);
+}
 
 /**
  * The 21 abilities specific to the randomizer, in the same order as the
@@ -86,6 +195,8 @@ window.onload = function() {
     // firstpage() first - and wrapping the fragile bits below in
     // try/catch - means the buttons activate ~1s after load no matter
     // what else fails.
+
+
     if (pageNum != 7) {
         firstpage();
         var page0Timeout = setTimeout(function() {
@@ -149,6 +260,18 @@ window.onload = function() {
     try {
     window.nx.footer.setAssign('B', '', function() {
         if (pageNum == 6) {
+            // Close just the autofill panel first if it's open, rather
+            // than backing all the way out of Spoiler Log out from under
+            // the user.
+            var autofillPanelB = document.getElementById('spoiler-autofill-panel');
+            if (autofillPanelB && autofillPanelB.style.display === "block") {
+                closeSpoilerAutofillPanel();
+                var autofillBtnB = document.getElementById('spoiler-autofill-btn');
+                if (autofillBtnB) {
+                    autofillBtnB.focus();
+                }
+                return;
+            }
             closeSpoilerLog();
             return;
         } else if (pageNum == 12) {
@@ -180,13 +303,10 @@ window.onload = function() {
                 page0seBackCheck = true;
                 clearTimeout(timeout0);
             }, 500);
-            document.getElementById('page-randomizer-movement').style.opacity = 0;
-            document.getElementById('page-randomizer-movement').style.display = "none";
-            document.getElementsByClassName("action-mov")[2].style.display = "none";
-            document.getElementsByClassName("action-mov")[2].style.opacity = 0;
-            document.getElementsByClassName('action-mov')[2].style.boxShadow = "";
-            document.getElementsByClassName("joycon-lr-desc")[2].style.display = "none";
-            document.getElementsByClassName("joycon-side-desc")[2].style.display = "none";
+            // Hides both variants and their own movie/description
+            // panels, so backing out of the motion-free page leaves just
+            // as clean a slate as backing out of the standard one.
+            randomizerResetPages();
             randomizerMove1SE = false;
             clearTimeout(playReportRandomizer);
             document.getElementsByClassName('btn-operation')[0].style.opacity = 0;
@@ -194,7 +314,42 @@ window.onload = function() {
             document.getElementsByClassName('btn-operation')[2].style.opacity = 1;
             document.getElementById('page-randomizer-action-guide').classList.add('active');
             document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "Randomizer Action Guide";
-            document.getElementById('toRandomizerController').focus();
+            // Return focus to the entry the user actually came in through,
+            // rather than always snapping back to the first one.
+            document.getElementById(
+                randomizerVariant === "motion"
+                    ? "toRandomizerControllerMotion"
+                    : "toRandomizerController"
+            ).focus();
+            pageNum = 16;
+            return;
+        } else if (pageNum == 19) {
+            // Motion-Free Capture is only ever reached through the
+            // Randomizer Action Guide overlay, so Cancel/B returns there -
+            // mirrors the pageNum==17 handling above, but for the
+            // capture-motion page and its own toc entry.
+            wsnd.play("seBack");
+            page0seBackCheck = false;
+            timeout0 = setTimeout(function() {
+                page0seBackCheck = true;
+                clearTimeout(timeout0);
+            }, 500);
+            var captureMotionPage = document.getElementById('page-randomizer-capture-motion');
+            captureMotionPage.style.opacity = 0;
+            captureMotionPage.style.display = "none";
+            var captureMotionMov = captureMotionPage.getElementsByClassName("action-mov")[0];
+            captureMotionMov.style.display = "none";
+            captureMotionMov.style.opacity = 0;
+            captureMotionMov.style.boxShadow = "";
+            captureMotionPage.getElementsByClassName("joycon-lr-desc")[0].style.display = "none";
+            captureMotionPage.getElementsByClassName("joycon-side-desc")[0].style.display = "none";
+            captureMotion1SE = false;
+            document.getElementsByClassName('btn-operation')[0].style.opacity = 0;
+            document.getElementsByClassName('btn-operation')[1].style.opacity = 0;
+            document.getElementsByClassName('btn-operation')[2].style.opacity = 1;
+            document.getElementById('page-randomizer-action-guide').classList.add('active');
+            document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "Randomizer Action Guide";
+            document.getElementById('toRandomizerCaptureAction').focus();
             pageNum = 16;
             return;
         } else if (pageNum == 1 || pageNum == 4 || pageNum == 5) {
@@ -320,8 +475,6 @@ window.onload = function() {
                 clearTimeout(playReport9to14);
             }
         } else if (pageNum == 0) {
-            // Cancel/Back does nothing on the main menu - there's nowhere
-            // further back to go, so don't close/exit the app.
             return;
         }
         pageNum = 0;
@@ -334,10 +487,10 @@ window.onload = function() {
     document.onkeydown = function(e) {
       var featuresPageEl = document.getElementById('page-features');
       if (featuresPageEl && featuresPageEl.classList.contains('active')) {
-        // The Features page owns its own keydown listener (just
-        // Escape/Backspace now that it's a single scrollable grid).
-        // Bail out here so we don't preventDefault/steal focus out
-        // from under Cancel (when btnActive is false).
+        // The Features page owns its own keydown listener (arrow-key grid
+        // navigation plus Escape/Backspace to close). Bail out here so we
+        // don't preventDefault/steal focus out from under Cancel (when
+        // btnActive is false).
         return;
       }
       if(btnActive){
@@ -347,38 +500,50 @@ window.onload = function() {
         } else if (e.keyCode == 37) { //左
             e.preventDefault();
             customFunctionL();
-        } else if (e.keyCode == 38) { //上
-            if (document.activeElement.id == "toController") {
-                document.getElementById('toCredits').focus();
-            } else if (document.activeElement.id == "toBasicAction") {
-                document.getElementById('toController').focus();
-            } else if (document.activeElement.id == "toCaptureAction") {
-                document.getElementById('toBasicAction').focus();
-            } else if (document.activeElement.id == "toOthers") {
-                document.getElementById('toCaptureAction').focus();
-            } else if (document.activeElement.id == "toDownloads") {
-                document.getElementById('toOthers').focus();
-            } else if (document.activeElement.id == "toCredits") {
-                document.getElementById('toDownloads').focus();
+        } else if (e.keyCode == 38 || e.keyCode == 40) { //上 / 下
+            // Was a hard-coded chain of six IDs copied from the original
+            // manual (toController -> toBasicAction -> toCaptureAction ->
+            // toOthers -> toDownloads -> toCredits). The menu has changed
+            // since: Features, Skybox Testing, the Action Guide and the
+            // Randomizer Action Guide were unreachable with the arrow keys,
+            // and pressing Up from Credits threw focus into the hidden
+            // Action Guide overlay. Reading the list out of the DOM instead
+            // keeps it correct no matter how the menu is edited later, and
+            // makes the same code work inside both overlays.
+            e.preventDefault();
+            var goingDown = e.keyCode == 40;
+            // The thumbnail grids (Basic Actions, Capture Actions x2,
+            // Randomizer Movement x2) are only ever walked left/right by
+            // customFunctionL/R's flat 1..N sequence - Up/Down did nothing
+            // on them at all. gridUpDown() moves by a real row instead.
+            if (pageNum == 4) {
+                gridUpDown('action', '', 24, 12, goingDown);
+                return;
+            } else if (pageNum == 5) {
+                gridUpDown('capture', '', 24, 12, goingDown);
+                return;
+            } else if (pageNum == 17) {
+                gridUpDown('rmove', randomizerVariantFor(randomizerVariant).suffix, 21, 11, goingDown);
+                return;
+            } else if (pageNum == 19) {
+                gridUpDown('capture', '-motion', 24, 12, goingDown);
+                return;
             }
-        } else if (e.keyCode == 40) { //下
-            if (document.activeElement.id == "toController") {
-                document.getElementById('toBasicAction').focus();
-            } else if (document.activeElement.id == "toBasicAction") {
-                document.getElementById('toCaptureAction').focus();
-            } else if (document.activeElement.id == "toCaptureAction") {
-                document.getElementById('toOthers').focus();
-            } else if (document.activeElement.id == "toOthers") {
-                document.getElementById('toDownloads').focus();
-            } else if (document.activeElement.id == "toDownloads") {
-                document.getElementById('toCredits').focus();
-            } else if (document.activeElement.id == "toCredits") {
-                document.getElementById('toController').focus();
+            var items = menuItemsInScope();
+            if (!items.length) {
+                return;
             }
+            var at = items.indexOf(document.activeElement);
+            var step = e.keyCode == 38 ? -1 : 1;
+            var next = at === -1 ? 0 : (at + step + items.length) % items.length;
+            items[next].focus();
         };
       }else{
         e.preventDefault();
-        document.getElementById('toController').focus();
+        var fallback = menuItemsInScope()[0];
+        if (fallback) {
+            fallback.focus();
+        }
       }
 
 
@@ -390,7 +555,7 @@ window.onload = function() {
 
 
 function customFunctionL() {
-    if (pageNum == 6 || pageNum == 12 || pageNum == 13 || pageNum == 15 || pageNum == 18) {
+    if (pageNum == 6 || pageNum == 12 || pageNum == 13 || pageNum == 14 || pageNum == 15 || pageNum == 16 || pageNum == 18) {
         return;
     } else if (pageNum == 1) {
         wsnd.play("UiTurnPage");
@@ -456,14 +621,28 @@ function customFunctionL() {
         document.getElementById('capture' + (captureNum - 1)).focus();
 
     } else if (pageNum == 17) {
-        if (document.activeElement.id == "dummy-a-randomizer") {
-            document.getElementById('dummy-a-randomizer').focus();
+        // Suffix-aware so left/right wrap around inside whichever
+        // Randomizer Movement page is open, instead of always jumping
+        // focus onto the standard page's (hidden) thumbnails.
+        var rSuffix = randomizerVariantFor(randomizerVariant).suffix;
+        if (document.activeElement.id === "dummy-a-randomizer" + rSuffix) {
+            document.getElementById("dummy-a-randomizer" + rSuffix).focus();
         }
         var rMoveNum = parseFloat(document.activeElement.id.slice(5));
         if (rMoveNum == 1) {
             rMoveNum = 22;
         }
-        document.getElementById('rmove' + (rMoveNum - 1)).focus();
+        document.getElementById("rmove" + (rMoveNum - 1) + rSuffix).focus();
+
+    } else if (pageNum == 19) {
+        if (document.activeElement.id == "dummy-a-5-motion") {
+            document.getElementById('dummy-a-5-motion').focus();
+        }
+        var captureMotionNumL = parseFloat(document.activeElement.id.slice(7));
+        if (captureMotionNumL == 1) {
+            captureMotionNumL = 25;
+        }
+        document.getElementById('capture' + (captureMotionNumL - 1) + '-motion').focus();
 
     } else if (pageNum > 5) {
         wsnd.play("UiTurnPage");
@@ -511,7 +690,7 @@ function customFunctionL() {
 }
 
 function customFunctionR() {
-    if (pageNum == 6 || pageNum == 12 || pageNum == 13 || pageNum == 15 || pageNum == 18) {
+    if (pageNum == 6 || pageNum == 12 || pageNum == 13 || pageNum == 14 || pageNum == 15 || pageNum == 16 || pageNum == 18) {
         return;
     } else if (pageNum == 1) {
         wsnd.play("UiTurnPage");
@@ -576,14 +755,25 @@ function customFunctionR() {
         document.getElementById('capture' + (capturenNum + 1)).focus();
 
     } else if (pageNum == 17) {
-        if (document.activeElement.id == "dummy-a-randomizer") {
-            document.getElementById('dummy-a-randomizer').focus();
+        var rSuffixR = randomizerVariantFor(randomizerVariant).suffix;
+        if (document.activeElement.id === "dummy-a-randomizer" + rSuffixR) {
+            document.getElementById("dummy-a-randomizer" + rSuffixR).focus();
         }
         var rMoveNumR = parseFloat(document.activeElement.id.slice(5));
         if (rMoveNumR > 20) {
             rMoveNumR = 0;
         }
-        document.getElementById('rmove' + (rMoveNumR + 1)).focus();
+        document.getElementById("rmove" + (rMoveNumR + 1) + rSuffixR).focus();
+
+    } else if (pageNum == 19) {
+        if (document.activeElement.id == "dummy-a-5-motion") {
+            document.getElementById('dummy-a-5-motion').focus();
+        }
+        var captureMotionNumR = parseFloat(document.activeElement.id.slice(7));
+        if (captureMotionNumR > 23) {
+            captureMotionNumR = 0;
+        }
+        document.getElementById('capture' + (captureMotionNumR + 1) + '-motion').focus();
 
     } else if (pageNum > 5) {
         wsnd.play("UiTurnPage");
@@ -696,12 +886,106 @@ function firstpage() {
 
 }
 
+/**
+ * Shared visibility filter behind menuItemsInScope() - skips anything
+ * hidden (a collapsed autofill group, a not-yet-loaded spoiler viewer)
+ * so it can never swallow focus.
+ */
+function focusableInScope(scope, selector) {
+    if (!scope) {
+        return [];
+    }
+    return Array.prototype.filter.call(
+        scope.querySelectorAll(selector),
+        function(el) {
+            return el.offsetParent !== null || el.getClientRects().length > 0;
+        }
+    );
+}
+
+/**
+ * The focusable menu entries the arrow keys should cycle through right
+ * now: the entries of whichever Action Guide overlay is open, the real
+ * content of whichever sub-page is open (Downloads, Skybox, Credits,
+ * Spoiler Log - including its autofill panel once that's open; none of
+ * these have an on-screen Back button any more, B/Cancel covers it), or
+ * the main menu's own list when none of those apply. Derived from the
+ * DOM so adding or removing an entry never needs a matching edit here.
+ * (The thumbnail grids - pageNum 4/5/17/19 - are handled separately by
+ * gridUpDown(), since they need row-aware movement, not list cycling.)
+ */
+function menuItemsInScope() {
+    var overlay = document.querySelector(".action-guide-page.active");
+    if (overlay) {
+        return focusableInScope(overlay, ".toc > li > a");
+    }
+    if (pageNum == 12) {
+        return focusableInScope(document.getElementsByClassName("downloads-page")[0], ".download-btn");
+    }
+    if (pageNum == 18) {
+        return focusableInScope(document.getElementsByClassName("skybox-page")[0], ".download-btn");
+    }
+    if (pageNum == 13) {
+        return focusableInScope(document.getElementsByClassName("credits-page")[0], ".social-link");
+    }
+    if (pageNum == 6) {
+        var autofillPanel = document.getElementById("spoiler-autofill-panel");
+        if (autofillPanel && autofillPanel.style.display === "block") {
+            return focusableInScope(autofillPanel, ".spoiler-autofill-section-header, .spoiler-autofill-item");
+        }
+        return focusableInScope(
+            document.getElementsByClassName("spoiler-page")[0],
+            ".spoiler-load-btn, .spoiler-section-item, .spoiler-reload-btn, .spoiler-search, .spoiler-autofill-btn"
+        );
+    }
+    return focusableInScope(document.getElementsByClassName("page0")[0], ".toc > li > a");
+}
+
+/**
+ * Row/column-aware Up/Down for the thumbnail grids (Basic Actions, Capture
+ * Actions x2, Randomizer Movement x2). L/R already walks these as a flat
+ * 1..N sequence (customFunctionL/R); this mirrors that same sequence but
+ * moves by a real row instead. Clamps into the nearest real column on a
+ * short final row (e.g. Basic Actions' 25th tile, alone on its own row)
+ * instead of overflowing past N or landing on a nonexistent id.
+ */
+function gridFocusId(idPrefix, idSuffix, total, columns, current, goingDown) {
+    var rows = Math.ceil(total / columns);
+    var lastRowLen = total - columns * (rows - 1);
+    var row = Math.floor((current - 1) / columns);
+    var col = (current - 1) % columns;
+    var newRow = goingDown ? row + 1 : row - 1;
+    if (newRow >= rows) {
+        newRow = 0;
+    } else if (newRow < 0) {
+        newRow = rows - 1;
+    }
+    var rowLen = newRow === rows - 1 ? lastRowLen : columns;
+    var newCol = Math.min(col, rowLen - 1);
+    return idPrefix + (newRow * columns + newCol + 1) + idSuffix;
+}
+
+function gridUpDown(idPrefix, idSuffix, total, columns, goingDown) {
+    var activeId = document.activeElement.id;
+    var current = 1;
+    if (activeId.indexOf(idPrefix) === 0) {
+        var numMatch = activeId.slice(idPrefix.length).match(/^(\d+)/);
+        if (numMatch) {
+            current = parseInt(numMatch[1], 10);
+        }
+    }
+    var target = document.getElementById(gridFocusId(idPrefix, idSuffix, total, columns, current, goingDown));
+    if (target) {
+        target.focus();
+    }
+}
+
 function menuSelect(e) {
     pageNum = 0.5;
     if (btnActive) {
         wsnd.play("seDecide");
         footerText();
-        e.style.backgroundImage = 'url("")';
+        e.style.backgroundImage = "none";
         e.style.backgroundColor = "#525252";
         e.style.color = "#fff";
 
@@ -719,7 +1003,10 @@ function menuSelect(e) {
 }
 
 function menuBlur(e) {
-    e.style.backgroundImage = 'url("")';
+    // "none", not url("") - an empty url() is resolved against the
+    // current document, so the browser fetches index.html again and
+    // tries to decode it as an image every time an item loses focus.
+    e.style.backgroundImage = "none";
 }
 
 function menuFocus(e) {
@@ -743,8 +1030,11 @@ function page1Open(e) {
     document.getElementsByClassName("page0")[0].style.display = "none";
     document.getElementsByClassName("page1")[0].style.opacity = 1;
     document.getElementsByClassName('btn-operation')[0].style.opacity = 0;
-    document.getElementsByClassName('btn-operation')[1].style.opacity = 0;
-    document.getElementsByClassName('btn-operation')[2].style.opacity = 1;
+    // L/R pages between Controls/Two Players/Play Style, so this footer
+    // needs the L-stick "Select" hint too, not just Cancel.
+    footerText();
+    document.getElementsByClassName('btn-operation')[1].style.opacity = 1;
+    document.getElementsByClassName('btn-operation')[2].style.opacity = 0;
     document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = document.getElementById('footer-title').getElementsByTagName('span')[0].innerHTML;
     callOutRedPage1();
     callOutGrayPage1();
@@ -1004,33 +1294,160 @@ function page5Open(e) {
 
 }
 
-function randomizerMovementOpen() {
+/**
+ * The two Randomizer Movement pages are markup twins: same 21 thumbnails,
+ * same layout, different IDs (the motion-free one carries a "-motion"
+ * suffix on every ID). Everything below is written against whichever one
+ * is currently open rather than against hard-coded IDs or hard-coded
+ * getElementsByClassName indexes, which is what kept the -motion page from
+ * working: it was displayed, but every handler kept writing the title,
+ * descriptions and movie panel into the *other* (hidden) page, and kept
+ * moving focus back onto the other page's thumbnails.
+ */
+var RANDOMIZER_VARIANTS = {
+    standard: {
+        page: "page-randomizer-movement",
+        suffix: "",
+        title: "Randomizer Movement Controls"
+    },
+    motion: {
+        page: "page-randomizer-movement-motion",
+        suffix: "-motion",
+        title: "Randomizer Movement Motion-Free Controls"
+    }
+};
+
+/** Which of the two is on screen right now. */
+var randomizerVariant = "standard";
+
+function randomizerVariantFor(name) {
+    return RANDOMIZER_VARIANTS[name] || RANDOMIZER_VARIANTS.standard;
+}
+
+/** The <div class="page page-randomizer-movement"> for a variant. */
+function randomizerPageEl(name) {
+    return document.getElementById(randomizerVariantFor(name).page);
+}
+
+/**
+ * Works out which variant a thumbnail belongs to from its own ID, so the
+ * onfocus handlers don't have to be told twice. Falls back to whatever is
+ * currently open (used by keyboard/controller navigation).
+ */
+function randomizerVariantOf(el) {
+    if (el && el.id && el.id.slice(-7) === "-motion") {
+        return "motion";
+    }
+    if (el && el.id) {
+        return "standard";
+    }
+    return randomizerVariant;
+}
+
+/** Hide both pages and their movie panels - used on open and on back. */
+function randomizerResetPages() {
+    for (var key in RANDOMIZER_VARIANTS) {
+        var page = randomizerPageEl(key);
+        if (!page) {
+            continue;
+        }
+        page.style.opacity = 0;
+        page.style.display = "none";
+        var mov = page.getElementsByClassName("action-mov")[0];
+        if (mov) {
+            mov.style.display = "none";
+            mov.style.opacity = 0;
+            mov.style.boxShadow = "";
+        }
+        var lr = page.getElementsByClassName("joycon-lr-desc")[0];
+        var side = page.getElementsByClassName("joycon-side-desc")[0];
+        if (lr) {
+            lr.style.display = "none";
+        }
+        if (side) {
+            side.style.display = "none";
+        }
+    }
+}
+
+function randomizerMovementOpen(name) {
+    var variant = randomizerVariantFor(name);
+    randomizerVariant = RANDOMIZER_VARIANTS[name] ? name : "standard";
+
     pageNum = 0.5;
+    randomizerResetPages();
+
+    var page = randomizerPageEl(randomizerVariant);
     document.getElementsByClassName("page0")[0].style.display = "none";
-    document.getElementById('page-randomizer-movement').style.display = "block";
-    document.getElementById('dummy-a-randomizer').focus();
+    document.getElementsByClassName("page0")[0].style.opacity = 0;
 
-    document.getElementsByClassName('page0')[0].style.opacity = 0;
-    document.getElementById('page-randomizer-movement').style.opacity = 1;
+    page.style.display = "block";
+    page.style.opacity = 1;
 
-    document.getElementsByClassName("action-mov")[2].style.display = "block";
+    var mov = page.getElementsByClassName("action-mov")[0];
+    mov.style.display = "block";
+    mov.style.opacity = 1;
+    page.getElementsByClassName("joycon-lr-desc")[0].style.display = "block";
+    page.getElementsByClassName("joycon-side-desc")[0].style.display = "block";
 
-    document.getElementsByClassName('btn-operation')[0].style.opacity = 0;
-    document.getElementsByClassName('btn-operation')[1].style.opacity = 1;
-    document.getElementsByClassName('btn-operation')[2].style.opacity = 0;
-    document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "Randomizer Movement Controls";
+    document.getElementsByClassName("btn-operation")[0].style.opacity = 0;
+    document.getElementsByClassName("btn-operation")[1].style.opacity = 1;
+    document.getElementsByClassName("btn-operation")[2].style.opacity = 0;
+    document.getElementsByClassName("page-title")[0]
+        .getElementsByTagName("span")[0].innerHTML = variant.title;
 
-    document.getElementsByClassName("action-mov")[2].style.opacity = 1;
-    document.getElementsByClassName("joycon-lr-desc")[2].style.display = "block";
-    document.getElementsByClassName("joycon-side-desc")[2].style.display = "block";
-    document.getElementById('page-randomizer-movement').style.display = "block"; //連打対策
-    document.getElementById('rmove1').focus();
+    randomizerMove1SE = false;
+    document.getElementById("dummy-a-randomizer" + variant.suffix).focus();
+    document.getElementById("rmove1" + variant.suffix).focus();
     pageNum = 17;
 
     // NOTE: intentionally not calling playReportCount() here - the existing
     // counter IDs (4/5/6/7/8...) are already assigned to other pages, and
     // this page needs its own free counter ID once one is picked.
 }
+
+/** Kept as a named entry point; the motion page is just the other variant. */
+function openRandomizerMovementMotion() {
+    randomizerMovementOpen("motion");
+}
+
+/**
+ * Motion-Free Capture - a straight duplicate of the Classic Action
+ * Guide's Capture Actions page (page5), reachable from the Randomizer
+ * Action Guide overlay instead. Every id in its markup carries a
+ * "-motion" suffix, and it's addressed by id / scoped within its own
+ * page element throughout (never a bare getElementsByClassName('page5')
+ * or global "action-mov" index), so it can't collide with page5Open()/
+ * captureMov() or shift their hard-coded indices.
+ */
+function randomizerCaptureMotionOpen() {
+    pageNum = 0.5;
+
+    var page = document.getElementById('page-randomizer-capture-motion');
+    document.getElementsByClassName("page0")[0].style.display = "none";
+    document.getElementsByClassName("page0")[0].style.opacity = 0;
+
+    page.style.display = "block";
+    page.style.opacity = 1;
+
+    var mov = page.getElementsByClassName("action-mov")[0];
+    mov.style.display = "block";
+    mov.style.opacity = 1;
+    page.getElementsByClassName("joycon-lr-desc")[0].style.display = "block";
+    page.getElementsByClassName("joycon-side-desc")[0].style.display = "block";
+
+    document.getElementsByClassName("btn-operation")[0].style.opacity = 0;
+    document.getElementsByClassName("btn-operation")[1].style.opacity = 1;
+    document.getElementsByClassName("btn-operation")[2].style.opacity = 0;
+    document.getElementsByClassName("page-title")[0]
+        .getElementsByTagName("span")[0].innerHTML = "Motion-Free Capture";
+
+    captureMotion1SE = false;
+    document.getElementById("dummy-a-5-motion").focus();
+    document.getElementById("capture1-motion").focus();
+    pageNum = 19;
+}
+
 
 function openSpoilerLog() {
     wsnd.play("seDecide");
@@ -1044,9 +1461,12 @@ function openSpoilerLog() {
         document.getElementsByClassName('page6')[0].style.opacity = 1;
         document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "Spoiler Log";
         document.getElementsByClassName('btn-operation')[0].style.opacity = 0;
-        document.getElementsByClassName('btn-operation')[2].style.opacity = 1;
-        document.getElementById('spoiler-back').focus();
+        document.getElementsByClassName('btn-operation')[1].style.opacity = 1;
         pageNum = 6;
+        var spoilerFirstFocus = menuItemsInScope()[0];
+        if (spoilerFirstFocus) {
+            spoilerFirstFocus.focus();
+        }
         clearTimeout(spoilerTimeout);
     }, 100);
 }
@@ -1058,7 +1478,7 @@ function closeSpoilerLog() {
     document.getElementsByClassName('page0')[0].style.display = "block";
     document.getElementsByClassName('page0')[0].style.opacity = 1;
     document.getElementsByClassName('btn-operation')[0].style.opacity = 1;
-    document.getElementsByClassName('btn-operation')[2].style.opacity = 0;
+    document.getElementsByClassName('btn-operation')[1].style.opacity = 0;
     document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "";
     document.getElementById('toOthers').style.backgroundColor = "";
     document.getElementById('toOthers').style.color = "";
@@ -4229,9 +4649,12 @@ function openDownloads() {
         document.getElementsByClassName('page12')[0].style.opacity = 1;
         document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "Downloads";
         document.getElementsByClassName('btn-operation')[0].style.opacity = 0;
-        document.getElementsByClassName('btn-operation')[2].style.opacity = 1;
-        document.getElementById('downloads-back').focus();
+        document.getElementsByClassName('btn-operation')[1].style.opacity = 1;
         pageNum = 12;
+        var downloadsFirstFocus = menuItemsInScope()[0];
+        if (downloadsFirstFocus) {
+            downloadsFirstFocus.focus();
+        }
         clearTimeout(downloadsTimeout);
     }, 100);
 }
@@ -4243,7 +4666,7 @@ function closeDownloads() {
     document.getElementsByClassName('page0')[0].style.display = "block";
     document.getElementsByClassName('page0')[0].style.opacity = 1;
     document.getElementsByClassName('btn-operation')[0].style.opacity = 1;
-    document.getElementsByClassName('btn-operation')[2].style.opacity = 0;
+    document.getElementsByClassName('btn-operation')[1].style.opacity = 0;
     document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "";
     document.getElementById('toDownloads').style.backgroundColor = "";
     document.getElementById('toDownloads').style.color = "";
@@ -4264,9 +4687,12 @@ function openCredits() {
         if (typeof renderCredits === "function") { renderCredits(); }
         document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "Credits";
         document.getElementsByClassName('btn-operation')[0].style.opacity = 0;
-        document.getElementsByClassName('btn-operation')[2].style.opacity = 1;
-        document.getElementById('credits-back').focus();
+        document.getElementsByClassName('btn-operation')[1].style.opacity = 1;
         pageNum = 13;
+        var creditsFirstFocus = menuItemsInScope()[0];
+        if (creditsFirstFocus) {
+            creditsFirstFocus.focus();
+        }
         clearTimeout(creditsTimeout);
     }, 100);
 }
@@ -4278,7 +4704,7 @@ function closeCredits() {
     document.getElementsByClassName('page0')[0].style.display = "block";
     document.getElementsByClassName('page0')[0].style.opacity = 1;
     document.getElementsByClassName('btn-operation')[0].style.opacity = 1;
-    document.getElementsByClassName('btn-operation')[2].style.opacity = 0;
+    document.getElementsByClassName('btn-operation')[1].style.opacity = 0;
     document.getElementsByClassName('page-title')[0].getElementsByTagName('span')[0].innerHTML = "";
     document.getElementById('toCredits').style.backgroundColor = "";
     document.getElementById('toCredits').style.color = "";
@@ -4331,7 +4757,7 @@ function basicMov(num) {
                 imgload1.src = "../../video/action" + num + ".webp";
                 basicTimeout3 = setTimeout(function() {
                     document.getElementsByClassName("action-mov")[0].style.backgroundImage = "url(../../video/action" + num + ".webp)";
-                    imgload1.src=null;
+                    releasePreloader(imgload1);
                     clearTimeout(basicTimeout3);
                 }, 200);
                 clearTimeout(basicTimeout2);
@@ -4349,7 +4775,7 @@ function basicMov(num) {
             imgload1.src = "../../video/action" + num + ".webp";
             basicTimeout3 = setTimeout(function() {
                 document.getElementsByClassName("action-mov")[0].style.backgroundImage = "url(../../video/action" + num + ".webp)";
-                imgload1.src=null;
+                releasePreloader(imgload1);
                 clearTimeout(basicTimeout3);
             }, 200);
             clearTimeout(basicTimeout2);
@@ -4367,7 +4793,7 @@ function basicMov(num) {
     }, 100);
 }
 
-function randomizerAbilityMov(num) {
+function randomizerAbilityMov(num, el) {
     if (randomizerMove1SE) {
         wsnd.play("UiCursor");
     } else {
@@ -4375,27 +4801,59 @@ function randomizerAbilityMov(num) {
     }
     clearTimeout(randomizerMoveTimeout2);
     clearTimeout(randomizerMoveTimeout3);
+
+    // Scope every lookup to the page the focused thumbnail actually lives
+    // on. The old code used getElementsByClassName(...)[2] and the fixed
+    // ID "randomizer-basic-title", which always pointed at the standard
+    // page - so on the motion-free page nothing ever updated.
+    var name = randomizerVariantOf(el || document.activeElement);
+    randomizerVariant = name;
+    var variant = randomizerVariantFor(name);
+    var page = randomizerPageEl(name);
+    if (!page) {
+        return;
+    }
+
     var ability = RANDOMIZER_ABILITIES[num - 1];
-    var videoUrl = "url(../../video/randomizerabilities/" + ability.video + ".webp)";
-    document.getElementById('randomizer-basic-title').getElementsByTagName('span')[0].style.opacity = 0;
-    var randomizerTitle = document.getElementById('randomizer-basic-title').getElementsByTagName('span')[0];
-    var leftDesc = document.getElementsByClassName('joycon-lr-desc')[2].getElementsByTagName('span')[0];
-    var rightDesc = document.getElementsByClassName('joycon-side-desc')[2].getElementsByTagName('span')[0];
-    randomizerTitle.innerHTML = document.getElementsByClassName('action-desc')[2].getElementsByTagName('h2')[num - 1].innerHTML;
-    leftDesc.innerHTML = document.getElementsByClassName('action-desc')[2].getElementsByClassName('action-ms')[num - 1].innerHTML;
+    var videoUrl = "../../video/randomizerabilities/" + ability.video + ".webp";
+
+    var titleBar = page.getElementsByClassName("top-bar")[0];
+    var randomizerTitle = titleBar.getElementsByTagName("span")[0];
+    var descBlock = page.getElementsByClassName("action-desc")[0];
+    var leftDesc = page.getElementsByClassName("joycon-lr-desc")[0]
+        .getElementsByTagName("span")[0];
+    var rightDesc = page.getElementsByClassName("joycon-side-desc")[0]
+        .getElementsByTagName("span")[0];
+    var mov = page.getElementsByClassName("action-mov")[0];
+
+    randomizerTitle.style.opacity = 0;
+    randomizerTitle.innerHTML =
+        descBlock.getElementsByTagName("h2")[num - 1].innerHTML;
+    leftDesc.innerHTML =
+        descBlock.getElementsByClassName("action-ms")[num - 1].innerHTML;
     // Right side gets its own independent description text (see the
     // "action-ms-right" entries in the Randomizer Movement action-desc
     // block), instead of mirroring the left side.
-    rightDesc.innerHTML = document.getElementsByClassName('action-desc')[2].getElementsByClassName('action-ms-right')[num - 1].innerHTML;
-    document.getElementById('rmove' + num).getElementsByTagName('img')[0].style.animationName = "focus-thmb-up1";
+    rightDesc.innerHTML =
+        descBlock.getElementsByClassName("action-ms-right")[num - 1].innerHTML;
+
+    var thumb = document.getElementById("rmove" + num + variant.suffix);
+    if (thumb) {
+        thumb.getElementsByTagName("img")[0].style.animationName =
+            "focus-thmb-up1";
+    }
 
     randomizerMoveTimeout2 = setTimeout(function() {
-        imgload1.src = "../../video/randomizerabilities/" + ability.video + ".webp";
-        randomizerMoveTimeout3 = setTimeout(function() {
-            document.getElementsByClassName("action-mov")[2].style.backgroundImage = videoUrl;
-            imgload1.src = null;
-            clearTimeout(randomizerMoveTimeout3);
-        }, 200);
+        // Five of the 21 ability clips aren't shipped yet; preloadMovie
+        // swaps in the "not available" still after one failed request and
+        // remembers it, instead of 404ing again on every focus.
+        preloadMovie(videoUrl, function(resolvedUrl) {
+            // Bail out if focus moved on while the clip was loading.
+            if (randomizerVariant !== name) {
+                return;
+            }
+            mov.style.backgroundImage = "url(" + resolvedUrl + ")";
+        });
         clearTimeout(randomizerMoveTimeout2);
     }, 100);
 
@@ -4404,6 +4862,7 @@ function randomizerAbilityMov(num) {
         clearTimeout(randomizerMoveTimeout1);
     }, 100);
 }
+
 
 function captureMov(num) {
     if (capture1SE) {
@@ -4433,7 +4892,7 @@ function captureMov(num) {
             imgload1.src = "../../video/capture" + num + ".webp";
             captureTimeout3 = setTimeout(function() {
                 document.getElementsByClassName("action-mov")[1].style.backgroundImage = "url(../../video/capture" + num + ".webp)";
-                imgload1.src=null;
+                releasePreloader(imgload1);
                 clearTimeout(captureTimeout3);
             }, 200);
 
@@ -4451,6 +4910,72 @@ function captureMov(num) {
     var captureTimeout1 = setTimeout(function() {
         document.getElementById('capture-title').getElementsByTagName('span')[0].style.opacity = 1;
         clearTimeout(captureTimeout1);
+    }, 100);
+}
+
+
+/**
+ * Motion-Free Capture's own captureMov() - same logic, but scoped to
+ * #page-randomizer-capture-motion and its "-motion"-suffixed ids instead
+ * of the hard-coded global "action-mov"/"action-desc" indices and bare
+ * "captureN" ids that captureMov() uses for the Classic guide's page5.
+ */
+function captureMovMotion(num) {
+    if (captureMotion1SE) {
+        wsnd.play("UiCursor");
+    } else {
+        captureMotion1SE = true;
+    }
+    clearTimeout(captureMotionTimeout2);
+    clearTimeout(captureMotionTimeout3);
+    var page = document.getElementById('page-randomizer-capture-motion');
+    var mov = page.getElementsByClassName("action-mov")[0];
+    var descBlock = page.getElementsByClassName('action-desc')[0];
+    var captureTitle = document.getElementById('capture-title-motion').getElementsByTagName('span')[0];
+    var leftDesc = page.getElementsByClassName('joycon-lr-desc')[0].getElementsByTagName('span')[0];
+    var rightDesc = page.getElementsByClassName('joycon-side-desc')[0].getElementsByTagName('span')[0];
+    // Per-<img> instead of a blind string replace so the R-stick icon (which
+    // has no "two-play-r-stick-white.png" asset) can be special-cased into
+    // its two-player stand-in pair right as the "two-play-" prefix would
+    // otherwise be applied, rather than patching a broken src afterward.
+    var imgRegExp = /<img\b[^>]*?src="\.\.\/\.\.\/img\/([^"]+)"[^>]*?\/?>/g;
+
+    mov.style.backgroundImage = "url(../../video/capture" + num + "_0.webp)";
+    captureTitle.style.opacity = 0;
+    captureTitle.innerHTML = descBlock.getElementsByTagName('h2')[num - 1].innerHTML;
+    leftDesc.innerHTML = descBlock.getElementsByClassName('capture-ms')[num - 1].innerHTML;
+    rightDesc.innerHTML = descBlock.getElementsByClassName('capture-ms')[num - 1].innerHTML.replace(imgRegExp, function(tag, filename) {
+        if (filename === "r-stick-white.png") {
+            return tag.replace(filename, "two-play-stick-white-static.png") + "+" + tag.replace(filename, "two-play-x-button-white.png");
+        }
+        return tag.replace("../../img/", "../../img/two-play-");
+    });
+    document.getElementById('capture' + num + '-motion').getElementsByTagName('img')[0].style.animationName = "focus-thmb-up1";
+
+    if (tftext[3][num - 1] == 0) {
+        mov.style.backgroundImage = "url(../../img/temp/mov-not-open.webp)";
+        document.getElementById('capture' + num + '-motion').getElementsByTagName('img')[0].style.animationName = "";
+    } else {
+        captureMotionTimeout2 = setTimeout(function() {
+            imgload1.src = "../../video/capture" + num + ".webp";
+            captureMotionTimeout3 = setTimeout(function() {
+                mov.style.backgroundImage = "url(../../video/capture" + num + ".webp)";
+                releasePreloader(imgload1);
+                clearTimeout(captureMotionTimeout3);
+            }, 200);
+
+            clearTimeout(captureMotionTimeout2);
+        }, 100);
+
+        // NOTE: intentionally not calling playReportCount() here - the
+        // existing counter IDs (39-62) are already assigned to page5's
+        // captures, and this page needs its own free counter IDs once
+        // some are picked.
+    }
+
+    var captureMotionTimeout1 = setTimeout(function() {
+        captureTitle.style.opacity = 1;
+        clearTimeout(captureMotionTimeout1);
     }, 100);
 }
 
@@ -4531,7 +5056,7 @@ function spoilerAutofillGroupHtml(groupId, label, headerIconFile, items) {
     }).join("");
 
     return '<div class="spoiler-autofill-section">' +
-        '<div class="spoiler-autofill-section-header" onclick="toggleSpoilerAutofillGroup(\'' + groupId + '\')">' +
+        '<div class="spoiler-autofill-section-header" tabindex="0" onclick="toggleSpoilerAutofillGroup(\'' + groupId + '\')">' +
         '<img src="' + headerIconSrc + '" alt="" />' +
         '<span>' + label + '</span>' +
         '<span class="spoiler-autofill-caret" id="spoiler-autofill-caret-' + groupId + '">▼</span>' +
@@ -4578,6 +5103,10 @@ function openSpoilerAutofillPanel() {
     }
     if (backdrop) {
         backdrop.style.display = "block";
+    }
+    var firstHeader = panel && panel.querySelector('.spoiler-autofill-section-header');
+    if (firstHeader) {
+        firstHeader.focus();
     }
 }
 
