@@ -18,7 +18,7 @@
                 - Features overlay page
                 - Theme toggle + home notes
                 - Downloads "Last updated" labels
-                - Skybox Testing page
+                - Extra Downloads (Skybox Testing) page
       2. <body> - one <div class="page ..."> per screen:
                 - Home (page0)
                 - One Player controls (page1)
@@ -29,7 +29,7 @@
                 - Randomizer Movement (motion + standard variants)
                 - Spoiler Log (page6)
                 - Downloads (page12)
-                - Skybox Testing (page14)
+                - Extra Downloads / Skybox Testing (page14)
                 - Credits (page13)
                 - Features overlay
                 - Classic Action Guide overlay
@@ -860,7 +860,7 @@
                             onfocus="menuFocus(this)"
                             id="toSkyboxTesting"
                             nx-se-disabled=""
-                            ><span>Skybox Testing</span></a
+                            ><span>Extra Downloads</span></a
                         >
                     </li>
                     <li class="toc-gap" aria-hidden="true"></li>
@@ -4494,6 +4494,9 @@
                 <div class="top-bar">
                     <span>Downloads</span>
                 </div>
+                <div class="skybox-desc">
+                    <p>Forked from the SMO Randomizer</p>
+                </div>
                 <div class="downloads-container">
                     <div class="download-item">
                         <div class="download-info">
@@ -4542,7 +4545,7 @@
                  ======================================================== -->
             <div class="page page14 skybox-page">
                 <div class="top-bar">
-                    <span>Skybox Testing</span>
+                    <span>Extra Downloads</span>
                 </div>
                 <div class="downloads-container">
                     <div class="download-item">
@@ -4575,6 +4578,55 @@
                         to mess around, explore different areas, and see what
                         you can find!
                     </p>
+                </div>
+                <div class="skybox-desc">
+                    <p>Forked from the SMO Randomizer</p>
+                </div>
+                <div class="downloads-container">
+                    <div class="download-item">
+                        <div class="download-info">
+                            <p class="download-title fontDB">
+                                Motion Free Controls for Nintendo Switch
+                            </p>
+                            <p class="download-desc">
+                                Removes the need for motion controls in Super
+                                Mario Odyssey, letting you perform
+                                motion-based actions using standard button
+                                inputs. Enjoy a smoother, more accessible
+                                experience without having to shake or move
+                                your controller.
+                            </p>
+                        </div>
+                        <a
+                            class="download-btn"
+                            href="../../downloads/MotionFreeControls-Switch.zip"
+                            download
+                            onclick="wsnd.play('seDecide')"
+                            >Download</a
+                        >
+                    </div>
+                    <div class="download-item">
+                        <div class="download-info">
+                            <p class="download-title fontDB">
+                                Motion Free Controls for Emulator
+                            </p>
+                            <p class="download-desc">
+                                Removes the need for motion controls in Super
+                                Mario Odyssey, letting you perform
+                                motion-based actions using standard button
+                                inputs. Enjoy a smoother, more accessible
+                                experience without having to shake or move
+                                your controller.
+                            </p>
+                        </div>
+                        <a
+                            class="download-btn"
+                            href="../../downloads/MotionFreeControls-Emulator.zip"
+                            download
+                            onclick="wsnd.play('seDecide')"
+                            >Download</a
+                        >
+                    </div>
                 </div>
             </div>
 
@@ -5001,7 +5053,7 @@
                     document
                         .getElementsByClassName("page-title")[0]
                         .getElementsByTagName("span")[0].innerHTML =
-                        "Skybox Testing";
+                        "Extra Downloads";
                     document.getElementsByClassName(
                         "btn-operation",
                     )[0].style.opacity = 0;
