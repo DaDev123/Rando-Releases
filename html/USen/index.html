@@ -654,6 +654,7 @@
             .skybox-page {
                 display: none;
                 flex-direction: column;
+                overflow-y: auto;
             }
 
             .skybox-page .top-bar {
@@ -666,8 +667,11 @@
                 z-index: 1;
             }
 
+            .skybox-page .skybox-desc {
+                flex: 0 0 auto;
+            }
+
             .skybox-desc {
-                flex: 1 1 auto;
                 position: relative;
                 z-index: 1;
                 display: flex;
@@ -679,6 +683,7 @@
                 text-align: center;
                 font-size: 17px;
                 line-height: 1.6;
+                padding: 16px 0;
             }
 
             .skybox-desc p {
