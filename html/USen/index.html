@@ -626,6 +626,7 @@
                Downloads page itself */
             .downloads-last-updated {
                 display: block;
+                flex: 0 0 auto;
                 text-align: right;
                 color: #d4af37;
                 font-size: 13px;
@@ -651,23 +652,27 @@
                the default to "none" here just fixes the *initial* state -
                the open/close functions still work exactly as before.
                ------------------------------------------------------------ */
-            .skybox-page {
+            .skybox-page,
+            .downloads-page {
                 display: none;
                 flex-direction: column;
                 overflow-y: auto;
             }
 
-            .skybox-page .top-bar {
+            .skybox-page .top-bar,
+            .downloads-page .top-bar {
                 flex: 0 0 auto;
             }
 
-            .skybox-page .downloads-container {
+            .skybox-page .downloads-container,
+            .downloads-page .downloads-container {
                 flex: 0 0 auto;
                 position: relative;
                 z-index: 1;
             }
 
-            .skybox-page .skybox-desc {
+            .skybox-page .skybox-desc,
+            .downloads-page .skybox-desc {
                 flex: 0 0 auto;
             }
 
@@ -4498,9 +4503,6 @@
             <div class="page page12 downloads-page">
                 <div class="top-bar">
                     <span>Downloads</span>
-                </div>
-                <div class="skybox-desc">
-                    <p>Forked from the SMO Randomizer</p>
                 </div>
                 <div class="downloads-container">
                     <div class="download-item">
