@@ -662,6 +662,47 @@
             .skybox-page .top-bar,
             .downloads-page .top-bar {
                 flex: 0 0 auto;
+                position: relative;
+            }
+
+            .skybox-page .skybox-desc:first-of-type,
+            .downloads-page .skybox-desc:first-of-type {
+                margin-top: 70px;
+            }
+
+            /* Compact the Skybox Testing page so all three download
+               entries fit on screen without scrolling. */
+            .skybox-page .skybox-desc {
+                gap: 6px;
+                font-size: 13px;
+                line-height: 1.3;
+                padding: 6px 0;
+            }
+
+            .skybox-page .skybox-desc:first-of-type {
+                margin-top: 44px;
+            }
+
+            .skybox-page .downloads-container {
+                gap: 6px;
+                margin: 4px 0;
+            }
+
+            .skybox-page .download-item {
+                padding: 8px 16px;
+            }
+
+            .skybox-page .download-title {
+                font-size: 15px;
+            }
+
+            .skybox-page .download-desc {
+                font-size: 12px;
+            }
+
+            .skybox-page .download-btn {
+                padding: 8px 16px;
+                font-size: 14px;
             }
 
             .skybox-page .downloads-container,
