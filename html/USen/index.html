@@ -902,6 +902,142 @@
                 letter-spacing: 0.04em;
             }
         </style>
+
+        <!-- ================================================================
+             MOBILE SUPPORT: detection + styles
+             Adds html.is-mobile on phones/tablets (never on Nintendo Switch).
+             The 1280x720 stage is scaled to fit by the script at the bottom.
+             ================================================================ -->
+        <script>
+            (function () {
+                var ua = navigator.userAgent || "";
+                var coarse = window.matchMedia && matchMedia("(pointer: coarse)").matches;
+                var small = Math.min(screen.width, screen.height) < 900;
+                var mobile =
+                    !/Nintendo/i.test(ua) &&
+                    (/Android|iPhone|iPad|iPod|Mobile|Silk|Opera Mini|IEMobile/i.test(ua) ||
+                        (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ||
+                        (coarse && small));
+                window.IS_MOBILE = mobile;
+                if (mobile) {
+                    document.documentElement.classList.add("is-mobile");
+                    var m = document.querySelector('meta[name="viewport"]');
+                    if (m) {
+                        m.setAttribute("content",
+                            "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover");
+                    }
+                }
+            })();
+        </script>
+        <style>
+            html.is-mobile,
+            html.is-mobile body {
+                width: 100% !important;
+                height: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+                position: fixed !important;
+                inset: 0;
+                background-color: #000;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
+                -webkit-text-size-adjust: 100%;
+                overscroll-behavior: none;
+            }
+            /* The fixed 1280x720 stage; transform is set by JS. */
+            html.is-mobile .contents {
+                position: fixed !important;
+                left: 0 !important;
+                top: 0 !important;
+                transition: none !important;
+                width: 1280px !important;
+                height: 720px !important;
+                margin: 0 !important;
+                overflow: hidden !important;
+                transform-origin: 0 0 !important;
+                transform: var(--stage-transform, none) !important;
+            }
+            /* Small text is boosted so it stays legible after scaling. */
+            html.is-mobile .feature-title { font-size: 18px; }
+            html.is-mobile .feature-tooltip { font-size: 17px; }
+            html.is-mobile .server-line { font-size: 19px; }
+            html.is-mobile .toc-last-updated,
+            html.is-mobile .broken-button-note,
+            html.is-mobile .downloads-last-updated { font-size: 16px; }
+            html.is-mobile .changelog-entry ul { font-size: 16px; }
+            html.is-mobile .changelog-version { font-size: 18px; }
+            html.is-mobile .credit-desc,
+            html.is-mobile .credit-role { font-size: calc(15px * var(--credit-scale, 1)); }
+            html.is-mobile .skybox-page .download-desc { font-size: 15px; }
+            html.is-mobile .spoiler-autofill-panel { width: 420px; }
+            html.is-mobile .changelog,
+            html.is-mobile .spoiler-content,
+            html.is-mobile .spoiler-section-list,
+            html.is-mobile .spoiler-autofill-panel,
+            html.is-mobile .feature-tooltip {
+                -webkit-overflow-scrolling: touch;
+                touch-action: pan-y;
+            }
+            html.is-mobile .toc a,
+            html.is-mobile .thumb-area a,
+            html.is-mobile .download-btn { cursor: pointer; }
+
+            /* On-screen Back button (phones have no B button) */
+            #mobile-back-btn {
+                display: none;
+                position: fixed;
+                top: calc(env(safe-area-inset-top, 0px) + 8px);
+                left: calc(env(safe-area-inset-left, 0px) + 8px);
+                z-index: 99990;
+                min-width: 44px;
+                height: 44px;
+                padding: 0 16px;
+                border-radius: 22px;
+                border: 1px solid #d4af37;
+                background: rgba(32, 26, 10, 0.92);
+                color: #f0d67e;
+                font-size: 16px;
+                font-weight: bold;
+                font-family: inherit;
+            }
+            #mobile-back-btn.show { display: block; }
+
+            /* Portrait prompt */
+            #mobile-rotate {
+                display: none;
+                position: fixed;
+                inset: 0;
+                z-index: 99995;
+                background: #14100a;
+                color: #d4af37;
+                text-align: center;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 18px;
+                padding: 24px;
+                font-size: 18px;
+                line-height: 1.4;
+            }
+            #mobile-rotate.show { display: flex; }
+            #mobile-rotate .rot-icon {
+                font-size: 64px;
+                animation: rot-tilt 2s ease-in-out infinite;
+            }
+            @keyframes rot-tilt {
+                0%, 30% { transform: rotate(0deg); }
+                60%, 100% { transform: rotate(-90deg); }
+            }
+            #mobile-rotate button {
+                padding: 10px 20px;
+                border-radius: 8px;
+                border: 1px solid #d4af37;
+                background: transparent;
+                color: #f0d67e;
+                font-size: 15px;
+            }
+        </style>
     </head>
 
     <body>
@@ -6487,6 +6623,87 @@
                     menuBlur(el);
                 }
             }
+        </script>
+
+
+        <!-- ============================================================
+             MOBILE SUPPORT: stage scaling, rotate prompt, back button,
+             tap-to-focus (iOS doesn't focus links on tap, and this UI is
+             driven by focus).
+             ============================================================ -->
+        <div id="mobile-rotate">
+            <div class="rot-icon">&#128241;</div>
+            <div>Rotate your device to landscape<br />for the best view.</div>
+            <button type="button" id="mobile-rotate-skip">View sideways instead</button>
+        </div>
+        <button type="button" id="mobile-back-btn">&#8592; Back</button>
+        <script>
+            (function () {
+                if (!window.IS_MOBILE) {
+                    return;
+                }
+                var root = document.documentElement;
+                var rotateEl = document.getElementById("mobile-rotate");
+                var backBtn = document.getElementById("mobile-back-btn");
+                var forceRotate = false;
+
+                function layout() {
+                    var w = window.innerWidth, h = window.innerHeight;
+                    var portrait = h > w;
+                    var rot = portrait && forceRotate;
+                    var vw = rot ? h : w, vh = rot ? w : h;
+                    var s = Math.min(vw / 1280, vh / 720);
+                    var ox = (vw - 1280 * s) / 2, oy = (vh - 720 * s) / 2;
+                    var t = "translate(" + ox + "px," + oy + "px) scale(" + s + ")";
+                    if (rot) {
+                        t = "translate(" + w + "px,0) rotate(90deg) " + t;
+                    }
+                    root.style.setProperty("--stage-transform", t);
+                    rotateEl.classList.toggle("show", portrait && !forceRotate);
+                }
+                window.addEventListener("resize", layout);
+                window.addEventListener("orientationchange", function () {
+                    setTimeout(layout, 150);
+                });
+                document.getElementById("mobile-rotate-skip").onclick = function () {
+                    forceRotate = true;
+                    layout();
+                };
+                layout();
+
+                // Back: the app listens for Escape/Backspace (B button).
+                function fireKey(code, key) {
+                    var ev = new KeyboardEvent("keydown", {
+                        key: key, bubbles: true, cancelable: true,
+                    });
+                    ["keyCode", "which"].forEach(function (p) {
+                        Object.defineProperty(ev, p, { get: function () { return code; } });
+                    });
+                    (document.activeElement || document).dispatchEvent(ev);
+                }
+                backBtn.addEventListener("click", function () {
+                    var before = typeof pageNum !== "undefined" ? pageNum : null;
+                    fireKey(27, "Escape");
+                    setTimeout(function () {
+                        if (typeof pageNum !== "undefined" && pageNum === before && before !== 0) {
+                            fireKey(8, "Backspace");
+                        }
+                    }, 250);
+                });
+                setInterval(function () {
+                    var onSub = typeof pageNum !== "undefined" && pageNum !== 0;
+                    backBtn.classList.toggle("show", onSub);
+                }, 250);
+
+                // Tap = focus for focus-driven items.
+                document.addEventListener("click", function (e) {
+                    var el = e.target.closest &&
+                        e.target.closest("a[onfocus], .feature-card, .server-card, .toc a");
+                    if (el && document.activeElement !== el) {
+                        el.focus();
+                    }
+                }, true);
+            })();
         </script>
 
         <!-- textbox_id_counter-916 -->
