@@ -6689,10 +6689,19 @@
                         imp(stage, "transform",
                             "translate(" + ox + "px," + oy + "px) scale(" + s + ")");
                     }
-                    if (debugEl) {
-                        debugEl.textContent = "mobile " + w + "x" + h +
-                            (reflow ? " reflow" : " stage");
-                    }
+                    dbgMode = (reflow ? "reflow" : "stage") + " " + w + "x" + h;
+                    updateDebug();
+                }
+                var dbgMode = "", dbgTap = "-", dbgErr = "-", dbgTouch = 0;
+                function updateDebug() {
+                    if (!debugEl) { return; }
+                    debugEl.textContent =
+                        "build m4 | " + dbgMode +
+                        " | indexjs:" + (typeof pageNum !== "undefined" ? "yes p=" + pageNum : "NO") +
+                        " | back:" + (typeof window.MOBILE_BACK === "function" ? "yes" : "NO") +
+                        " | touches:" + dbgTouch +
+                        " | last tap:" + dbgTap +
+                        " | last error:" + dbgErr;
                 }
                 window.addEventListener("resize", layout);
                 window.addEventListener("orientationchange", function () {
@@ -6705,7 +6714,23 @@
                         "position:fixed;right:4px;bottom:4px;z-index:99999;" +
                         "background:rgba(0,0,0,.8);color:#0f0;font:11px monospace;" +
                         "padding:3px 6px;pointer-events:none";
+                    debugEl.style.maxWidth = "96%";
+                    debugEl.style.whiteSpace = "normal";
                     body.appendChild(debugEl);
+                    window.addEventListener("error", function (e) {
+                        dbgErr = String(e.message || e).slice(0, 60);
+                        updateDebug();
+                    });
+                    window.addEventListener("pointerdown", function () {
+                        dbgTouch++;
+                        updateDebug();
+                    }, true);
+                    document.addEventListener("click", function (e) {
+                        var t = e.target;
+                        dbgTap = t.tagName + (t.id ? "#" + t.id : "");
+                        updateDebug();
+                    }, true);
+                    setInterval(updateDebug, 1000);
                 }
                 layout();
 
