@@ -921,6 +921,10 @@
                 window.IS_MOBILE = mobile;
                 if (mobile) {
                     document.documentElement.classList.add("is-mobile");
+                    // mobile-responsive.css (unseen) can fight the stage
+                    // scaling below, so it is switched off on mobile.
+                    var mr = document.querySelector('link[href*="mobile-responsive"]');
+                    if (mr) { mr.disabled = true; mr.media = "not all"; }
                     var m = document.querySelector('meta[name="viewport"]');
                     if (m) {
                         m.setAttribute("content",
@@ -6643,9 +6647,17 @@
                     return;
                 }
                 var root = document.documentElement;
+                var body = document.body;
+                var stage = document.querySelector(".contents");
                 var rotateEl = document.getElementById("mobile-rotate");
                 var backBtn = document.getElementById("mobile-back-btn");
                 var forceRotate = false;
+                var debugEl = null;
+
+                function imp(el, prop, val) {
+                    // inline !important beats every stylesheet rule
+                    if (el) { el.style.setProperty(prop, val, "important"); }
+                }
 
                 function layout() {
                     var w = window.innerWidth, h = window.innerHeight;
@@ -6658,17 +6670,47 @@
                     if (rot) {
                         t = "translate(" + w + "px,0) rotate(90deg) " + t;
                     }
-                    root.style.setProperty("--stage-transform", t);
+                    [root, body].forEach(function (el) {
+                        imp(el, "width", "100%");
+                        imp(el, "height", "100%");
+                        imp(el, "overflow", "hidden");
+                    });
+                    imp(stage, "position", "fixed");
+                    imp(stage, "left", "0");
+                    imp(stage, "top", "0");
+                    imp(stage, "width", "1280px");
+                    imp(stage, "height", "720px");
+                    imp(stage, "margin", "0");
+                    imp(stage, "transition", "none");
+                    imp(stage, "transform-origin", "0 0");
+                    imp(stage, "transform", t);
                     rotateEl.classList.toggle("show", portrait && !forceRotate);
+                    if (debugEl) {
+                        debugEl.textContent = "mobile " + w + "x" + h +
+                            (portrait ? " portrait" : " landscape") +
+                            " scale " + s.toFixed(3) + (rot ? " rotated" : "");
+                    }
                 }
                 window.addEventListener("resize", layout);
                 window.addEventListener("orientationchange", function () {
                     setTimeout(layout, 150);
+                    setTimeout(layout, 500);
                 });
                 document.getElementById("mobile-rotate-skip").onclick = function () {
                     forceRotate = true;
                     layout();
                 };
+
+                // Add ?debug to the URL to show a small status line + the
+                // element under each tap.
+                if (/[?&]debug/.test(location.search)) {
+                    debugEl = document.createElement("div");
+                    debugEl.style.cssText =
+                        "position:fixed;right:4px;bottom:4px;z-index:99999;" +
+                        "background:rgba(0,0,0,.8);color:#0f0;font:11px monospace;" +
+                        "padding:3px 6px;max-width:70%;pointer-events:none";
+                    body.appendChild(debugEl);
+                }
                 layout();
 
                 // Back: the app listens for Escape/Backspace (B button).
@@ -6695,12 +6737,47 @@
                     backBtn.classList.toggle("show", onSub);
                 }, 250);
 
-                // Tap = focus for focus-driven items.
+                // Touch taps. The app (nx.js / index.js) may swallow touch
+                // events so the browser never fires "click", and iOS never
+                // focuses links on tap while this UI is driven by focus.
+                // So taps are resolved here from pointer events, which
+                // can't be cancelled that way, and re-issued as focus+click.
+                var SEL = "a, button, label, input, select, textarea, [onclick], " +
+                    ".feature-card, .server-card, .changelog";
+                var down = null, lastSynth = 0;
+                document.addEventListener("pointerdown", function (e) {
+                    down = { x: e.clientX, y: e.clientY, id: e.pointerId };
+                }, true);
+                document.addEventListener("pointerup", function (e) {
+                    var d = down;
+                    down = null;
+                    if (!d || d.id !== e.pointerId || e.pointerType === "mouse") {
+                        return;
+                    }
+                    if (Math.hypot(e.clientX - d.x, e.clientY - d.y) > 14) {
+                        return; // a drag/scroll, not a tap
+                    }
+                    var t = document.elementFromPoint(e.clientX, e.clientY);
+                    if (debugEl && t) {
+                        debugEl.textContent += " | tap: " + t.tagName +
+                            (t.className ? "." + String(t.className).split(" ")[0] : "");
+                    }
+                    var el = t && t.closest(SEL);
+                    if (!el) {
+                        return;
+                    }
+                    lastSynth = Date.now();
+                    try { el.focus({ preventScroll: true }); } catch (err) {}
+                    if (el.matches("a, button, label, input, select, textarea, [onclick]")) {
+                        el.click();
+                    }
+                }, true);
+                // If the browser also fires its own click, drop it so
+                // nothing runs twice.
                 document.addEventListener("click", function (e) {
-                    var el = e.target.closest &&
-                        e.target.closest("a[onfocus], .feature-card, .server-card, .toc a");
-                    if (el && document.activeElement !== el) {
-                        el.focus();
+                    if (e.isTrusted && Date.now() - lastSynth < 700) {
+                        e.stopImmediatePropagation();
+                        e.preventDefault();
                     }
                 }, true);
             })();
