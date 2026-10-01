@@ -258,7 +258,12 @@ window.onload = function() {
     } catch (e) {}
 
     try {
-    window.nx.footer.setAssign('B', '', function() {
+      window.nx.footer.setAssign('B', '', function () {
+      var changelog_modal = document.getElementById('changelog-modal');
+      if (changelog_modal && changelog_modal.style.display == "block") {
+        changelog_modal.style.display = "none";
+        return;
+      }
         if (pageNum == 6) {
             // Close just the autofill panel first if it's open, rather
             // than backing all the way out of Spoiler Log out from under

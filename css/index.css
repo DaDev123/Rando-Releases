@@ -1629,12 +1629,12 @@ html.dark-mode .spoiler-page {
 }
 
 html.dark-mode .download-item,
-html.dark-mode .credit-item {
+html.dark-mode .credit-item, html.dark-mode #changelog-modal {
     background-color: #454545 !important;
 }
 
 html.dark-mode .credit-name,
-html.dark-mode .credit-desc {
+html.dark-mode .credit-desc, html.dark-mode #changelog-modal, html.dark-mode .server-line {
     color: #fff !important;
 }
 

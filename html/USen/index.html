@@ -656,13 +656,12 @@
                 gap: 12px;
             }
             .server-card:focus {
-                outline: 2px solid #d4af37;
-                outline-offset: 2px;
+                outline: none;
             }
             .server-line {
                 margin: 4px 0 0;
                 font-size: 14px;
-                color: #fff;
+                color: #000;
             }
             .server-line b {
                 color: #d4af37;
@@ -676,7 +675,7 @@
                 font-size: 15px;
                 font-weight: bold;
                 color: #fff;
-                background: rgba(0, 0, 0, 0.35);
+                outline: 1px #d4af37;
                 white-space: nowrap;
             }
             .server-status-dot {
@@ -687,7 +686,6 @@
             }
             .server-status.online .server-status-dot {
                 background: #3ddc57;
-                box-shadow: 0 0 6px #3ddc57;
             }
             .server-status.online {
                 color: #3ddc57;
@@ -702,24 +700,24 @@
             /* ------------------------------------------------------------
                DOWNLOADS CHANGELOG
                ------------------------------------------------------------ */
-            .changelog {
+            #changelog-modal {
                 position: absolute;
-                top: 485px;
+                top: 163px;
                 left: 82px;
                 right: 82px;
-                height: 145px;
+                height: 464px;
                 z-index: 2;
                 overflow-y: auto;
                 margin: 0;
                 padding: 10px 16px;
                 box-sizing: border-box;
                 border-radius: 10px;
-                background: rgba(255, 255, 255, 0.06);
+                background: #FFF;
                 border: 1px solid rgba(212, 175, 55, 0.25);
-                color: #fff;
+                color: #000;
                 text-align: left;
             }
-            .changelog:focus {
+            #changelog-modal:focus {
                 outline: 2px solid #d4af37;
                 outline-offset: 2px;
             }
@@ -914,12 +912,17 @@
         <script>
             (function () {
                 var ua = navigator.userAgent || "";
-                var coarse = window.matchMedia && matchMedia("(pointer: coarse)").matches;
+                var coarse =
+                    window.matchMedia &&
+                    matchMedia("(pointer: coarse)").matches;
                 var small = Math.min(screen.width, screen.height) < 900;
                 var mobile =
                     !/Nintendo/i.test(ua) &&
-                    (/Android|iPhone|iPad|iPod|Mobile|Silk|Opera Mini|IEMobile/i.test(ua) ||
-                        (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ||
+                    (/Android|iPhone|iPad|iPod|Mobile|Silk|Opera Mini|IEMobile/i.test(
+                        ua,
+                    ) ||
+                        (/Macintosh/.test(ua) &&
+                            navigator.maxTouchPoints > 1) ||
                         (coarse && small) ||
                         window.innerWidth <= 760);
                 window.IS_MOBILE = mobile;
@@ -929,8 +932,10 @@
                 document.documentElement.classList.add("is-mobile");
                 var m = document.querySelector('meta[name="viewport"]');
                 if (m) {
-                    m.setAttribute("content",
-                        "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover");
+                    m.setAttribute(
+                        "content",
+                        "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+                    );
                 }
                 // js/index.js calls preventDefault() on every touch event,
                 // which stops the browser from ever sending a "click" (so
@@ -938,11 +943,17 @@
                 // for the Switch but wrong for phones, so on mobile these
                 // events are stopped at window level, before index.js's
                 // document listeners can see them.
-                ["touchstart", "touchmove", "touchend", "touchcancel"].forEach(function (t) {
-                    window.addEventListener(t, function (e) {
-                        e.stopImmediatePropagation();
-                    }, true);
-                });
+                ["touchstart", "touchmove", "touchend", "touchcancel"].forEach(
+                    function (t) {
+                        window.addEventListener(
+                            t,
+                            function (e) {
+                                e.stopImmediatePropagation();
+                            },
+                            true,
+                        );
+                    },
+                );
                 // index.js registers the B/Cancel action through
                 // nx.footer.setAssign('B', ...). Capture it so the on-screen
                 // Back button can run exactly the same code.
@@ -956,7 +967,9 @@
                     if (key === "B" && typeof cb === "function") {
                         window.MOBILE_BACK = cb;
                     }
-                    try { return origAssign.apply(this, arguments); } catch (e) {}
+                    try {
+                        return origAssign.apply(this, arguments);
+                    } catch (e) {}
                 };
             })();
         </script>
@@ -979,18 +992,36 @@
                 background-color: #000;
                 overscroll-behavior: none;
             }
-            html.m-stage .feature-title { font-size: 18px; }
-            html.m-stage .feature-tooltip { font-size: 17px; }
-            html.m-stage .server-line { font-size: 19px; }
+            html.m-stage .feature-title {
+                font-size: 18px;
+            }
+            html.m-stage .feature-tooltip {
+                font-size: 17px;
+            }
+            html.m-stage .server-line {
+                font-size: 19px;
+            }
             html.m-stage .toc-last-updated,
             html.m-stage .broken-button-note,
-            html.m-stage .downloads-last-updated { font-size: 16px; }
-            html.m-stage .changelog-entry ul { font-size: 16px; }
-            html.m-stage .changelog-version { font-size: 18px; }
+            html.m-stage .downloads-last-updated {
+                font-size: 16px;
+            }
+            html.m-stage .changelog-entry ul {
+                font-size: 16px;
+            }
+            html.m-stage .changelog-version {
+                font-size: 18px;
+            }
             html.m-stage .credit-desc,
-            html.m-stage .credit-role { font-size: calc(15px * var(--credit-scale, 1)); }
-            html.m-stage .skybox-page .download-desc { font-size: 15px; }
-            html.m-stage .spoiler-autofill-panel { width: 420px; }
+            html.m-stage .credit-role {
+                font-size: calc(15px * var(--credit-scale, 1));
+            }
+            html.m-stage .skybox-page .download-desc {
+                font-size: 15px;
+            }
+            html.m-stage .spoiler-autofill-panel {
+                width: 420px;
+            }
             html.m-stage .changelog,
             html.m-stage .spoiler-content,
             html.m-stage .spoiler-section-list,
@@ -1003,8 +1034,12 @@
             /* ----- portrait reflow extras ----- */
             /* The Switch-style footer (Select/Cancel/OK) is replaced by the
                Back button on phones. */
-            html.m-reflow footer { display: none !important; }
-            html.m-reflow .page { padding-bottom: 24px !important; }
+            html.m-reflow footer {
+                display: none !important;
+            }
+            html.m-reflow .page {
+                padding-bottom: 24px !important;
+            }
             html.m-reflow .server-list,
             html.m-reflow .changelog {
                 position: static !important;
@@ -1015,10 +1050,16 @@
             html.m-reflow .features-page,
             html.m-reflow .multiplayer-page,
             html.m-reflow .skybox-page,
-            html.m-reflow .downloads-page { overflow-y: visible; }
+            html.m-reflow .downloads-page {
+                overflow-y: visible;
+            }
             html.m-reflow .credits-container,
-            html.m-reflow .features-container { max-height: none !important; }
-            html.m-reflow .credit-item { height: auto !important; }
+            html.m-reflow .features-container {
+                max-height: none !important;
+            }
+            html.m-reflow .credit-item {
+                height: auto !important;
+            }
 
             /* On-screen Back button (phones have no B button) */
             #mobile-back-btn {
@@ -1038,7 +1079,9 @@
                 font-weight: bold;
                 font-family: inherit;
             }
-            #mobile-back-btn.show { display: block; }
+            #mobile-back-btn.show {
+                display: block;
+            }
         </style>
     </head>
 
@@ -2326,15 +2369,20 @@
                             src="../../img/l-stick-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />+<img
                             src="../../img/y-button-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         Dash<br />
-                        <img src="../../img/b-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        <img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Jump<br />
                         <p style="font-size: 18px" data-ms="true">
                             Shake the
@@ -2342,14 +2390,19 @@
                                 src="../../img/joycons-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to High Jump.
                         </p>
                     </span>
                     <h2><span data-msgid="textbox_id-104">Paragoomba</span></h2>
                     <span class="capture-ms" data-msgid="textbox_id-105"
-                        ><img src="../../img/b-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        ><img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Fly<br />
                         <p style="font-size: 18px" data-ms="true">
                             Shake the
@@ -2357,7 +2410,7 @@
                                 src="../../img/joycons-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to fly faster
                         </p>
@@ -2371,7 +2424,7 @@
                                 src="../../img/l-stick-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Release (flick back)</span
                         ></span
@@ -2382,15 +2435,20 @@
                             src="../../img/l-stick-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />+<img
                             src="../../img/y-button-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         Dash<br />
-                        <img src="../../img/b-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        <img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Attack<br />
                         <p style="font-size: 18px" data-ms="true">
                             You can also shake the
@@ -2398,7 +2456,7 @@
                                 src="../../img/joycons-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Attack.
                         </p>
@@ -2413,10 +2471,15 @@
                             src="../../img/r-stick-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         Look around<br />
-                        <img src="../../img/y-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        <img
+                            src="../../img/y-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Zoom<br />
                         <p style="font-size: 18px" data-ms="true">
                             You can also look around with
@@ -2424,13 +2487,13 @@
                                 src="../../img/joycon-vert-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             /><br />
                             <img
                                 src="../../img/r-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Reset
                         </p>
@@ -2445,7 +2508,7 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to accelerate<br />
                             <p style="font-size: 18px" data-ms="true">
@@ -2454,7 +2517,7 @@
                                     src="../../img/joycons-white.png"
                                     data-ms="true"
                                     height="32px"
-                                    style="margin: -8px;"
+                                    style="margin: -8px"
                                 />
                                 to Accelerate more.
                             </p>
@@ -2462,7 +2525,12 @@
                     >
                     <h2><span data-msgid="textbox_id-114">Moe-Eye</span></h2>
                     <span class="capture-ms" data-msgid="textbox_id-115"
-                        ><img src="../../img/y-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        ><img
+                            src="../../img/y-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Put On / Take Off Shades</span
                     >
                     <h2><span data-msgid="textbox_id-119">Goomba</span></h2>
@@ -2471,15 +2539,20 @@
                             src="../../img/l-stick-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />+<img
                             src="../../img/y-button-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         Dash<br />
-                        <img src="../../img/b-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        <img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Jump<br />
                         <p style="font-size: 18px" data-ms="true">
                             Shake the
@@ -2487,7 +2560,7 @@
                                 src="../../img/joycons-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to High Jump
                         </p>
@@ -2500,7 +2573,7 @@
                                 src="../../img/b-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Glide</span
                         ></span
@@ -2512,7 +2585,7 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Lower / Raise Line</span
                         ></span
@@ -2521,9 +2594,19 @@
                         <span data-msgid="textbox_id-135">Cheep Cheep</span>
                     </h2>
                     <span class="capture-ms" data-msgid="textbox_id-136"
-                        ><img src="../../img/y-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        ><img
+                            src="../../img/y-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Dive<br />
-                        <img src="../../img/b-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        <img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Surface<br />
                         <p style="font-size: 18px" data-ms="true">
                             Shake the
@@ -2531,7 +2614,7 @@
                                 src="../../img/joycons-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Attack.
                         </p>
@@ -2544,7 +2627,7 @@
                                 src="../../img/b-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Stretch<br />
                             <p style="font-size: 18px" data-ms="true">
@@ -2553,7 +2636,7 @@
                                     src="../../img/joycons-white.png"
                                     data-ms="true"
                                     height="32px"
-                                    style="margin: -8px;"
+                                    style="margin: -8px"
                                 />
                                 to stretch farther
                             </p>
@@ -2566,14 +2649,14 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Throw<br />
                             <img
                                 src="../../img/b-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Jump<br />
                             <p style="font-size: 18px" data-ms="true">
@@ -2582,7 +2665,7 @@
                                     src="../../img/joycons-white.png"
                                     data-ms="true"
                                     height="32px"
-                                    style="margin: -8px;"
+                                    style="margin: -8px"
                                 />
                                 to Throw faster.
                             </p>
@@ -2595,14 +2678,14 @@
                                 src="../../img/r-stick-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Aim<br />
                             <img
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Shoot<br />
                             <p style="font-size: 18px" data-ms="true">
@@ -2611,13 +2694,13 @@
                                     src="../../img/joycon-vert-white.png"
                                     data-ms="true"
                                     height="32px"
-                                    style="margin: -8px;"
+                                    style="margin: -8px"
                                 />.<br />
                                 <img
                                     src="../../img/r-button-white.png"
                                     data-ms="true"
                                     height="32px"
-                                    style="margin: -8px;"
+                                    style="margin: -8px"
                                 />
                                 Reset
                             </p>
@@ -2633,12 +2716,12 @@
                             src="../../img/l-stick-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />+<img
                             src="../../img/y-button-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         Stretch<br />
                         <p style="font-size: 18px" data-ms="true">
@@ -2647,7 +2730,7 @@
                                 src="../../img/joycons-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Stretch faster.
                         </p>
@@ -2660,7 +2743,7 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Exhale<br />
                             <p style="font-size: 18px" data-ms="true">
@@ -2669,7 +2752,7 @@
                                     src="../../img/joycons-white.png"
                                     data-ms="true"
                                     height="32px"
-                                    style="margin: -8px;"
+                                    style="margin: -8px"
                                 />
                                 to blow harder.
                             </p>
@@ -2681,7 +2764,12 @@
                         >
                     </h2>
                     <span class="capture-ms" data-msgid="textbox_id-146"
-                        ><img src="../../img/b-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        ><img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Bound<br />
                         <p style="font-size: 18px" data-ms="true">
                             You can also shake the
@@ -2689,7 +2777,7 @@
                                 src="../../img/joycons-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to bound.
                         </p>
@@ -2702,7 +2790,7 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Jet Forward<br />
                             Hold
@@ -2710,7 +2798,7 @@
                                 src="../../img/b-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Jet Upward<br />
                             <p style="font-size: 18px" data-ms="true">
@@ -2719,7 +2807,7 @@
                                     src="../../img/joycons-white.png"
                                     data-ms="true"
                                     height="32px"
-                                    style="margin: -8px;"
+                                    style="margin: -8px"
                                 />
                                 to spray in all directions.
                             </p>
@@ -2733,15 +2821,20 @@
                             src="../../img/l-stick-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />+<img
                             src="../../img/y-button-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         Dash<br />
-                        <img src="../../img/b-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        <img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Jump<br />
                         <p style="font-size: 18px" data-ms="true">
                             Shake the
@@ -2749,7 +2842,7 @@
                                 src="../../img/joycons-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Dash faster.
                         </p>
@@ -2761,14 +2854,14 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Throw<br />
                             <img
                                 src="../../img/b-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Jump<br />
                             <p style="font-size: 18px" data-ms="true">
@@ -2777,7 +2870,7 @@
                                     src="../../img/joycons-white.png"
                                     data-ms="true"
                                     height="32px"
-                                    style="margin: -8px;"
+                                    style="margin: -8px"
                                 />to Throw faster.
                             </p>
                         </span></span
@@ -2789,21 +2882,21 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Poke<br />
                             <img
                                 src="../../img/l-stick-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Flick<br />
                             <img
                                 src="../../img/b-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Jump</span
                         ></span
@@ -2818,7 +2911,7 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Charge Up<br />
                             Release
@@ -2826,16 +2919,26 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Tackle</span
                         ></span
                     >
                     <h2><span data-msgid="textbox_id-157">Bowser</span></h2>
                     <span class="capture-ms" data-msgid="textbox_id-158"
-                        ><img src="../../img/y-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        ><img
+                            src="../../img/y-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Attack<br />
-                        <img src="../../img/b-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        <img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Jump<br />
                         <p style="font-size: 18px" data-ms="true">
                             Shake the
@@ -2843,7 +2946,7 @@
                                 src="../../img/joycons-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to breathe Fire.
                         </p>
@@ -2855,7 +2958,7 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Extend Tongue<br />
                             Hold
@@ -2863,7 +2966,7 @@
                                 src="../../img/b-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Flutter Jump<br />
                             <p style="font-size: 18px" data-ms="true">
@@ -2872,7 +2975,7 @@
                                     src="../../img/joycons-white.png"
                                     data-ms="true"
                                     height="32px"
-                                    style="margin: -8px;"
+                                    style="margin: -8px"
                                 />
                                 to extend tongue.
                             </p>
@@ -3086,37 +3189,71 @@
                 <div class="action-desc">
                     <h2><span>Neutral Throw</span></h2>
                     <span class="action-ms">
-                        <img src="../../img/y-button-white.png" data-ms="true" height="32" style="margin: -8px;" />
+                        <img
+                            src="../../img/y-button-white.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />
                     </span>
                     <h2><span>Up Throw</span></h2>
                     <span class="action-ms">
-                        <img src="../../img/x-button-white.png" data-ms="true" height="32" style="margin: -8px;" /> (midair only)
+                        <img
+                            src="../../img/x-button-white.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />
+                        (midair only)
                     </span>
                     <h2><span>Down Throw</span></h2>
                     <span class="action-ms">
-                        <img src="../../img/b-button-white.png" data-ms="true" height="32" style="margin: -8px;" />
+                        <img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />
                     </span>
                     <h2><span>Spin Throw</span></h2>
                     <span class="action-ms">
-                        <img src="../../img/r-button-white.png" data-ms="true" height="32" style="margin: -8px;" />
+                        <img
+                            src="../../img/r-button-white.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />
                     </span>
                     <h2><span>Vault</span></h2>
                     <span class="action-ms"
                         >Press and hold
-                        <img src="../../img/y-button-white.png" data-ms="true" height="32" style="margin: -8px;" />,
-                        then step on the cap.</span
+                        <img
+                            src="../../img/y-button-white.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />, then step on the cap.</span
                     >
                     <h2><span>Crouch</span></h2>
                     <span class="action-ms"
-                        ><img src="../../img/zl-button-white.png" data-ms="true" height="32" style="margin: -8px;" />
+                        ><img
+                            src="../../img/zl-button-white.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />
                     </span>
                     <h2><span>Backflip</span></h2>
                     <span class="action-ms"
-                        ><img src="../../img/zl-button-white.png" data-ms="true" height="32" style="margin: -8px;" />+<img
+                        ><img
+                            src="../../img/zl-button-white.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px" />+<img
                             src="../../img/a-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                     /></span>
                     <h2><span>Long Jump</span></h2>
                     <span class="action-ms"
@@ -3124,24 +3261,25 @@
                             src="../../img/zl-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />+<img
                             src="../../img/b-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
-                        /> while running</span
+                            style="margin: -8px"
+                        />
+                        while running</span
                     >
                     <h2><span>Roll</span></h2>
                     <span class="action-ms"
                         ><img
                             src="../../img/zl-button-white.png"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                             data-ms="true" />+<img
                             src="../../img/y-button-white.png"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                             data-ms="true"
                     /></span>
                     <h2><span>Roll Boost</span></h2>
@@ -3149,12 +3287,12 @@
                         ><img
                             src="../../img/zl-button-white.png"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                             data-ms="true"
                         />+<img
                             src="../../img/y-button-white.png"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                             data-ms="true"
                         />
                         <p class="or-text" data-ms="true">or</p>
@@ -3162,8 +3300,9 @@
                             src="../../img/r-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
-                        /> while rolling.
+                            style="margin: -8px"
+                        />
+                        while rolling.
                     </span>
                     <h2><span>Ground Pound</span></h2>
                     <span class="action-ms"
@@ -3171,21 +3310,26 @@
                             src="../../img/zl-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         (midair only)</span
                     >
                     <h2><span>Ground Pound Jump</span></h2>
                     <span class="action-ms"
                         >Press
-                        <img src="../../img/zl-button-white.png" data-ms="true" height="32" style="margin: -8px;" />
+                        <img
+                            src="../../img/zl-button-white.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />
                         in midair.<br />
                         When you hit the ground, press
                         <img
                             src="../../img/a-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />.</span
                     >
                     <h2><span>Dive</span></h2>
@@ -3195,12 +3339,12 @@
                             src="../../img/zl-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />+<img
                             src="../../img/y-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                     </span>
                     <h2><span>Double Jump</span></h2>
@@ -3209,18 +3353,16 @@
                             src="../../img/a-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
-                        /><img
+                            style="margin: -8px" /><img
                             src="../../img/arrow-white.png"
                             class="align4px"
                             height="32"
                             data-ms="true"
-                            style="margin: -8px; margin-bottom: -12px;"
-                        /><img
+                            style="margin: -8px; margin-bottom: -12px" /><img
                             src="../../img/a-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                     /></span>
                     <h2><span>Triple Jump</span></h2>
                     <span class="action-ms"
@@ -3228,29 +3370,29 @@
                             src="../../img/a-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         /><img
                             src="../../img/arrow-white.png"
                             height="32"
                             class="align4px"
                             data-ms="true"
-                            style="margin: -8px; margin-bottom: -12px;"
+                            style="margin: -8px; margin-bottom: -12px"
                         /><img
                             src="../../img/a-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         /><img
                             src="../../img/arrow-white.png"
                             height="32"
                             class="align4px"
                             data-ms="true"
-                            style="margin: -8px; margin-bottom: -12px;"
+                            style="margin: -8px; margin-bottom: -12px"
                         /><img
                             src="../../img/a-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         /><br />(proper timing required!)</span
                     >
                     <h2><span>Side Flip</span></h2>
@@ -3259,12 +3401,12 @@
                             src="../../img/l-stick-white-static.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />+<img
                             src="../../img/a-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         (tilt in the opposite direction while running, then
                         press)</span
@@ -3272,7 +3414,12 @@
                     <h2><span>Spin</span></h2>
                     <span class="action-ms"
                         >Rotate
-                        <img src="../../img/l-stick-white-static.png" data-ms="true" height="32" style="margin: -8px;" />
+                        <img
+                            src="../../img/l-stick-white-static.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />
                     </span>
                     <h2><span>Wall Jump</span></h2>
                     <span class="action-ms"
@@ -3282,7 +3429,7 @@
                             src="../../img/a-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />.</span
                     >
                     <h2><span>Ledge Grab</span></h2>
@@ -3292,7 +3439,7 @@
                             src="../../img/l-stick-white-static.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         towards a ledge</span
                     >
@@ -3302,14 +3449,15 @@
                             src="../../img/l-stick-white-static.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
-                        /><p class="or-text" data-ms="true">or</p>
+                            style="margin: -8px"
+                        />
+                        <p class="or-text" data-ms="true">or</p>
                         To go faster press
                         <img
                             src="../../img/r-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                     </span>
                     <h2><span>Swing</span></h2>
@@ -3319,14 +3467,14 @@
                             src="../../img/l-stick-white-static.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         back and forth + Press
                         <img
                             src="../../img/a-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                     </span>
                     <span class="action-ms-right">Throw Cappy ahead.</span>
@@ -3556,13 +3704,17 @@
                 <div class="action-desc">
                     <h2><span>Neutral Throw</span></h2>
                     <span class="action-ms"
-                        ><img src="../../img/y-button-white.png" data-ms="true" height="32" style="margin: -8px;" />
+                        ><img
+                            src="../../img/y-button-white.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px" />
                         <p class="or-text" data-ms="true">or</p>
                         Shake
                         <img
                             src="../../img/joycons-white.png"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                             data-ms="true"
                     /></span>
                     <h2><span>Up Throw</span></h2>
@@ -3571,7 +3723,7 @@
                         <img
                             src="../../img/joycons-white.png"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                             data-ms="true"
                         />
                         upward</span
@@ -3582,7 +3734,7 @@
                         <img
                             src="../../img/joycons-white.png"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                             data-ms="true"
                         />
                         downward</span
@@ -3593,7 +3745,7 @@
                         <img
                             src="../../img/joycons-white.png"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                             data-ms="true"
                         />
                         to the side</span
@@ -3601,47 +3753,84 @@
                     <h2><span>Vault</span></h2>
                     <span class="action-ms"
                         >Press and hold
-                        <img src="../../img/y-button-white.png" data-ms="true" height="32" style="margin: -8px;" />,
-                        then step on the cap.</span
+                        <img
+                            src="../../img/y-button-white.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />, then step on the cap.</span
                     >
                     <h2><span>Crouch</span></h2>
                     <span class="action-ms"
-                        ><img src="../../img/zl-button-white.png" data-ms="true" height="32" style="margin: -8px;" /></span>
+                        ><img
+                            src="../../img/zl-button-white.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                    /></span>
                     <h2><span>Backflip</span></h2>
                     <span class="action-ms"
-                        ><img src="../../img/zl-button-white.png" height="32" style="margin: -8px;" />+<img
-                            src="../../img/b-button-white.png" height="32" style="margin: -8px;" /></span>
+                        ><img
+                            src="../../img/zl-button-white.png"
+                            height="32"
+                            style="margin: -8px" />+<img
+                            src="../../img/b-button-white.png"
+                            height="32"
+                            style="margin: -8px"
+                    /></span>
                     <h2><span>Long Jump</span></h2>
                     <span class="action-ms"
                         ><img
                             src="../../img/zl-button-white.png"
-                            data-ms="true" height="32" style="margin: -8px;" />+<img
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />+<img
                             src="../../img/b-button-white.png"
-                            data-ms="true" height="32" style="margin: -8px;" />
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />
                         while running</span
                     >
                     <h2><span>Roll</span></h2>
                     <span class="action-ms"
                         ><img
                             src="../../img/zl-button-white.png"
-                            data-ms="true" height="32" style="margin: -8px;" />+<img
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px" />+<img
                             src="../../img/y-button-white.png"
-                            data-ms="true" height="32" style="margin: -8px;" /></span>
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                    /></span>
                     <h2><span>Roll Boost</span></h2>
                     <span class="action-ms"
                         ><img
                             src="../../img/zl-button-white.png"
-                            data-ms="true" height="32" style="margin: -8px;" />+<img
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />+<img
                             src="../../img/y-button-white.png"
-                            data-ms="true" height="32" style="margin: -8px;" />
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />
                         <p class="or-text" data-ms="true">or</p>
                         Hold
-                        <img src="../../img/zl-button-white.png" data-ms="true" height="32" style="margin: -8px;" />
+                        <img
+                            src="../../img/zl-button-white.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />
                         and shake
                         <img
                             src="../../img/joycons-white.png"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                             data-ms="true"
                         />.
                     </span>
@@ -3649,52 +3838,90 @@
                     <span class="action-ms"
                         ><img
                             src="../../img/zl-button-white.png"
-                            data-ms="true" height="32" style="margin: -8px;" />
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />
                         (midair only)</span
                     >
                     <h2><span>Ground Pound Jump</span></h2>
                     <span class="action-ms"
                         >Press
-                        <img src="../../img/zl-button-white.png" data-ms="true" height="32" style="margin: -8px;" />
+                        <img
+                            src="../../img/zl-button-white.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />
                         in midair.<br />
                         When you hit the ground, press
                         <img
                             src="../../img/b-button-white.png"
-                            data-ms="true" height="32" style="margin: -8px;" />.</span
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />.</span
                     >
                     <h2><span>Dive</span></h2>
                     <span class="action-ms"
                         >While Mario is falling in midair:
                         <img
                             src="../../img/zl-button-white.png"
-                            data-ms="true" height="32" style="margin: -8px;" />+<img
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px" />+<img
                             src="../../img/y-button-white.png"
-                            data-ms="true" height="32" style="margin: -8px;" /></span>
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                    /></span>
                     <h2><span>Double Jump</span></h2>
                     <span class="action-ms"
                         ><img
                             src="../../img/b-button-white.png"
-                            data-ms="true" height="32" style="margin: -8px;" /><img
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px" /><img
                             src="../../img/arrow-white.png"
                             class="align4px"
-                            data-ms="true" height="32" style="margin: -8px; margin-bottom: -12px;" /><img
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px; margin-bottom: -12px" /><img
                             src="../../img/b-button-white.png"
-                            data-ms="true" height="32" style="margin: -8px;" /></span>
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                    /></span>
                     <h2><span>Triple Jump</span></h2>
                     <span class="action-ms"
                         ><img
                             src="../../img/b-button-white.png"
-                            data-ms="true" height="32" style="margin: -8px;" /><img
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        /><img
                             src="../../img/arrow-white.png"
                             class="align4px"
-                            data-ms="true" height="32" style="margin: -8px; margin-bottom: -12px;" /><img
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px; margin-bottom: -12px"
+                        /><img
                             src="../../img/b-button-white.png"
-                            data-ms="true" height="32" style="margin: -8px;" /><img
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        /><img
                             src="../../img/arrow-white.png"
                             class="align4px"
-                            data-ms="true" height="32" style="margin: -8px; margin-bottom: -12px;" /><img
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px; margin-bottom: -12px"
+                        /><img
                             src="../../img/b-button-white.png"
-                            data-ms="true" height="32" style="margin: -8px;" /><br />(proper timing required!)</span
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        /><br />(proper timing required!)</span
                     >
                     <h2><span>Side Flip</span></h2>
                     <span class="action-ms"
@@ -3702,12 +3929,12 @@
                             src="../../img/l-stick-white-static.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />+<img
                             src="../../img/a-button-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         (tilt in the opposite direction while running, then
                         press)</span
@@ -3715,44 +3942,64 @@
                     <h2><span>Spin</span></h2>
                     <span class="action-ms"
                         >Rotate
-                        <img src="../../img/l-stick-white-static.png" data-ms="true" height="32" style="margin: -8px;" /></span>
+                        <img
+                            src="../../img/l-stick-white-static.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                    /></span>
                     <h2><span>Wall Jump</span></h2>
                     <span class="action-ms"
                         >Jump toward a wall and<br />
                         press
                         <img
                             src="../../img/b-button-white.png"
-                            data-ms="true" height="32" style="margin: -8px;" />.</span
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />.</span
                     >
                     <h2><span>Ledge Grab</span></h2>
                     <span class="action-ms"
                         >Hold
                         <img
                             src="../../img/l-stick-white-static.png"
-                            data-ms="true" height="32" style="margin: -8px;" />
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />
                         towards a ledge</span
                     >
                     <h2><span>Climb</span></h2>
                     <span class="action-ms"
                         ><img
                             src="../../img/l-stick-white-static.png"
-                            data-ms="true" height="32" style="margin: -8px;" />
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px" />
                         <p class="or-text" data-ms="true">or</p>
                         Shake
                         <img
                             src="../../img/joycons-white.png"
                             data-ms="true"
                             height="32"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                     /></span>
                     <h2><span>Swing</span></h2>
                     <span class="action-ms"
                         >Sway
                         <img
                             src="../../img/l-stick-white-static.png"
-                            data-ms="true" height="32" style="margin: -8px;" />
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px" />
                         back and forth + Press
-                        <img src="../../img/b-button-white.png" data-ms="true" height="32" style="margin: -8px;" /></span>
+                        <img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                    /></span>
                     <span class="action-ms-right">Throw Cappy ahead.</span>
                     <span class="action-ms-right">Throw Cappy upward.</span>
                     <span class="action-ms-right">Throw Cappy downward.</span>
@@ -3985,15 +4232,20 @@
                             src="../../img/l-stick-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />+<img
                             src="../../img/y-button-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         Dash<br />
-                        <img src="../../img/b-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        <img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Jump<br />
                         <p style="font-size: 18px" data-ms="true">
                             Press
@@ -4001,14 +4253,19 @@
                                 src="../../img/r-button-white.png"
                                 height="32"
                                 data-ms="true"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to High Jump.
                         </p>
                     </span>
                     <h2><span data-msgid="textbox_id-104">Paragoomba</span></h2>
                     <span class="capture-ms" data-msgid="textbox_id-105"
-                        ><img src="../../img/b-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        ><img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Fly<br />
                         <p style="font-size: 18px" data-ms="true">
                             Press
@@ -4016,7 +4273,7 @@
                                 src="../../img/r-button-white.png"
                                 height="32"
                                 data-ms="true"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to fly faster
                         </p>
@@ -4030,7 +4287,7 @@
                                 src="../../img/l-stick-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Release (flick back)</span
                         ></span
@@ -4041,15 +4298,20 @@
                             src="../../img/l-stick-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />+<img
                             src="../../img/y-button-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         Dash<br />
-                        <img src="../../img/b-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        <img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Attack<br />
                         <p style="font-size: 18px" data-ms="true">
                             You can also press
@@ -4057,7 +4319,7 @@
                                 src="../../img/r-button-white.png"
                                 height="32"
                                 data-ms="true"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Attack.
                         </p>
@@ -4072,17 +4334,22 @@
                             src="../../img/r-stick-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         Look around<br />
-                        <img src="../../img/y-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        <img
+                            src="../../img/y-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Zoom<br />
                         <p style="font-size: 18px" data-ms="true">
                             <img
                                 src="../../img/r-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Reset
                         </p>
@@ -4097,7 +4364,7 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to accelerate<br />
                             <p style="font-size: 18px" data-ms="true">
@@ -4106,7 +4373,7 @@
                                     src="../../img/r-button-white.png"
                                     height="32"
                                     data-ms="true"
-                                    style="margin: -8px;"
+                                    style="margin: -8px"
                                 />
                                 to Accelerate more.
                             </p>
@@ -4114,7 +4381,12 @@
                     >
                     <h2><span data-msgid="textbox_id-114">Moe-Eye</span></h2>
                     <span class="capture-ms" data-msgid="textbox_id-115"
-                        ><img src="../../img/y-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        ><img
+                            src="../../img/y-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Put On / Take Off Shades</span
                     >
                     <h2><span data-msgid="textbox_id-119">Goomba</span></h2>
@@ -4123,15 +4395,20 @@
                             src="../../img/l-stick-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />+<img
                             src="../../img/y-button-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         Dash<br />
-                        <img src="../../img/b-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        <img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Jump<br />
                         <p style="font-size: 18px" data-ms="true">
                             Press
@@ -4139,7 +4416,7 @@
                                 src="../../img/r-button-white.png"
                                 height="32"
                                 data-ms="true"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to High Jump
                         </p>
@@ -4152,7 +4429,7 @@
                                 src="../../img/b-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Glide</span
                         ></span
@@ -4164,7 +4441,7 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Lower / Raise Line</span
                         ></span
@@ -4173,9 +4450,19 @@
                         <span data-msgid="textbox_id-135">Cheep Cheep</span>
                     </h2>
                     <span class="capture-ms" data-msgid="textbox_id-136"
-                        ><img src="../../img/y-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        ><img
+                            src="../../img/y-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Dive<br />
-                        <img src="../../img/b-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        <img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Surface<br />
                         <p style="font-size: 18px" data-ms="true">
                             Press
@@ -4183,7 +4470,7 @@
                                 src="../../img/r-button-white.png"
                                 height="32"
                                 data-ms="true"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Attack.
                         </p>
@@ -4196,7 +4483,7 @@
                                 src="../../img/b-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Stretch<br />
                             <p style="font-size: 18px" data-ms="true">
@@ -4205,7 +4492,7 @@
                                     src="../../img/r-button-white.png"
                                     height="32"
                                     data-ms="true"
-                                    style="margin: -8px;"
+                                    style="margin: -8px"
                                 />
                                 to stretch farther
                             </p>
@@ -4218,14 +4505,14 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Throw<br />
                             <img
                                 src="../../img/b-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Jump<br />
                             <p style="font-size: 18px" data-ms="true">
@@ -4234,7 +4521,7 @@
                                     src="../../img/r-button-white.png"
                                     height="32"
                                     data-ms="true"
-                                    style="margin: -8px;"
+                                    style="margin: -8px"
                                 />
                                 to Throw faster.
                             </p>
@@ -4247,14 +4534,14 @@
                                 src="../../img/r-stick-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Aim<br />
                             <img
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Shoot<br />
                             <p style="font-size: 18px" data-ms="true">
@@ -4262,7 +4549,7 @@
                                     src="../../img/r-button-white.png"
                                     data-ms="true"
                                     height="32px"
-                                    style="margin: -8px;"
+                                    style="margin: -8px"
                                 />
                                 Reset
                             </p>
@@ -4278,12 +4565,12 @@
                             src="../../img/l-stick-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />+<img
                             src="../../img/y-button-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         Stretch<br />
                         <p style="font-size: 18px" data-ms="true">
@@ -4292,7 +4579,7 @@
                                 src="../../img/r-button-white.png"
                                 height="32"
                                 data-ms="true"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Stretch faster.
                         </p>
@@ -4305,7 +4592,7 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Exhale<br />
                             <p style="font-size: 18px" data-ms="true">
@@ -4314,7 +4601,7 @@
                                     src="../../img/r-button-white.png"
                                     height="32"
                                     data-ms="true"
-                                    style="margin: -8px;"
+                                    style="margin: -8px"
                                 />
                                 to blow harder.
                             </p>
@@ -4326,7 +4613,12 @@
                         >
                     </h2>
                     <span class="capture-ms" data-msgid="textbox_id-146"
-                        ><img src="../../img/b-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        ><img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Bound<br />
                         <p style="font-size: 18px" data-ms="true">
                             You can also press
@@ -4334,7 +4626,7 @@
                                 src="../../img/r-button-white.png"
                                 height="32"
                                 data-ms="true"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to bound.
                         </p>
@@ -4347,7 +4639,7 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Jet Forward<br />
                             Hold
@@ -4355,7 +4647,7 @@
                                 src="../../img/b-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Jet Upward<br />
                             <p style="font-size: 18px" data-ms="true">
@@ -4364,7 +4656,7 @@
                                     src="../../img/r-button-white.png"
                                     height="32"
                                     data-ms="true"
-                                    style="margin: -8px;"
+                                    style="margin: -8px"
                                 />
                                 to spray in all directions.
                             </p>
@@ -4378,15 +4670,20 @@
                             src="../../img/l-stick-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />+<img
                             src="../../img/y-button-white.png"
                             data-ms="true"
                             height="32px"
-                            style="margin: -8px;"
+                            style="margin: -8px"
                         />
                         Dash<br />
-                        <img src="../../img/b-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        <img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Jump<br />
                         <p style="font-size: 18px" data-ms="true">
                             Press
@@ -4394,7 +4691,7 @@
                                 src="../../img/r-button-white.png"
                                 height="32"
                                 data-ms="true"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Dash faster.
                         </p>
@@ -4406,14 +4703,14 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Throw<br />
                             <img
                                 src="../../img/b-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Jump<br />
                             <p style="font-size: 18px" data-ms="true">
@@ -4422,7 +4719,7 @@
                                     src="../../img/r-button-white.png"
                                     height="32"
                                     data-ms="true"
-                                    style="margin: -8px;"
+                                    style="margin: -8px"
                                 />to Throw faster.
                             </p>
                         </span></span
@@ -4434,21 +4731,21 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Poke<br />
                             <img
                                 src="../../img/l-stick-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Flick<br />
                             <img
                                 src="../../img/b-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             Jump</span
                         ></span
@@ -4463,7 +4760,7 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Charge Up<br />
                             Release
@@ -4471,16 +4768,26 @@
                                 src="../../img/y-button-white.png"
                                 data-ms="true"
                                 height="32px"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to Tackle</span
                         ></span
                     >
                     <h2><span data-msgid="textbox_id-157">Bowser</span></h2>
                     <span class="capture-ms" data-msgid="textbox_id-158"
-                        ><img src="../../img/y-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        ><img
+                            src="../../img/y-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Attack<br />
-                        <img src="../../img/b-button-white.png" data-ms="true" height="32px" style="margin: -8px;" />
+                        <img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32px"
+                            style="margin: -8px"
+                        />
                         Jump<br />
                         <p style="font-size: 18px" data-ms="true">
                             Press
@@ -4488,7 +4795,7 @@
                                 src="../../img/r-button-white.png"
                                 height="32"
                                 data-ms="true"
-                                style="margin: -8px;"
+                                style="margin: -8px"
                             />
                             to breathe Fire.
                         </p>
@@ -4496,31 +4803,31 @@
                     <h2><span data-msgid="textbox_id-160">Yoshi</span></h2>
                     <span class="capture-ms" data-msgid="textbox_id-161"
                         ><img
-                                src="../../img/y-button-white.png"
-                                data-ms="true"
-                                height="32"
-                                style="margin: -8px;"
-                            />
-                            Extend Tongue<br />
-                            Hold
+                            src="../../img/y-button-white.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />
+                        Extend Tongue<br />
+                        Hold
+                        <img
+                            src="../../img/b-button-white.png"
+                            data-ms="true"
+                            height="32"
+                            style="margin: -8px"
+                        />
+                        to Flutter Jump<br />
+                        <p style="font-size: 18px" data-ms="true">
+                            You can also press
                             <img
-                                src="../../img/b-button-white.png"
-                                data-ms="true"
+                                src="../../img/r-button-white.png"
                                 height="32"
-                                style="margin: -8px;"
+                                data-ms="true"
+                                style="margin: -8px"
                             />
-                            to Flutter Jump<br />
-                            <p style="font-size: 18px" data-ms="true">
-                                You can also press
-                                <img
-                                    src="../../img/r-button-white.png"
-                                    height="32"
-                                    data-ms="true"
-                                    style="margin: -8px;"
-                                />
-                                to extend tongue.
-                            </p>
-                        </span>
+                            to extend tongue.
+                        </p>
+                    </span>
                 </div>
                 <a
                     class="dummy-a-5"
@@ -4714,7 +5021,10 @@
                             seed's settings, moon placements, entrances, and
                             more.
                         </p>
-                        <label for="spoiler-file-input" class="spoiler-load-btn" tabindex="0"
+                        <label
+                            for="spoiler-file-input"
+                            class="spoiler-load-btn"
+                            tabindex="0"
                             >Choose File</label
                         >
                         <input
@@ -4837,12 +5147,30 @@
                             >Download</a
                         >
                     </div>
+                    <div class="download-item">
+                        <div class="download-info">
+                            <p class="download-title fontDB">View Changelog</p>
+                            <p class="download-desc">Shows the Changelog</p>
+                        </div>
+                        <a
+                            class="download-btn"
+                            href="#"
+                            download
+                            id="changelog-button"
+                            style="cursor: pointer"
+                            onclick="wsnd.play('seDecide')"
+                            >View</a
+                        >
+                    </div>
                 </div>
                 <span
                     class="downloads-last-updated"
                     id="downloads-last-updated-page"
-                    >Last updated ...</span>
-                <div class="changelog" id="changelog" tabindex="0"></div>
+                    >Last updated ...</span
+                >
+                <div id="changelog-modal" style="display: none">
+                    <div class="changelog" id="changelog" tabindex="0"></div>
+                </div>
             </div>
 
             <!-- ========================================================
@@ -4895,7 +5223,8 @@
                                 Motion Free Controls for Emulator
                             </p>
                             <p class="download-desc">
-                                Motion Free Controls mod for SMO on Emulator. (Without the randomizer included)
+                                Motion Free Controls mod for SMO on Emulator.
+                                (Without the randomizer included)
                             </p>
                         </div>
                         <a
@@ -5012,7 +5341,12 @@
                     <li>
                         <a
                             href="javascript:void(0);"
-                            onclick="selectRandomizerActionGuideItem(this, 'standard')"
+                            onclick="
+                                selectRandomizerActionGuideItem(
+                                    this,
+                                    'standard',
+                                )
+                            "
                             onblur="randomizerActionGuideBlur(this)"
                             onfocus="randomizerActionGuideFocus(this)"
                             id="toRandomizerController"
@@ -5023,7 +5357,9 @@
                     <li>
                         <a
                             href="javascript:void(0);"
-                            onclick="selectRandomizerActionGuideItem(this, 'motion')"
+                            onclick="
+                                selectRandomizerActionGuideItem(this, 'motion')
+                            "
                             onblur="randomizerActionGuideBlur(this)"
                             onfocus="randomizerActionGuideFocus(this)"
                             id="toRandomizerControllerMotion"
@@ -5324,6 +5660,13 @@
                first (latest) entry is shown on the page; older ones
                can stay here as an archive.
                ======================================================== */
+
+            const changelogbutton = document.getElementById("changelog-button");
+            function onChangelogButtonClick() {
+                document.getElementById("changelog-modal").style.display = "block";
+            }
+            changelogbutton.addEventListener("click", onChangelogButtonClick);
+
             const changelog = [
                 {
                     version: "Latest Build",
@@ -5367,7 +5710,7 @@
                         "Add additional options for Sheep herding (including Random)",
                         "Add Hints to Signposts",
                         "Add option to pick duplicate reward",
-                        "Add new \"Limited Lives\" game mode where you start with a set number of lives, can buy more in shops (1 per shop, and at increased prices on each purchase). Save deleted after dying with 0 lives",
+                        'Add new "Limited Lives" game mode where you start with a set number of lives, can buy more in shops (1 per shop, and at increased prices on each purchase). Save deleted after dying with 0 lives',
                         "Add option to go over the normal limit of coins",
                         "Logic refresh",
                         "Add Custom Music option, where you can upload your own .mp3 music to the sd card and have it play in game",
@@ -5385,6 +5728,7 @@
 
             function renderChangelog() {
                 var box = document.getElementById("changelog");
+
                 if (!box) {
                     return;
                 }
@@ -5436,21 +5780,16 @@
                 document.getElementById(
                     "toSkyboxTesting",
                 ).style.backgroundColor = "#525252";
-                document.getElementById("toSkyboxTesting").style.color =
-                    "#fff";
+                document.getElementById("toSkyboxTesting").style.color = "#fff";
                 var skyboxTimeout = setTimeout(function () {
-                    document.getElementsByClassName(
-                        "page0",
-                    )[0].style.opacity = 0;
-                    document.getElementsByClassName(
-                        "page0",
-                    )[0].style.display = "none";
-                    document.getElementsByClassName(
-                        "page14",
-                    )[0].style.display = "block";
-                    document.getElementsByClassName(
-                        "page14",
-                    )[0].style.opacity = 1;
+                    document.getElementsByClassName("page0")[0].style.opacity =
+                        0;
+                    document.getElementsByClassName("page0")[0].style.display =
+                        "none";
+                    document.getElementsByClassName("page14")[0].style.display =
+                        "block";
+                    document.getElementsByClassName("page14")[0].style.opacity =
+                        1;
                     document
                         .getElementsByClassName("page-title")[0]
                         .getElementsByTagName("span")[0].innerHTML =
@@ -5472,18 +5811,12 @@
 
             function closeSkyboxTesting() {
                 wsnd.play("seBack");
-                document.getElementsByClassName(
-                    "page14",
-                )[0].style.opacity = 0;
-                document.getElementsByClassName(
-                    "page14",
-                )[0].style.display = "none";
-                document.getElementsByClassName(
-                    "page0",
-                )[0].style.display = "block";
-                document.getElementsByClassName(
-                    "page0",
-                )[0].style.opacity = 1;
+                document.getElementsByClassName("page14")[0].style.opacity = 0;
+                document.getElementsByClassName("page14")[0].style.display =
+                    "none";
+                document.getElementsByClassName("page0")[0].style.display =
+                    "block";
+                document.getElementsByClassName("page0")[0].style.opacity = 1;
                 document.getElementsByClassName(
                     "btn-operation",
                 )[0].style.opacity = 1;
@@ -5516,7 +5849,7 @@
                 "1tsAJ",
                 "BaconFearMC",
                 "Onijuiku",
-                "Umm12many"
+                "Umm12many",
             ];
 
             // ---- Person details live here. Add a new entry, then add their
@@ -5656,20 +5989,20 @@
                     ],
                 },
                 Umm12many: {
-                  avatar: "../../img/credits/Umm12many.png",
-                  role: "Web UI",
-                  desc: "Web UI Updater & Fixes developer.",
-                  links: [
-                      {
-                          icon: "youtube",
-                          url: "https://youtube.com/@Umm12many",
-                      },
-                      {
-                          icon: "github",
-                          url: "https://github.com/Umm12many",
-                      },
-                  ],
-                }
+                    avatar: "../../img/credits/Umm12many.png",
+                    role: "Web UI",
+                    desc: "Web UI Updater & Fixes developer.",
+                    links: [
+                        {
+                            icon: "youtube",
+                            url: "https://youtube.com/@Umm12many",
+                        },
+                        {
+                            icon: "github",
+                            url: "https://github.com/Umm12many",
+                        },
+                    ],
+                },
             };
 
             const iconFiles = {
@@ -5681,8 +6014,7 @@
             };
 
             function renderCredits() {
-                const container =
-                    document.getElementById("credits-container");
+                const container = document.getElementById("credits-container");
                 const creditsData = creditsOrder
                     .filter((name) => {
                         if (!creditsPeople[name]) {
@@ -5706,10 +6038,7 @@
                 const containerWidth = container.clientWidth || 1180;
                 const containerHeight = container.clientHeight || 520;
                 const aspect = containerWidth / containerHeight;
-                let cols = Math.max(
-                    1,
-                    Math.round(Math.sqrt(count * aspect)),
-                );
+                let cols = Math.max(1, Math.round(Math.sqrt(count * aspect)));
                 let rows = Math.max(1, Math.ceil(count / cols));
                 // Shrink cols until the last row isn't mostly empty.
                 while (cols > 1 && (cols - 1) * rows >= count) {
@@ -5721,17 +6050,11 @@
                 // 200x230 is the card's natural (unscaled) footprint.
                 const scale = Math.max(
                     0.55,
-                    Math.min(
-                        1.3,
-                        Math.min(cellWidth / 200, cellHeight / 230),
-                    ),
+                    Math.min(1.3, Math.min(cellWidth / 200, cellHeight / 230)),
                 );
                 container.style.setProperty("--credit-cols", cols);
                 container.style.setProperty("--credit-rows", rows);
-                container.style.setProperty(
-                    "--credit-scale",
-                    scale.toFixed(3),
-                );
+                container.style.setProperty("--credit-scale", scale.toFixed(3));
 
                 container.innerHTML = creditsData
                     .map(
@@ -5785,7 +6108,7 @@
             // status: "online" or "offline" (shown as-is, not checked live).
             const multiplayerServers = [
                 {
-                    name: "SMO Multiplayer Server",
+                    name: "Randomizer Official Online Server",
                     ip: "129.213.139.181",
                     port: "1027",
                     location: "United States",
@@ -5876,18 +6199,15 @@
                 wsnd.play("seDecide");
                 footerText();
                 pageNum = 20;
-                document.getElementById(
-                    "toMultiplayer",
-                ).style.backgroundColor = "#fff";
+                document.getElementById("toMultiplayer").style.backgroundColor =
+                    "#fff";
                 document.getElementById("toMultiplayer").style.color =
                     "#525252";
                 var multiplayerTimeout = setTimeout(function () {
-                    document.getElementsByClassName(
-                        "page0",
-                    )[0].style.opacity = 0;
-                    document.getElementsByClassName(
-                        "page0",
-                    )[0].style.display = "none";
+                    document.getElementsByClassName("page0")[0].style.opacity =
+                        0;
+                    document.getElementsByClassName("page0")[0].style.display =
+                        "none";
                     document
                         .getElementById("page-multiplayer")
                         .classList.add("active");
@@ -5918,12 +6238,9 @@
                 document
                     .getElementById("page-multiplayer")
                     .classList.remove("active");
-                document.getElementsByClassName(
-                    "page0",
-                )[0].style.display = "block";
-                document.getElementsByClassName(
-                    "page0",
-                )[0].style.opacity = 1;
+                document.getElementsByClassName("page0")[0].style.display =
+                    "block";
+                document.getElementsByClassName("page0")[0].style.opacity = 1;
                 document.getElementsByClassName(
                     "btn-operation",
                 )[0].style.opacity = 1;
@@ -5933,12 +6250,13 @@
                 document
                     .getElementsByClassName("page-title")[0]
                     .getElementsByTagName("span")[0].innerHTML = "";
-                document.getElementById(
-                    "toMultiplayer",
-                ).style.backgroundColor = "";
+                document.getElementById("toMultiplayer").style.backgroundColor =
+                    "";
                 document.getElementById("toMultiplayer").style.color = "";
                 document.getElementById("toMultiplayer").focus();
-                document.getElementsByClassName('btn-operation')[2].style.opacity = 0;
+                document.getElementsByClassName(
+                    "btn-operation",
+                )[2].style.opacity = 0;
             }
 
             /* ========================================================
@@ -6068,9 +6386,7 @@
             // Pass ext: "gif" in that feature's featuresData entry to use an
             // animated GIF instead of a PNG for that card.
             function featureImagePath(title, ext) {
-                const filename = title
-                    .toLowerCase()
-                    .replace(/[^a-z0-9]/g, "");
+                const filename = title.toLowerCase().replace(/[^a-z0-9]/g, "");
                 return `../../img/features/${filename}.${ext || "png"}`;
             }
 
@@ -6086,10 +6402,7 @@
                 })
                 .map((title) => ({
                     title,
-                    image: featureImagePath(
-                        title,
-                        featuresData[title].ext,
-                    ),
+                    image: featureImagePath(title, featuresData[title].ext),
                     ...featuresData[title],
                 }));
 
@@ -6098,8 +6411,7 @@
             const FEATURES_MAX = 50;
 
             function renderFeatures() {
-                const container =
-                    document.getElementById("features-container");
+                const container = document.getElementById("features-container");
                 const items = featuresList.slice(0, FEATURES_MAX);
 
                 // Pick a grid shape that's wider than it is tall (tiles
@@ -6110,10 +6422,7 @@
                 const containerWidth = container.clientWidth || 1240;
                 const containerHeight = container.clientHeight || 555;
                 const aspect = containerWidth / containerHeight;
-                let cols = Math.max(
-                    1,
-                    Math.round(Math.sqrt(count * aspect)),
-                );
+                let cols = Math.max(1, Math.round(Math.sqrt(count * aspect)));
                 let rows = Math.max(1, Math.ceil(count / cols));
                 // Shrink cols until every row would actually have at least
                 // one tile in it (avoids a mostly-empty final row).
@@ -6218,24 +6527,20 @@
                 wsnd.play("seDecide");
                 footerText();
                 pageNum = 15;
-                document.getElementById(
-                    "toFeatures",
-                ).style.backgroundColor = "#fff";
+                document.getElementById("toFeatures").style.backgroundColor =
+                    "#fff";
                 document.getElementById("toFeatures").style.color = "#525252";
                 var featuresTimeout = setTimeout(function () {
-                    document.getElementsByClassName(
-                        "page0",
-                    )[0].style.opacity = 0;
-                    document.getElementsByClassName(
-                        "page0",
-                    )[0].style.display = "none";
+                    document.getElementsByClassName("page0")[0].style.opacity =
+                        0;
+                    document.getElementsByClassName("page0")[0].style.display =
+                        "none";
                     document
                         .getElementById("page-features")
                         .classList.add("active");
                     document
                         .getElementsByClassName("page-title")[0]
-                        .getElementsByTagName("span")[0].innerHTML =
-                        "Features";
+                        .getElementsByTagName("span")[0].innerHTML = "Features";
                     document.getElementsByClassName(
                         "btn-operation",
                     )[0].style.opacity = 0;
@@ -6259,12 +6564,9 @@
                 document
                     .getElementById("page-features")
                     .classList.remove("active");
-                document.getElementsByClassName(
-                    "page0",
-                )[0].style.display = "block";
-                document.getElementsByClassName(
-                    "page0",
-                )[0].style.opacity = 1;
+                document.getElementsByClassName("page0")[0].style.display =
+                    "block";
+                document.getElementsByClassName("page0")[0].style.opacity = 1;
                 document.getElementsByClassName(
                     "btn-operation",
                 )[0].style.opacity = 1;
@@ -6274,9 +6576,8 @@
                 document
                     .getElementsByClassName("page-title")[0]
                     .getElementsByTagName("span")[0].innerHTML = "";
-                document.getElementById(
-                    "toFeatures",
-                ).style.backgroundColor = "";
+                document.getElementById("toFeatures").style.backgroundColor =
+                    "";
                 document.getElementById("toFeatures").style.color = "";
                 document.getElementById("toFeatures").focus();
             }
@@ -6288,18 +6589,15 @@
                 wsnd.play("seDecide");
                 footerText();
                 pageNum = 14;
-                document.getElementById(
-                    "toActionGuide",
-                ).style.backgroundColor = "#fff";
+                document.getElementById("toActionGuide").style.backgroundColor =
+                    "#fff";
                 document.getElementById("toActionGuide").style.color =
                     "#525252";
                 var actionGuideTimeout = setTimeout(function () {
-                    document.getElementsByClassName(
-                        "page0",
-                    )[0].style.opacity = 0;
-                    document.getElementsByClassName(
-                        "page0",
-                    )[0].style.display = "none";
+                    document.getElementsByClassName("page0")[0].style.opacity =
+                        0;
+                    document.getElementsByClassName("page0")[0].style.display =
+                        "none";
                     document
                         .getElementById("page-action-guide")
                         .classList.add("active");
@@ -6349,12 +6647,9 @@
                 document
                     .getElementById("page-action-guide")
                     .classList.remove("active");
-                document.getElementsByClassName(
-                    "page0",
-                )[0].style.display = "block";
-                document.getElementsByClassName(
-                    "page0",
-                )[0].style.opacity = 1;
+                document.getElementsByClassName("page0")[0].style.display =
+                    "block";
+                document.getElementsByClassName("page0")[0].style.opacity = 1;
                 document.getElementsByClassName(
                     "btn-operation",
                 )[0].style.opacity = 1;
@@ -6364,9 +6659,8 @@
                 document
                     .getElementsByClassName("page-title")[0]
                     .getElementsByTagName("span")[0].innerHTML = "";
-                document.getElementById(
-                    "toActionGuide",
-                ).style.backgroundColor = "";
+                document.getElementById("toActionGuide").style.backgroundColor =
+                    "";
                 document.getElementById("toActionGuide").style.color = "";
                 // Put the video/graphic element back on the Main Page.
                 var movElement = document.getElementById("toc-mov");
@@ -6376,9 +6670,15 @@
                         .appendChild(movElement);
                 }
                 document.getElementById("toActionGuide").focus();
-                document.getElementsByClassName('btn-operation')[0].style.opacity = 1;
-                document.getElementsByClassName('btn-operation')[1].style.opacity = 0;
-                document.getElementsByClassName('btn-operation')[2].style.opacity = 0;
+                document.getElementsByClassName(
+                    "btn-operation",
+                )[0].style.opacity = 1;
+                document.getElementsByClassName(
+                    "btn-operation",
+                )[1].style.opacity = 0;
+                document.getElementsByClassName(
+                    "btn-operation",
+                )[2].style.opacity = 0;
             }
 
             function selectActionGuideItem(el, targetPage) {
@@ -6394,9 +6694,8 @@
                     // our overlay before handing off, since those
                     // functions reference getElementsByClassName('page0')[0]
                     // directly rather than by ID.
-                    document.getElementsByClassName(
-                        "page0",
-                    )[0].style.display = "block";
+                    document.getElementsByClassName("page0")[0].style.display =
+                        "block";
                     document
                         .getElementById("page-action-guide")
                         .classList.remove("active");
@@ -6462,16 +6761,13 @@
                 document.getElementById(
                     "toRandomizerActionGuide",
                 ).style.backgroundColor = "#fff";
-                document.getElementById(
-                    "toRandomizerActionGuide",
-                ).style.color = "#525252";
+                document.getElementById("toRandomizerActionGuide").style.color =
+                    "#525252";
                 var randomizerActionGuideTimeout = setTimeout(function () {
-                    document.getElementsByClassName(
-                        "page0",
-                    )[0].style.opacity = 0;
-                    document.getElementsByClassName(
-                        "page0",
-                    )[0].style.display = "none";
+                    document.getElementsByClassName("page0")[0].style.opacity =
+                        0;
+                    document.getElementsByClassName("page0")[0].style.display =
+                        "none";
                     document
                         .getElementById("page-randomizer-action-guide")
                         .classList.add("active");
@@ -6507,9 +6803,7 @@
                             itemEl.style.color = "";
                         }
                     });
-                    document
-                        .getElementById("toRandomizerController")
-                        .focus();
+                    document.getElementById("toRandomizerController").focus();
                     clearTimeout(randomizerActionGuideTimeout);
                 }, 100);
             }
@@ -6520,12 +6814,9 @@
                 document
                     .getElementById("page-randomizer-action-guide")
                     .classList.remove("active");
-                document.getElementsByClassName(
-                    "page0",
-                )[0].style.display = "block";
-                document.getElementsByClassName(
-                    "page0",
-                )[0].style.opacity = 1;
+                document.getElementsByClassName("page0")[0].style.display =
+                    "block";
+                document.getElementsByClassName("page0")[0].style.opacity = 1;
                 document.getElementsByClassName(
                     "btn-operation",
                 )[0].style.opacity = 1;
@@ -6538,9 +6829,8 @@
                 document.getElementById(
                     "toRandomizerActionGuide",
                 ).style.backgroundColor = "";
-                document.getElementById(
-                    "toRandomizerActionGuide",
-                ).style.color = "";
+                document.getElementById("toRandomizerActionGuide").style.color =
+                    "";
                 var movElement = document.getElementById("toc-mov");
                 if (movElement) {
                     document
@@ -6548,9 +6838,15 @@
                         .appendChild(movElement);
                 }
                 document.getElementById("toRandomizerActionGuide").focus();
-                document.getElementsByClassName('btn-operation')[0].style.opacity = 1;
-                document.getElementsByClassName('btn-operation')[1].style.opacity = 0;
-                document.getElementsByClassName('btn-operation')[2].style.opacity = 0;
+                document.getElementsByClassName(
+                    "btn-operation",
+                )[0].style.opacity = 1;
+                document.getElementsByClassName(
+                    "btn-operation",
+                )[1].style.opacity = 0;
+                document.getElementsByClassName(
+                    "btn-operation",
+                )[2].style.opacity = 0;
             }
 
             // "variant" is either "standard" or "motion" - the two
@@ -6564,9 +6860,8 @@
                 e_style_reset(el);
 
                 var randomizerGuideTimeout = setTimeout(function () {
-                    document.getElementsByClassName(
-                        "page0",
-                    )[0].style.display = "block";
+                    document.getElementsByClassName("page0")[0].style.display =
+                        "block";
                     document
                         .getElementById("page-randomizer-action-guide")
                         .classList.remove("active");
@@ -6588,9 +6883,8 @@
                 e_style_reset(el);
 
                 var randomizerCaptureGuideTimeout = setTimeout(function () {
-                    document.getElementsByClassName(
-                        "page0",
-                    )[0].style.display = "block";
+                    document.getElementsByClassName("page0")[0].style.display =
+                        "block";
                     document
                         .getElementById("page-randomizer-action-guide")
                         .classList.remove("active");
@@ -6627,7 +6921,6 @@
             }
         </script>
 
-
         <!-- ============================================================
              MOBILE SUPPORT: layout mode, Back button, tap-to-focus
              ============================================================ -->
@@ -6640,17 +6933,33 @@
                 var root = document.documentElement;
                 var body = document.body;
                 var stage = document.querySelector(".contents");
-                var mr = document.querySelector('link[href*="mobile-responsive"]');
+                var mr = document.querySelector(
+                    'link[href*="mobile-responsive"]',
+                );
                 var backBtn = document.getElementById("mobile-back-btn");
-                var STAGE_PROPS = ["position", "left", "top", "width", "height",
-                    "margin", "transition", "transform-origin", "transform", "overflow"];
+                var STAGE_PROPS = [
+                    "position",
+                    "left",
+                    "top",
+                    "width",
+                    "height",
+                    "margin",
+                    "transition",
+                    "transform-origin",
+                    "transform",
+                    "overflow",
+                ];
                 var debugEl = null;
 
                 function imp(el, prop, val) {
-                    if (el) { el.style.setProperty(prop, val, "important"); }
+                    if (el) {
+                        el.style.setProperty(prop, val, "important");
+                    }
                 }
                 function clearInline() {
-                    STAGE_PROPS.forEach(function (p) { stage.style.removeProperty(p); });
+                    STAGE_PROPS.forEach(function (p) {
+                        stage.style.removeProperty(p);
+                    });
                     [root, body].forEach(function (el) {
                         ["width", "height", "overflow"].forEach(function (p) {
                             el.style.removeProperty(p);
@@ -6659,7 +6968,8 @@
                 }
 
                 function layout() {
-                    var w = window.innerWidth, h = window.innerHeight;
+                    var w = window.innerWidth,
+                        h = window.innerHeight;
                     // Narrow portrait phones reflow; everything else scales.
                     var reflow = w <= 600 || (w <= 760 && h > w);
                     root.classList.toggle("m-reflow", reflow);
@@ -6672,7 +6982,8 @@
                         clearInline();
                     } else {
                         var s = Math.min(w / 1280, h / 720);
-                        var ox = (w - 1280 * s) / 2, oy = (h - 720 * s) / 2;
+                        var ox = (w - 1280 * s) / 2,
+                            oy = (h - 720 * s) / 2;
                         [root, body].forEach(function (el) {
                             imp(el, "width", "100%");
                             imp(el, "height", "100%");
@@ -6686,22 +6997,46 @@
                         imp(stage, "margin", "0");
                         imp(stage, "transition", "none");
                         imp(stage, "transform-origin", "0 0");
-                        imp(stage, "transform",
-                            "translate(" + ox + "px," + oy + "px) scale(" + s + ")");
+                        imp(
+                            stage,
+                            "transform",
+                            "translate(" +
+                                ox +
+                                "px," +
+                                oy +
+                                "px) scale(" +
+                                s +
+                                ")",
+                        );
                     }
                     dbgMode = (reflow ? "reflow" : "stage") + " " + w + "x" + h;
                     updateDebug();
                 }
-                var dbgMode = "", dbgTap = "-", dbgErr = "-", dbgTouch = 0;
+                var dbgMode = "",
+                    dbgTap = "-",
+                    dbgErr = "-",
+                    dbgTouch = 0;
                 function updateDebug() {
-                    if (!debugEl) { return; }
+                    if (!debugEl) {
+                        return;
+                    }
                     debugEl.textContent =
-                        "build m4 | " + dbgMode +
-                        " | indexjs:" + (typeof pageNum !== "undefined" ? "yes p=" + pageNum : "NO") +
-                        " | back:" + (typeof window.MOBILE_BACK === "function" ? "yes" : "NO") +
-                        " | touches:" + dbgTouch +
-                        " | last tap:" + dbgTap +
-                        " | last error:" + dbgErr;
+                        "build m4 | " +
+                        dbgMode +
+                        " | indexjs:" +
+                        (typeof pageNum !== "undefined"
+                            ? "yes p=" + pageNum
+                            : "NO") +
+                        " | back:" +
+                        (typeof window.MOBILE_BACK === "function"
+                            ? "yes"
+                            : "NO") +
+                        " | touches:" +
+                        dbgTouch +
+                        " | last tap:" +
+                        dbgTap +
+                        " | last error:" +
+                        dbgErr;
                 }
                 window.addEventListener("resize", layout);
                 window.addEventListener("orientationchange", function () {
@@ -6721,15 +7056,23 @@
                         dbgErr = String(e.message || e).slice(0, 60);
                         updateDebug();
                     });
-                    window.addEventListener("pointerdown", function () {
-                        dbgTouch++;
-                        updateDebug();
-                    }, true);
-                    document.addEventListener("click", function (e) {
-                        var t = e.target;
-                        dbgTap = t.tagName + (t.id ? "#" + t.id : "");
-                        updateDebug();
-                    }, true);
+                    window.addEventListener(
+                        "pointerdown",
+                        function () {
+                            dbgTouch++;
+                            updateDebug();
+                        },
+                        true,
+                    );
+                    document.addEventListener(
+                        "click",
+                        function (e) {
+                            var t = e.target;
+                            dbgTap = t.tagName + (t.id ? "#" + t.id : "");
+                            updateDebug();
+                        },
+                        true,
+                    );
                     setInterval(updateDebug, 1000);
                 }
                 layout();
@@ -6747,15 +7090,24 @@
 
                 // iOS doesn't focus links on tap, and this UI is driven by
                 // focus (thumbnails, menu highlight, feature tiles).
-                document.addEventListener("click", function (e) {
-                    var el = e.target.closest &&
-                        e.target.closest("a[onfocus], .feature-card, .server-card, .toc a");
-                    if (el && document.activeElement !== el) {
-                        try { el.focus({ preventScroll: true }); } catch (err) {}
-                    }
-                }, true);
+                document.addEventListener(
+                    "click",
+                    function (e) {
+                        var el =
+                            e.target.closest &&
+                            e.target.closest(
+                                "a[onfocus], .feature-card, .server-card, .toc a",
+                            );
+                        if (el && document.activeElement !== el) {
+                            try {
+                                el.focus({ preventScroll: true });
+                            } catch (err) {}
+                        }
+                    },
+                    true,
+                );
             })();
         </script>
-<!-- textbox_id_counter-916 -->
+        <!-- textbox_id_counter-916 -->
     </body>
 </html>
