@@ -905,8 +905,11 @@
 
         <!-- ================================================================
              MOBILE SUPPORT: detection + styles
-             Adds html.is-mobile on phones/tablets (never on Nintendo Switch).
-             The 1280x720 stage is scaled to fit by the script at the bottom.
+             - Portrait phones: the page reflows using
+               css/mobile-responsive.css (stacked menus, scrolling pages).
+             - Landscape phones / tablets: the 1280x720 layout is scaled
+               to fit the screen.
+             - Nintendo Switch is never treated as mobile.
              ================================================================ -->
         <script>
             (function () {
@@ -917,25 +920,55 @@
                     !/Nintendo/i.test(ua) &&
                     (/Android|iPhone|iPad|iPod|Mobile|Silk|Opera Mini|IEMobile/i.test(ua) ||
                         (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ||
-                        (coarse && small));
+                        (coarse && small) ||
+                        window.innerWidth <= 760);
                 window.IS_MOBILE = mobile;
-                if (mobile) {
-                    document.documentElement.classList.add("is-mobile");
-                    // mobile-responsive.css (unseen) can fight the stage
-                    // scaling below, so it is switched off on mobile.
-                    var mr = document.querySelector('link[href*="mobile-responsive"]');
-                    if (mr) { mr.disabled = true; mr.media = "not all"; }
-                    var m = document.querySelector('meta[name="viewport"]');
-                    if (m) {
-                        m.setAttribute("content",
-                            "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover");
-                    }
+                if (!mobile) {
+                    return;
                 }
+                document.documentElement.classList.add("is-mobile");
+                var m = document.querySelector('meta[name="viewport"]');
+                if (m) {
+                    m.setAttribute("content",
+                        "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover");
+                }
+                // js/index.js calls preventDefault() on every touch event,
+                // which stops the browser from ever sending a "click" (so
+                // nothing is tappable) and stops scrolling. That is right
+                // for the Switch but wrong for phones, so on mobile these
+                // events are stopped at window level, before index.js's
+                // document listeners can see them.
+                ["touchstart", "touchmove", "touchend", "touchcancel"].forEach(function (t) {
+                    window.addEventListener(t, function (e) {
+                        e.stopImmediatePropagation();
+                    }, true);
+                });
+                // index.js registers the B/Cancel action through
+                // nx.footer.setAssign('B', ...). Capture it so the on-screen
+                // Back button can run exactly the same code.
+                window.nx = window.nx || {};
+                window.nx.footer = window.nx.footer || {
+                    setAssign: function () {},
+                    unsetAssign: function () {},
+                };
+                var origAssign = window.nx.footer.setAssign;
+                window.nx.footer.setAssign = function (key, label, cb) {
+                    if (key === "B" && typeof cb === "function") {
+                        window.MOBILE_BACK = cb;
+                    }
+                    try { return origAssign.apply(this, arguments); } catch (e) {}
+                };
             })();
         </script>
         <style>
-            html.is-mobile,
-            html.is-mobile body {
+            html.is-mobile {
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
+                -webkit-text-size-adjust: 100%;
+            }
+            /* ----- scaled 1280x720 mode (landscape / tablets) ----- */
+            html.m-stage,
+            html.m-stage body {
                 width: 100% !important;
                 height: 100% !important;
                 margin: 0 !important;
@@ -944,54 +977,54 @@
                 position: fixed !important;
                 inset: 0;
                 background-color: #000;
-                touch-action: manipulation;
-                -webkit-tap-highlight-color: transparent;
-                -webkit-text-size-adjust: 100%;
                 overscroll-behavior: none;
             }
-            /* The fixed 1280x720 stage; transform is set by JS. */
-            html.is-mobile .contents {
-                position: fixed !important;
-                left: 0 !important;
-                top: 0 !important;
-                transition: none !important;
-                width: 1280px !important;
-                height: 720px !important;
-                margin: 0 !important;
-                overflow: hidden !important;
-                transform-origin: 0 0 !important;
-                transform: var(--stage-transform, none) !important;
-            }
-            /* Small text is boosted so it stays legible after scaling. */
-            html.is-mobile .feature-title { font-size: 18px; }
-            html.is-mobile .feature-tooltip { font-size: 17px; }
-            html.is-mobile .server-line { font-size: 19px; }
-            html.is-mobile .toc-last-updated,
-            html.is-mobile .broken-button-note,
-            html.is-mobile .downloads-last-updated { font-size: 16px; }
-            html.is-mobile .changelog-entry ul { font-size: 16px; }
-            html.is-mobile .changelog-version { font-size: 18px; }
-            html.is-mobile .credit-desc,
-            html.is-mobile .credit-role { font-size: calc(15px * var(--credit-scale, 1)); }
-            html.is-mobile .skybox-page .download-desc { font-size: 15px; }
-            html.is-mobile .spoiler-autofill-panel { width: 420px; }
-            html.is-mobile .changelog,
-            html.is-mobile .spoiler-content,
-            html.is-mobile .spoiler-section-list,
-            html.is-mobile .spoiler-autofill-panel,
-            html.is-mobile .feature-tooltip {
+            html.m-stage .feature-title { font-size: 18px; }
+            html.m-stage .feature-tooltip { font-size: 17px; }
+            html.m-stage .server-line { font-size: 19px; }
+            html.m-stage .toc-last-updated,
+            html.m-stage .broken-button-note,
+            html.m-stage .downloads-last-updated { font-size: 16px; }
+            html.m-stage .changelog-entry ul { font-size: 16px; }
+            html.m-stage .changelog-version { font-size: 18px; }
+            html.m-stage .credit-desc,
+            html.m-stage .credit-role { font-size: calc(15px * var(--credit-scale, 1)); }
+            html.m-stage .skybox-page .download-desc { font-size: 15px; }
+            html.m-stage .spoiler-autofill-panel { width: 420px; }
+            html.m-stage .changelog,
+            html.m-stage .spoiler-content,
+            html.m-stage .spoiler-section-list,
+            html.m-stage .spoiler-autofill-panel,
+            html.m-stage .feature-tooltip {
                 -webkit-overflow-scrolling: touch;
                 touch-action: pan-y;
             }
-            html.is-mobile .toc a,
-            html.is-mobile .thumb-area a,
-            html.is-mobile .download-btn { cursor: pointer; }
+
+            /* ----- portrait reflow extras ----- */
+            /* The Switch-style footer (Select/Cancel/OK) is replaced by the
+               Back button on phones. */
+            html.m-reflow footer { display: none !important; }
+            html.m-reflow .page { padding-bottom: 24px !important; }
+            html.m-reflow .server-list,
+            html.m-reflow .changelog {
+                position: static !important;
+                height: auto !important;
+                max-height: 260px;
+                margin: 12px 0 !important;
+            }
+            html.m-reflow .features-page,
+            html.m-reflow .multiplayer-page,
+            html.m-reflow .skybox-page,
+            html.m-reflow .downloads-page { overflow-y: visible; }
+            html.m-reflow .credits-container,
+            html.m-reflow .features-container { max-height: none !important; }
+            html.m-reflow .credit-item { height: auto !important; }
 
             /* On-screen Back button (phones have no B button) */
             #mobile-back-btn {
                 display: none;
                 position: fixed;
-                top: calc(env(safe-area-inset-top, 0px) + 8px);
+                top: calc(env(safe-area-inset-top, 0px) + 6px);
                 left: calc(env(safe-area-inset-left, 0px) + 8px);
                 z-index: 99990;
                 min-width: 44px;
@@ -1006,41 +1039,6 @@
                 font-family: inherit;
             }
             #mobile-back-btn.show { display: block; }
-
-            /* Portrait prompt */
-            #mobile-rotate {
-                display: none;
-                position: fixed;
-                inset: 0;
-                z-index: 99995;
-                background: #14100a;
-                color: #d4af37;
-                text-align: center;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                gap: 18px;
-                padding: 24px;
-                font-size: 18px;
-                line-height: 1.4;
-            }
-            #mobile-rotate.show { display: flex; }
-            #mobile-rotate .rot-icon {
-                font-size: 64px;
-                animation: rot-tilt 2s ease-in-out infinite;
-            }
-            @keyframes rot-tilt {
-                0%, 30% { transform: rotate(0deg); }
-                60%, 100% { transform: rotate(-90deg); }
-            }
-            #mobile-rotate button {
-                padding: 10px 20px;
-                border-radius: 8px;
-                border: 1px solid #d4af37;
-                background: transparent;
-                color: #f0d67e;
-                font-size: 15px;
-            }
         </style>
     </head>
 
@@ -6631,15 +6629,8 @@
 
 
         <!-- ============================================================
-             MOBILE SUPPORT: stage scaling, rotate prompt, back button,
-             tap-to-focus (iOS doesn't focus links on tap, and this UI is
-             driven by focus).
+             MOBILE SUPPORT: layout mode, Back button, tap-to-focus
              ============================================================ -->
-        <div id="mobile-rotate">
-            <div class="rot-icon">&#128241;</div>
-            <div>Rotate your device to landscape<br />for the best view.</div>
-            <button type="button" id="mobile-rotate-skip">View sideways instead</button>
-        </div>
         <button type="button" id="mobile-back-btn">&#8592; Back</button>
         <script>
             (function () {
@@ -6649,46 +6640,58 @@
                 var root = document.documentElement;
                 var body = document.body;
                 var stage = document.querySelector(".contents");
-                var rotateEl = document.getElementById("mobile-rotate");
+                var mr = document.querySelector('link[href*="mobile-responsive"]');
                 var backBtn = document.getElementById("mobile-back-btn");
-                var forceRotate = false;
+                var STAGE_PROPS = ["position", "left", "top", "width", "height",
+                    "margin", "transition", "transform-origin", "transform", "overflow"];
                 var debugEl = null;
 
                 function imp(el, prop, val) {
-                    // inline !important beats every stylesheet rule
                     if (el) { el.style.setProperty(prop, val, "important"); }
+                }
+                function clearInline() {
+                    STAGE_PROPS.forEach(function (p) { stage.style.removeProperty(p); });
+                    [root, body].forEach(function (el) {
+                        ["width", "height", "overflow"].forEach(function (p) {
+                            el.style.removeProperty(p);
+                        });
+                    });
                 }
 
                 function layout() {
                     var w = window.innerWidth, h = window.innerHeight;
-                    var portrait = h > w;
-                    var rot = portrait && forceRotate;
-                    var vw = rot ? h : w, vh = rot ? w : h;
-                    var s = Math.min(vw / 1280, vh / 720);
-                    var ox = (vw - 1280 * s) / 2, oy = (vh - 720 * s) / 2;
-                    var t = "translate(" + ox + "px," + oy + "px) scale(" + s + ")";
-                    if (rot) {
-                        t = "translate(" + w + "px,0) rotate(90deg) " + t;
+                    // Narrow portrait phones reflow; everything else scales.
+                    var reflow = w <= 600 || (w <= 760 && h > w);
+                    root.classList.toggle("m-reflow", reflow);
+                    root.classList.toggle("m-stage", !reflow);
+                    if (mr) {
+                        mr.disabled = false;
+                        mr.media = reflow ? "all" : "not all";
                     }
-                    [root, body].forEach(function (el) {
-                        imp(el, "width", "100%");
-                        imp(el, "height", "100%");
-                        imp(el, "overflow", "hidden");
-                    });
-                    imp(stage, "position", "fixed");
-                    imp(stage, "left", "0");
-                    imp(stage, "top", "0");
-                    imp(stage, "width", "1280px");
-                    imp(stage, "height", "720px");
-                    imp(stage, "margin", "0");
-                    imp(stage, "transition", "none");
-                    imp(stage, "transform-origin", "0 0");
-                    imp(stage, "transform", t);
-                    rotateEl.classList.toggle("show", portrait && !forceRotate);
+                    if (reflow) {
+                        clearInline();
+                    } else {
+                        var s = Math.min(w / 1280, h / 720);
+                        var ox = (w - 1280 * s) / 2, oy = (h - 720 * s) / 2;
+                        [root, body].forEach(function (el) {
+                            imp(el, "width", "100%");
+                            imp(el, "height", "100%");
+                            imp(el, "overflow", "hidden");
+                        });
+                        imp(stage, "position", "fixed");
+                        imp(stage, "left", "0");
+                        imp(stage, "top", "0");
+                        imp(stage, "width", "1280px");
+                        imp(stage, "height", "720px");
+                        imp(stage, "margin", "0");
+                        imp(stage, "transition", "none");
+                        imp(stage, "transform-origin", "0 0");
+                        imp(stage, "transform",
+                            "translate(" + ox + "px," + oy + "px) scale(" + s + ")");
+                    }
                     if (debugEl) {
                         debugEl.textContent = "mobile " + w + "x" + h +
-                            (portrait ? " portrait" : " landscape") +
-                            " scale " + s.toFixed(3) + (rot ? " rotated" : "");
+                            (reflow ? " reflow" : " stage");
                     }
                 }
                 window.addEventListener("resize", layout);
@@ -6696,93 +6699,38 @@
                     setTimeout(layout, 150);
                     setTimeout(layout, 500);
                 });
-                document.getElementById("mobile-rotate-skip").onclick = function () {
-                    forceRotate = true;
-                    layout();
-                };
-
-                // Add ?debug to the URL to show a small status line + the
-                // element under each tap.
                 if (/[?&]debug/.test(location.search)) {
                     debugEl = document.createElement("div");
                     debugEl.style.cssText =
                         "position:fixed;right:4px;bottom:4px;z-index:99999;" +
                         "background:rgba(0,0,0,.8);color:#0f0;font:11px monospace;" +
-                        "padding:3px 6px;max-width:70%;pointer-events:none";
+                        "padding:3px 6px;pointer-events:none";
                     body.appendChild(debugEl);
                 }
                 layout();
 
-                // Back: the app listens for Escape/Backspace (B button).
-                function fireKey(code, key) {
-                    var ev = new KeyboardEvent("keydown", {
-                        key: key, bubbles: true, cancelable: true,
-                    });
-                    ["keyCode", "which"].forEach(function (p) {
-                        Object.defineProperty(ev, p, { get: function () { return code; } });
-                    });
-                    (document.activeElement || document).dispatchEvent(ev);
-                }
+                // Back = run the page's own B/Cancel handler.
                 backBtn.addEventListener("click", function () {
-                    var before = typeof pageNum !== "undefined" ? pageNum : null;
-                    fireKey(27, "Escape");
-                    setTimeout(function () {
-                        if (typeof pageNum !== "undefined" && pageNum === before && before !== 0) {
-                            fireKey(8, "Backspace");
-                        }
-                    }, 250);
+                    if (typeof window.MOBILE_BACK === "function") {
+                        window.MOBILE_BACK();
+                    }
                 });
                 setInterval(function () {
-                    var onSub = typeof pageNum !== "undefined" && pageNum !== 0;
-                    backBtn.classList.toggle("show", onSub);
+                    var p = typeof pageNum !== "undefined" ? pageNum : 0;
+                    backBtn.classList.toggle("show", p > 0.5);
                 }, 250);
 
-                // Touch taps. The app (nx.js / index.js) may swallow touch
-                // events so the browser never fires "click", and iOS never
-                // focuses links on tap while this UI is driven by focus.
-                // So taps are resolved here from pointer events, which
-                // can't be cancelled that way, and re-issued as focus+click.
-                var SEL = "a, button, label, input, select, textarea, [onclick], " +
-                    ".feature-card, .server-card, .changelog";
-                var down = null, lastSynth = 0;
-                document.addEventListener("pointerdown", function (e) {
-                    down = { x: e.clientX, y: e.clientY, id: e.pointerId };
-                }, true);
-                document.addEventListener("pointerup", function (e) {
-                    var d = down;
-                    down = null;
-                    if (!d || d.id !== e.pointerId || e.pointerType === "mouse") {
-                        return;
-                    }
-                    if (Math.hypot(e.clientX - d.x, e.clientY - d.y) > 14) {
-                        return; // a drag/scroll, not a tap
-                    }
-                    var t = document.elementFromPoint(e.clientX, e.clientY);
-                    if (debugEl && t) {
-                        debugEl.textContent += " | tap: " + t.tagName +
-                            (t.className ? "." + String(t.className).split(" ")[0] : "");
-                    }
-                    var el = t && t.closest(SEL);
-                    if (!el) {
-                        return;
-                    }
-                    lastSynth = Date.now();
-                    try { el.focus({ preventScroll: true }); } catch (err) {}
-                    if (el.matches("a, button, label, input, select, textarea, [onclick]")) {
-                        el.click();
-                    }
-                }, true);
-                // If the browser also fires its own click, drop it so
-                // nothing runs twice.
+                // iOS doesn't focus links on tap, and this UI is driven by
+                // focus (thumbnails, menu highlight, feature tiles).
                 document.addEventListener("click", function (e) {
-                    if (e.isTrusted && Date.now() - lastSynth < 700) {
-                        e.stopImmediatePropagation();
-                        e.preventDefault();
+                    var el = e.target.closest &&
+                        e.target.closest("a[onfocus], .feature-card, .server-card, .toc a");
+                    if (el && document.activeElement !== el) {
+                        try { el.focus({ preventScroll: true }); } catch (err) {}
                     }
                 }, true);
             })();
         </script>
-
-        <!-- textbox_id_counter-916 -->
+<!-- textbox_id_counter-916 -->
     </body>
 </html>
