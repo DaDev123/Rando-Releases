@@ -289,6 +289,9 @@ window.onload = function() {
         } else if (pageNum == 18) {
             closeSkyboxTesting();
             return;
+        } else if (pageNum == 20) {
+            closeMultiplayer();
+            return;
         } else if (pageNum == 16) {
             closeRandomizerActionGuide();
             return;
@@ -528,6 +531,8 @@ window.onload = function() {
             } else if (pageNum == 19) {
                 gridUpDown('capture', '-motion', 24, 12, goingDown);
                 return;
+            } else if (pageNum == 20) {
+                return;
             }
             var items = menuItemsInScope();
             if (!items.length) {
@@ -555,7 +560,7 @@ window.onload = function() {
 
 
 function customFunctionL() {
-    if (pageNum == 6 || pageNum == 12 || pageNum == 13 || pageNum == 14 || pageNum == 15 || pageNum == 16 || pageNum == 18) {
+    if (pageNum == 6 || pageNum == 12 || pageNum == 13 || pageNum == 14 || pageNum == 15 || pageNum == 16 || pageNum == 18 || pageNum == 20) {
         return;
     } else if (pageNum == 1) {
         wsnd.play("UiTurnPage");
@@ -690,7 +695,7 @@ function customFunctionL() {
 }
 
 function customFunctionR() {
-    if (pageNum == 6 || pageNum == 12 || pageNum == 13 || pageNum == 14 || pageNum == 15 || pageNum == 16 || pageNum == 18) {
+    if (pageNum == 6 || pageNum == 12 || pageNum == 13 || pageNum == 14 || pageNum == 15 || pageNum == 16 || pageNum == 18 || pageNum == 20) {
         return;
     } else if (pageNum == 1) {
         wsnd.play("UiTurnPage");

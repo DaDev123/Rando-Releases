@@ -365,7 +365,7 @@
                screen once the Randomizer Action Guide button was added, so
                shift the whole list up a bit. Adjust the px value to taste. */
             .page0 .toc {
-                transform: translateY(-65px);
+                transform: translateY(-90px);
             }
 
             /* Purely decorative - was intercepting clicks meant for the menu
@@ -633,6 +633,124 @@
                 font-size: 13px;
                 margin-top: 10px;
                 padding-right: 4px;
+            }
+
+            /* ------------------------------------------------------------
+               MULTIPLAYER (SERVER LIST) OVERLAY PAGE
+               ------------------------------------------------------------ */
+            .multiplayer-page {
+                display: none;
+                position: relative;
+            }
+            .multiplayer-page.active {
+                display: block;
+                opacity: 1;
+            }
+            .server-list {
+                position: absolute;
+                top: 110px;
+                left: 82px;
+                right: 82px;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .server-card:focus {
+                outline: 2px solid #d4af37;
+                outline-offset: 2px;
+            }
+            .server-line {
+                margin: 4px 0 0;
+                font-size: 14px;
+                color: #fff;
+            }
+            .server-line b {
+                color: #d4af37;
+            }
+            .server-status {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-size: 15px;
+                font-weight: bold;
+                color: #fff;
+                background: rgba(0, 0, 0, 0.35);
+                white-space: nowrap;
+            }
+            .server-status-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: #8a8a8a;
+            }
+            .server-status.online .server-status-dot {
+                background: #3ddc57;
+                box-shadow: 0 0 6px #3ddc57;
+            }
+            .server-status.online {
+                color: #3ddc57;
+            }
+            .server-status.offline .server-status-dot {
+                background: #e0352b;
+            }
+            .server-status.offline {
+                color: #e0352b;
+            }
+
+            /* ------------------------------------------------------------
+               DOWNLOADS CHANGELOG
+               ------------------------------------------------------------ */
+            .changelog {
+                position: absolute;
+                top: 485px;
+                left: 82px;
+                right: 82px;
+                height: 145px;
+                z-index: 2;
+                overflow-y: auto;
+                margin: 0;
+                padding: 10px 16px;
+                box-sizing: border-box;
+                border-radius: 10px;
+                background: rgba(255, 255, 255, 0.06);
+                border: 1px solid rgba(212, 175, 55, 0.25);
+                color: #fff;
+                text-align: left;
+            }
+            .changelog:focus {
+                outline: 2px solid #d4af37;
+                outline-offset: 2px;
+            }
+            .changelog-heading {
+                margin: 0 0 6px;
+                color: #d4af37;
+                font-size: 16px;
+                font-weight: bold;
+            }
+            .changelog-entry + .changelog-entry {
+                margin-top: 10px;
+                padding-top: 8px;
+                border-top: 1px solid rgba(212, 175, 55, 0.2);
+            }
+            .changelog-version {
+                margin: 0;
+                font-size: 14px;
+                font-weight: bold;
+                color: #f0d67e;
+            }
+            .changelog-date {
+                margin-left: 8px;
+                font-size: 11px;
+                font-weight: normal;
+                opacity: 0.75;
+            }
+            .changelog-entry ul {
+                margin: 4px 0 0;
+                padding-left: 20px;
+                font-size: 12px;
+                line-height: 1.4;
             }
 
             /* ------------------------------------------------------------
@@ -915,6 +1033,17 @@
                             ><span>Extra Downloads</span></a
                         >
                     </li>
+                    <li>
+                        <a
+                            href="javascript:void(0);"
+                            onclick="openMultiplayer()"
+                            onblur="menuBlur(this)"
+                            onfocus="menuFocus(this)"
+                            id="toMultiplayer"
+                            nx-se-disabled=""
+                            ><span>Multiplayer</span></a
+                        >
+                    </li>
                     <li class="toc-gap" aria-hidden="true"></li>
                     <li>
                         <a
@@ -925,17 +1054,6 @@
                             id="toRandomizerActionGuide"
                             nx-se-disabled=""
                             ><span>Randomizer Action Guide</span></a
-                        >
-                    </li>
-                    <li>
-                        <a
-                            href="javascript:void(0);"
-                            onclick="openActionGuide()"
-                            onblur="menuBlur(this)"
-                            onfocus="menuFocus(this)"
-                            id="toActionGuide"
-                            nx-se-disabled=""
-                            ><span>Classic Action Guide</span></a
                         >
                     </li>
                 </ul>
@@ -4586,6 +4704,7 @@
                     class="downloads-last-updated"
                     id="downloads-last-updated-page"
                     >Last updated ...</span>
+                <div class="changelog" id="changelog" tabindex="0"></div>
             </div>
 
             <!-- ========================================================
@@ -4669,6 +4788,19 @@
                  (tiles are rendered by the Features script section at the
                  bottom of the file - edit the feature list there)
                  ======================================================== -->
+            <!-- ========================================================
+                 MULTIPLAYER OVERLAY PAGE
+                 (server cards are rendered by the Multiplayer script
+                 section at the bottom of the file - edit the server list
+                 there)
+                 ======================================================== -->
+            <div class="page multiplayer-page" id="page-multiplayer">
+                <div class="top-bar">
+                    <span>Multiplayer</span>
+                </div>
+                <div class="server-list" id="server-list"></div>
+            </div>
+
             <div class="page features-page" id="page-features">
                 <div class="top-bar">
                     <span>Features</span>
@@ -5049,6 +5181,115 @@
             fetchDownloadsLastUpdated();
 
             /* ========================================================
+               DOWNLOADS: CHANGELOG
+               Edit this list. Newest entry goes first. Only the
+               first (latest) entry is shown on the page; older ones
+               can stay here as an archive.
+               ======================================================== */
+            const changelog = [
+                {
+                    version: "Latest Build",
+                    changes: [
+                        "Sphynx questions updated",
+                        "Crash mitigation for Wooded Moon Rock scenario crash",
+                        "Add Per-Seed Key Phrase",
+                        "New  Ability Unlocks",
+                        "Tracker hints and kingdom checks fixes",
+                        "Map changes: try to fix rogue X markers, show next story moon for that kingdom, etc",
+                        "Add Moon reallocation",
+                        "Add Random Koopa Tracewalking Shapes",
+                        "Fix credits page play time",
+                        "Fix paintings that don't exist showing up in kingdom checks",
+                        "Add Total Moons run mode: collect enough moons, find the chapel and beat Bowser to win. Kingdoms are unlocked in the Odyssey through special moons",
+                        "Add new instant random start mode, where settings are picked at random",
+                        "Fix caching issue when deleting a save and starting a new one on the same slow carrying over some moons",
+                        "Make RC Car Subarea always the scenario for both moons to be available",
+                        "Speed improvements for seed generation + add a cancel button",
+                        "Add unlocked peach as a QoL",
+                        "Add option to hide moon cave requirements from tracker",
+                        "Add option to show last collected moon on tracker",
+                        "Small fix for Cascade Kingdom kingdom state",
+                        "Replay notification if warping out or going through loading zone before it finishes playing",
+                        "Add option to split overworld and subarea moons in tracker",
+                        "Fix bug where kingdom order randomization would lean toward some kingdoms",
+                        "Add toggle to enable and disable motion free controls from the pause menu's motion free controls menu",
+                        "Add option to randomize 2D outfits",
+                        "Add new bonus abilities tab (abilities that do not affect moon collecting) with 'warping' as the initial ability",
+                        "Add Health Upgrade options: start with your self of HP value and collect specific moons (set as moon rewards) to get upgrades to your HP",
+                        "Add options for skybox filtering from the #⁠☁️skybox-state . You can now pick only verified skyboxes!",
+                        "Add options for downthrow on Pro Controller",
+                        "Add option for showing skybox overlay",
+                        "Menu fixes",
+                        "Motion free motion controls should now downthrow from the ground",
+                        "Motion free motion controls should now work properly on a Switch with joycons detached",
+                        "No more cheating allowed: shaking for neutral throw when it has not been unlocked should now be blocked",
+                        "Add option to have Talkatoo in kingdoms that didn't originally have him",
+                        "Freeze time while in the Odyssey",
+                        "Add additional options for Minigame values (including Random)",
+                        "Add additional options for Sheep herding (including Random)",
+                        "Add Hints to Signposts",
+                        "Add option to pick duplicate reward",
+                        "Add new \"Limited Lives\" game mode where you start with a set number of lives, can buy more in shops (1 per shop, and at increased prices on each purchase). Save deleted after dying with 0 lives",
+                        "Add option to go over the normal limit of coins",
+                        "Logic refresh",
+                        "Add Custom Music option, where you can upload your own .mp3 music to the sd card and have it play in game",
+                        "Speed up binocular moon spawn speed",
+                        "Show custom hats on captures",
+                        "Add Fast Doggo QoL where the dog is faster and skips non-moon locations",
+                        "Add more abilities to ability lock (still WIP and with no logic, use at your own risk): Timer Challenges, 2D Pipes, Swim, Jaxi, Scooter, Rocket Flower, Talking to NPCs, Grab and Moon Kingdom Low Gravity",
+                        "Add custom credits",
+                        "Moon tick should only happen for moons from the kingdom we're on",
+                        "Fix laggy menu on custom moon lists",
+                        "Multiplayer Mode.",
+                    ],
+                },
+            ];
+
+            function renderChangelog() {
+                var box = document.getElementById("changelog");
+                if (!box) {
+                    return;
+                }
+                if (!changelog.length) {
+                    box.style.display = "none";
+                    return;
+                }
+                box.innerHTML = "";
+
+                var heading = document.createElement("p");
+                heading.className = "changelog-heading fontDB";
+                heading.textContent = "Latest Changelog";
+                box.appendChild(heading);
+
+                [changelog[0]].forEach(function (entry) {
+                    var wrap = document.createElement("div");
+                    wrap.className = "changelog-entry";
+
+                    var title = document.createElement("p");
+                    title.className = "changelog-version";
+                    title.textContent = entry.version;
+                    if (entry.date) {
+                        var date = document.createElement("span");
+                        date.className = "changelog-date";
+                        date.textContent = entry.date;
+                        title.appendChild(date);
+                    }
+                    wrap.appendChild(title);
+
+                    var list = document.createElement("ul");
+                    (entry.changes || []).forEach(function (text) {
+                        var li = document.createElement("li");
+                        li.textContent = text;
+                        list.appendChild(li);
+                    });
+                    wrap.appendChild(list);
+                    box.appendChild(wrap);
+                });
+            }
+
+            renderChangelog();
+
+            /* ========================================================
                SKYBOX TESTING PAGE (open/close)
                ======================================================== */
             function openSkyboxTesting() {
@@ -5397,6 +5638,170 @@
                     renderCredits();
                 });
             });
+
+            /* ========================================================
+               MULTIPLAYER OVERLAY PAGE (data + rendering + open/close)
+               ======================================================== */
+
+            // ---- EDIT THIS LIST TO ADD / REMOVE SERVERS ----
+            // status: "online" or "offline" (shown as-is, not checked live).
+            const multiplayerServers = [
+                {
+                    name: "SMO Multiplayer Server",
+                    ip: "129.213.139.181",
+                    port: "1027",
+                    location: "United States",
+                    status: "online",
+                },
+            ];
+
+            function renderServers() {
+                var list = document.getElementById("server-list");
+                if (!list) {
+                    return;
+                }
+                list.innerHTML = "";
+                multiplayerServers.forEach(function (server) {
+                    var card = document.createElement("div");
+                    card.className = "download-item server-card";
+                    card.tabIndex = 0;
+
+                    var info = document.createElement("div");
+                    info.className = "download-info";
+
+                    var title = document.createElement("p");
+                    title.className = "download-title fontDB";
+                    title.textContent = server.name;
+                    info.appendChild(title);
+
+                    [
+                        ["IP: ", server.ip],
+                        ["Port: ", server.port],
+                        ["Location: ", server.location],
+                    ].forEach(function (row) {
+                        var line = document.createElement("p");
+                        line.className = "server-line";
+                        var label = document.createElement("b");
+                        label.textContent = row[0];
+                        line.appendChild(label);
+                        line.appendChild(document.createTextNode(row[1]));
+                        info.appendChild(line);
+                    });
+                    card.appendChild(info);
+
+                    var isOnline = server.status === "online";
+                    var status = document.createElement("div");
+                    status.className =
+                        "server-status " + (isOnline ? "online" : "offline");
+                    var dot = document.createElement("span");
+                    dot.className = "server-status-dot";
+                    status.appendChild(dot);
+                    status.appendChild(
+                        document.createTextNode(
+                            isOnline ? "Online" : "Offline",
+                        ),
+                    );
+                    card.appendChild(status);
+
+                    list.appendChild(card);
+                });
+            }
+
+            // Own listener for the same reason as the Features page: this
+            // is a plain overlay, not one of the numbered pages handled by
+            // document.onkeydown.
+            // Capture phase on window: runs before index.js's document.onkeydown, and
+            // stopping propagation keeps it from reacting to the same Back press.
+            window.addEventListener(
+                "keydown",
+                function (e) {
+                    var page = document.getElementById("page-multiplayer");
+                    if (!page || !page.classList.contains("active")) {
+                        return;
+                    }
+                    if (
+                        e.key === "Escape" ||
+                        e.key === "Backspace" ||
+                        e.keyCode === 27 ||
+                        e.keyCode === 8
+                    ) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        closeMultiplayer();
+                    }
+                },
+                true,
+            );
+
+            function openMultiplayer() {
+                wsnd.play("seDecide");
+                footerText();
+                pageNum = 20;
+                document.getElementById(
+                    "toMultiplayer",
+                ).style.backgroundColor = "#fff";
+                document.getElementById("toMultiplayer").style.color =
+                    "#525252";
+                var multiplayerTimeout = setTimeout(function () {
+                    document.getElementsByClassName(
+                        "page0",
+                    )[0].style.opacity = 0;
+                    document.getElementsByClassName(
+                        "page0",
+                    )[0].style.display = "none";
+                    document
+                        .getElementById("page-multiplayer")
+                        .classList.add("active");
+                    document
+                        .getElementsByClassName("page-title")[0]
+                        .getElementsByTagName("span")[0].innerHTML =
+                        "Multiplayer";
+                    document.getElementsByClassName(
+                        "btn-operation",
+                    )[0].style.opacity = 0;
+                    document.getElementsByClassName(
+                        "btn-operation",
+                    )[1].style.opacity = 1;
+                    renderServers();
+                    var firstCard = document.querySelector(
+                        "#server-list .server-card",
+                    );
+                    if (firstCard) {
+                        firstCard.focus();
+                    }
+                    clearTimeout(multiplayerTimeout);
+                }, 100);
+            }
+
+            function closeMultiplayer() {
+                wsnd.play("seBack");
+                pageNum = 0;
+                document
+                    .getElementById("page-multiplayer")
+                    .classList.remove("active");
+                document.getElementsByClassName(
+                    "page0",
+                )[0].style.display = "block";
+                document.getElementsByClassName(
+                    "page0",
+                )[0].style.opacity = 1;
+                document.getElementsByClassName(
+                    "btn-operation",
+                )[0].style.opacity = 1;
+                document.getElementsByClassName(
+                    "btn-operation",
+                )[1].style.opacity = 0;
+                document
+                    .getElementsByClassName("page-title")[0]
+                    .getElementsByTagName("span")[0].innerHTML = "";
+                document.getElementById(
+                    "toMultiplayer",
+                ).style.backgroundColor = "";
+                document.getElementById("toMultiplayer").style.color = "";
+                document.getElementById("toMultiplayer").focus();
+                document.getElementsByClassName('btn-operation')[2].style.opacity = 0;
+            }
 
             /* ========================================================
                FEATURES OVERLAY PAGE (data + rendering + open/close)
