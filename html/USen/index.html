@@ -5125,7 +5125,8 @@
                         <a
                             class="download-btn"
                             href="../../downloads/SMO-Randomizer-Switch.zip"
-                            download
+                            download="SMO-Randomizer-Switch.zip"
+                            data-file="SMO-Randomizer-Switch.zip"
                             onclick="wsnd.play('seDecide')"
                             >Download</a
                         >
@@ -5142,7 +5143,8 @@
                         <a
                             class="download-btn"
                             href="../../downloads/SMO-Randomizer-Emulator.zip"
-                            download
+                            download="SMO-Randomizer-Emulator.zip"
+                            data-file="SMO-Randomizer-Emulator.zip"
                             onclick="wsnd.play('seDecide')"
                             >Download</a
                         >
@@ -5154,8 +5156,7 @@
                         </div>
                         <a
                             class="download-btn"
-                            href="#"
-                            download
+                            href="javascript:void(0);"
                             id="changelog-button"
                             style="cursor: pointer"
                             onclick="wsnd.play('seDecide')"
@@ -5194,7 +5195,8 @@
                         <a
                             class="download-btn"
                             href="../../downloads/SkyboxTesting.zip"
-                            download
+                            download="SkyboxTesting.zip"
+                            data-file="SkyboxTesting.zip"
                             onclick="wsnd.play('seDecide')"
                             >Download</a
                         >
@@ -5212,7 +5214,8 @@
                         <a
                             class="download-btn"
                             href="../../downloads/MotionFreeControls-Switch.zip"
-                            download
+                            download="MotionFreeControls-Switch.zip"
+                            data-file="MotionFreeControls-Switch.zip"
                             onclick="wsnd.play('seDecide')"
                             >Download</a
                         >
@@ -5230,7 +5233,8 @@
                         <a
                             class="download-btn"
                             href="../../downloads/MotionFreeControls-Emulator.zip"
-                            download
+                            download="MotionFreeControls-Emulator.zip"
+                            data-file="MotionFreeControls-Emulator.zip"
                             onclick="wsnd.play('seDecide')"
                             >Download</a
                         >
@@ -5660,6 +5664,57 @@
                first (latest) entry is shown on the page; older ones
                can stay here as an archive.
                ======================================================== */
+
+            /* ========================================================
+               DOWNLOAD BUTTONS
+               Each button points at ../../downloads/<file>.zip. If the
+               server answers with an HTML page there (404 fallback to
+               index.html), switch to the GitHub copy of the same file
+               so the user always gets the real zip.
+               ======================================================== */
+            (function initDownloadButtons() {
+                var buttons = document.querySelectorAll(
+                    ".download-btn[data-file]",
+                );
+                buttons.forEach(function (btn) {
+                    btn.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        var file = btn.getAttribute("data-file");
+                        var localUrl = btn.href;
+                        var githubUrl =
+                            "https://github.com/" +
+                            GITHUB_CONFIG.owner +
+                            "/" +
+                            GITHUB_CONFIG.repo +
+                            "/raw/" +
+                            GITHUB_CONFIG.branch +
+                            "/downloads/" +
+                            file;
+
+                        function go(url) {
+                            var a = document.createElement("a");
+                            a.href = url;
+                            a.download = file;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                        }
+
+                        fetch(localUrl, { method: "HEAD" })
+                            .then(function (res) {
+                                var type = res.headers.get("content-type") || "";
+                                if (!res.ok || type.indexOf("text/html") !== -1) {
+                                    go(githubUrl);
+                                } else {
+                                    go(localUrl);
+                                }
+                            })
+                            .catch(function () {
+                                go(localUrl);
+                            });
+                    });
+                });
+            })();
 
             const changelogbutton = document.getElementById("changelog-button");
             function onChangelogButtonClick() {
