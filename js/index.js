@@ -941,7 +941,7 @@ function menuItemsInScope() {
     if (pageNum == 6) {
         var autofillPanel = document.getElementById("spoiler-autofill-panel");
         if (autofillPanel && autofillPanel.style.display === "block") {
-            return focusableInScope(autofillPanel, ".spoiler-autofill-section-header, .spoiler-autofill-item");
+            return focusableInScope(autofillPanel, ".spoiler-autofill-section-header, .spoiler-autofill-item, .spoiler-search");
         }
         return focusableInScope(
             document.getElementsByClassName("spoiler-page")[0],
@@ -5017,8 +5017,7 @@ function playReportCount(obj) {
 var AUTOFILL_SECTION_ICON = {
     captures: "capturegoomba.png",
     abilities: "AbilityGP.png",
-    moonRockKey: "moonrockkey.png",
-    misc: "AbilityTimerChallenges.png"
+    moonRockKey: "moonrockkey.png"
 };
 
 var spoilerAutofillBuilt = false;
@@ -5033,6 +5032,33 @@ function setSpoilerAutofillAvailable(available) {
     }
     if (!available) {
         closeSpoilerAutofillPanel();
+    }
+    placeSpoilerSearchInput(available);
+}
+
+/**
+ * Where the typeable search box lives. On sections that have the Search
+ * button, the box sits at the bottom of that button's dropdown panel.
+ * On every other section (no Search button) it stays in the toolbar so
+ * it's still usable.
+ */
+function placeSpoilerSearchInput(inPanel) {
+    var input = document.getElementById('spoiler-search');
+    if (!input) {
+        return;
+    }
+    if (inPanel) {
+        buildSpoilerAutofillPanel();
+        var slot = document.getElementById('spoiler-autofill-search-slot');
+        if (slot && input.parentNode !== slot) {
+            slot.appendChild(input);
+        }
+    } else {
+        var toolbar = document.getElementById('spoiler-toolbar');
+        var countEl = document.getElementById('spoiler-count');
+        if (toolbar && input.parentNode !== toolbar) {
+            toolbar.insertBefore(input, countEl || toolbar.firstChild);
+        }
     }
 }
 
@@ -5055,12 +5081,15 @@ function buildSpoilerAutofillPanel() {
         spoilerAutofillGroupHtml("abilities", "Abilities", AUTOFILL_SECTION_ICON.abilities, abilityNames.map(function(name) {
             return { label: name, icon: moonPlacementIconSrc(abilityIconName(name)), search: name, exact: true };
         })) +
-        spoilerAutofillGroupHtml("misc", "Other Searches", AUTOFILL_SECTION_ICON.misc, [
-            { label: "Timer Challenges", icon: moonPlacementIconSrc("AbilityTimerChallenges.png"), search: "Timer Challenge", exact: false }
-        ]) +
         spoilerAutofillGroupHtml("moonRockKey", "Moon Rock Key", AUTOFILL_SECTION_ICON.moonRockKey, MOON_ROCK_KEY_KINGDOMS.map(function(name) {
             return { label: name, icon: moonPlacementIconSrc(kingdomIconKey(name)), search: name + "'s Moon Rock Key", exact: false };
         }));
+
+    // Search box slot pinned to the bottom of the panel (see placeSpoilerSearchInput).
+    var searchSlot = document.createElement("div");
+    searchSlot.className = "spoiler-autofill-search-slot";
+    searchSlot.id = "spoiler-autofill-search-slot";
+    panel.appendChild(searchSlot);
 
     spoilerAutofillBuilt = true;
 }
