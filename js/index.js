@@ -3084,7 +3084,10 @@ var PAINTING_ICON_FILENAMES = {
     "Ruined Kingdom": "RuinedPainting",
     "Bowser's Kingdom": "BowserPainting",
     "Moon Kingdom": "MoonPainting",
-    "Mushroom Kingdom": "MushroomPainting"
+    "Mushroom Kingdom": "MushroomPainting",
+    "Cap Kingdom": "CapPainting",
+    "Dark Side": "DarkSidePainting",
+    "Darker Side": "DarkSidePainting"
 };
 
 function paintingIconKey(kingdomName) {
@@ -3245,7 +3248,22 @@ var ABILITY_ICON_FILENAMES = {
     "Wall Jump": "AbilityWallJump.png",
     "Ledge Grab": "AbilityLedgeGrab.png",
     "Climb": "AbilityClimb.png",
-    "Swing": "AbilitySwing.png"
+    "Swing": "AbilitySwing.png",
+    // --- Newer abilities (names match the spoiler log exactly) ---
+    "Moon Kingdom Low Gravity": "AbilityMoonLowGravity.png",
+    "Grab": "AbilityGrab.png",
+    "Swim": "AbilitySwim.png",
+    "Scooter Riding": "AbilityScooterRiding.png",
+    "Jaxi Riding": "AbilityJaxiRiding.png",
+    "Rocket Flower": "AbilityRocketFlower.png",
+    "Talk to NPCs": "AbilityNPCTalking.png",
+    "Enter 2D Pipes": "AbilityEnter2DPipes.png",
+    "Scarecrows": "AbilityScarecrows.png",
+    "P-Switches": "AbilityPSwitches.png",
+    "Notes": "AbilityNotes.png",
+    "Cappy Flowers": "AbilityCappyFlowers.png",
+    // Health Upgrade moons (shown as an icon instead of "(Health Upgrade)" text)
+    "Health Upgrade": "Healthupgrade.png"
 };
 
 /** Exact capture name -> icon filename (a few break the "capture" + lowercase pattern, e.g. "T-Rex" -> "trex.png", "Gushen" -> "gushen.png"). */
@@ -4371,11 +4389,19 @@ function buildSpoilerModel(lines, sectionTitle) {
                 var multiTag = MOON_IS_MULTI[entry.moon] ? "  ✦ Multi Moon" : "";
                 var rockKeyTag = /Moon Rock Key$/.test(entry.moon) ? "  (" + entry.moon + ")" : "";
                 var itemNames = moonPlacementRowItemNames(trueKingdom, extraDetail);
+                // "(Health Upgrade)" is shown as an icon instead of text.
+                var isHealthUpgrade = /^\s*\(Health Upgrade\)\s*$/i.test(extraDetail);
+                var rowIcons = moonPlacementRowIconKey(trueKingdom, extraDetail, entry.check);
+                if (isHealthUpgrade) {
+                    extraDetail = "";
+                    rowIcons = rowIcons.concat([ABILITY_ICON_FILENAMES["Health Upgrade"]]);
+                    itemNames = itemNames.concat(["Health Upgrade"]);
+                }
                 rows.push({
                     type: "entry",
                     key: entry.check + multiTag,
                     value: "→  " + trueKingdom + extraDetail + rockKeyTag,
-                    icons: moonPlacementRowIconKey(trueKingdom, extraDetail, entry.check),
+                    icons: rowIcons,
                     icon2: rockKeyTag ? "moonrockkey.png" : null,
                     frontIcon: moonPlacementFrontIconKey(currentGroupTitle, entry.check),
                     checkName: entry.check,
@@ -4991,7 +5017,8 @@ function playReportCount(obj) {
 var AUTOFILL_SECTION_ICON = {
     captures: "capturegoomba.png",
     abilities: "AbilityGP.png",
-    moonRockKey: "moonrockkey.png"
+    moonRockKey: "moonrockkey.png",
+    misc: "AbilityTimerChallenges.png"
 };
 
 var spoilerAutofillBuilt = false;
@@ -5028,6 +5055,9 @@ function buildSpoilerAutofillPanel() {
         spoilerAutofillGroupHtml("abilities", "Abilities", AUTOFILL_SECTION_ICON.abilities, abilityNames.map(function(name) {
             return { label: name, icon: moonPlacementIconSrc(abilityIconName(name)), search: name, exact: true };
         })) +
+        spoilerAutofillGroupHtml("misc", "Other Searches", AUTOFILL_SECTION_ICON.misc, [
+            { label: "Timer Challenges", icon: moonPlacementIconSrc("AbilityTimerChallenges.png"), search: "Timer Challenge", exact: false }
+        ]) +
         spoilerAutofillGroupHtml("moonRockKey", "Moon Rock Key", AUTOFILL_SECTION_ICON.moonRockKey, MOON_ROCK_KEY_KINGDOMS.map(function(name) {
             return { label: name, icon: moonPlacementIconSrc(kingdomIconKey(name)), search: name + "'s Moon Rock Key", exact: false };
         }));
