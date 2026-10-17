@@ -737,6 +737,31 @@
                 outline: 2px solid #d4af37;
                 outline-offset: 2px;
             }
+            .changelog-close-btn {
+                position: absolute;
+                top: 8px;
+                right: 12px;
+                width: 32px;
+                height: 32px;
+                background: transparent;
+                border: none;
+                font-size: 24px;
+                line-height: 1;
+                color: inherit;
+                cursor: pointer;
+                opacity: 0.7;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 4px;
+                transition: opacity 0.15s ease, background-color 0.15s ease;
+                z-index: 10;
+            }
+            .changelog-close-btn:hover {
+                opacity: 1;
+                background-color: rgba(212, 175, 55, 0.15);
+            }
             .changelog-heading {
                 margin: 0 0 6px;
                 color: #d4af37;
@@ -760,11 +785,53 @@
                 font-weight: normal;
                 opacity: 0.75;
             }
+            .changelog-category {
+                margin: 14px 0 4px;
+                font-size: 13.5px;
+                font-weight: bold;
+                color: #d4af37;
+                border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+                padding-bottom: 3px;
+            }
+            .changelog-subtitle {
+                margin: 7px 0 2px 2px;
+                font-size: 12px;
+                font-weight: bold;
+                color: #f0d67e;
+            }
+            html:not(.dark-mode) .changelog-subtitle,
+            html:not(.dark-mode) .changelog-version {
+                color: #9e7912;
+            }
             .changelog-entry ul {
-                margin: 4px 0 0;
+                margin: 2px 0 6px;
                 padding-left: 20px;
                 font-size: 12px;
-                line-height: 1.4;
+                line-height: 1.45;
+            }
+            .changelog-entry li {
+                margin-bottom: 3px;
+            }
+            .changelog-entry li strong {
+                font-family: "FontEB", sans-serif;
+                font-weight: bold;
+            }
+            .changelog-known-issues {
+                background: rgba(255, 193, 7, 0.08);
+                border: 1px solid rgba(255, 193, 7, 0.35);
+                border-radius: 6px;
+                padding: 6px 12px;
+                margin-top: 12px;
+            }
+            .changelog-known-issues .changelog-category {
+                color: #e6a700;
+                border-bottom: none;
+                margin: 0 0 2px;
+                padding: 0;
+            }
+            .changelog-known-issues ul {
+                margin: 0;
+                padding-left: 18px;
             }
 
             /* ------------------------------------------------------------
@@ -1027,6 +1094,17 @@
             }
             html.m-stage .changelog-version {
                 font-size: 18px;
+            }
+            html.m-stage .changelog-category {
+                font-size: 17px;
+            }
+            html.m-stage .changelog-subtitle {
+                font-size: 15px;
+            }
+            html.m-stage .changelog-close-btn {
+                font-size: 28px;
+                width: 38px;
+                height: 38px;
             }
             html.m-stage .credit-desc,
             html.m-stage .credit-role {
@@ -5186,6 +5264,7 @@
                     >Last updated ...</span
                 >
                 <div id="changelog-modal" style="display: none">
+                    <button class="changelog-close-btn" id="changelog-close-btn" aria-label="Close" onclick="closeChangelogModal()">&times;</button>
                     <div class="changelog" id="changelog" tabindex="0"></div>
                 </div>
             </div>
@@ -5732,15 +5811,267 @@
                 });
             })();
 
+            function closeChangelogModal() {
+                var modal = document.getElementById("changelog-modal");
+                if (modal) {
+                    modal.style.display = "none";
+                }
+            }
+
             const changelogbutton = document.getElementById("changelog-button");
             function onChangelogButtonClick() {
                 document.getElementById("changelog-modal").style.display = "block";
             }
             changelogbutton.addEventListener("click", onChangelogButtonClick);
 
+            window.addEventListener("keydown", function (e) {
+                if (e.key === "Escape" || e.keyCode === 27) {
+                    closeChangelogModal();
+                }
+            });
+
+            window.addEventListener("click", function (e) {
+                var modal = document.getElementById("changelog-modal");
+                var btn = document.getElementById("changelog-button");
+                if (modal && modal.style.display === "block") {
+                    if (!modal.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
+                        modal.style.display = "none";
+                    }
+                }
+            });
+
             const changelog = [
                 {
                     version: "Latest Build",
+                    date: "October 2026",
+                    sections: [
+                        {
+                            category: "🎮 New Game Modes & Game Mode Updates",
+                            subsections: [
+                                {
+                                    title: "Level Up (Rogue-Lite Run Mode)",
+                                    items: [
+                                        "Progression overhaul: moons do not directly grant abilities, captures, or paintings; instead, collecting moons awards XP.",
+                                        "Level up to draft cards from a hand of abilities, captures, paintings, boons, runes, and curses.",
+                                        "Starting Fate: 5 seconds of free play outside the Odyssey before level 1 deals 3 hands of openers tailored to open reachable moons (with rescue hands if stuck).",
+                                        "Bonus Hands & Treasure Hands: Level-ups can proc bonus hands or treasure hands containing boons, Health Upgrades, Warp, Purple Wallet, Coins, XP Caches, Relics, and Hint Tokens.",
+                                        "Double XP: Kingdoms without moon requirements (Cap, Cloud, Mushroom, Dark, Darker Side) grant double XP.",
+                                        "Level Up difficulty settings (Easy, Normal, Hard).",
+                                    ],
+                                },
+                                {
+                                    title: "Moon Hunt (Run Mode)",
+                                    items: [
+                                        "Every journey kingdom requires 1–5 specific moons credited to that kingdom, wherever they were shuffled.",
+                                        "Custom HUD overlay under coins displays target hunt moons and locations (crossed out once collected).",
+                                        "Includes a Chapel requirement row once all kingdoms are completed.",
+                                        "Show Progress Moons: Option to show collection progress popups (<Kingdom> progress moon (n/N)) and track hunt moons on the tracker.",
+                                    ],
+                                },
+                                {
+                                    title: "Total Moons Variant",
+                                    items: [
+                                        "Added an option to unlock kingdoms by collecting a grand total of moons across the entire game rather than per-kingdom progress moons.",
+                                    ],
+                                },
+                                {
+                                    title: "Nuzlocke & Limited Lives Moved to Game Modifiers",
+                                    items: [
+                                        "Moved from dedicated run modes into the Game Modifiers menu so they can be combined with other game modes.",
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            category: "🧩 Abilities, Movement & Controls",
+                            subsections: [
+                                {
+                                    title: "New Bonus Abilities",
+                                    items: [
+                                        "Wallet & Purple Wallet: Can now be locked as bonus abilities (unlocking Wallet grants 100 coins to match starting with Wallet).",
+                                        "Paintings & Odyssey Travel: Can now be locked as bonus abilities.",
+                                    ],
+                                },
+                                {
+                                    title: "Timer Challenges Split",
+                                    items: [
+                                        "Timer Challenges ability has been split into independent abilities for finer-grained gating (e.g. P-Switches vs Scarecrows).",
+                                    ],
+                                },
+                                {
+                                    title: "P-Switch Logic Enforcement",
+                                    items: [
+                                        "Wooded Tower and Wooded Tank subarea P-Switches now strictly require the P-Switch ability.",
+                                    ],
+                                },
+                                {
+                                    title: "Start Without Cap Throw",
+                                    items: [
+                                        "Option to start a seed without any cap throw unlocked (captures now require any cap throw).",
+                                    ],
+                                },
+                                {
+                                    title: "Technique Decoupling & Fixes",
+                                    items: [
+                                        "Wall Jump decoupled from regular jump (no longer requires the regular jump ability).",
+                                        "Roll Cancel and Spinpound into Roll handled without gating on other abilities.",
+                                        "Jump ability no longer restricts captures.",
+                                        "Retrieve Cappy: Press Y to retrieve Cappy from uncaptured Cheep Cheeps or Tropical Wrigglers.",
+                                    ],
+                                },
+                                {
+                                    title: "Overflow Ability Grants",
+                                    items: [
+                                        "When locked abilities exceed host moons on Dark/Darker Side, excess abilities are granted at start through the prerequisite chain and announced in the opening start popup and spoiler log.",
+                                    ],
+                                },
+                                {
+                                    title: "Controls & Motion-Free Updates",
+                                    items: [
+                                        "Added \"Until Neutral Throw\" option for Motion Free Controls.",
+                                        "Added support for SL / SR buttons (and retired 360Chrism mode).",
+                                        "Fixed changing control settings with the left stick in the in-game menu.",
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            category: "🪞 Game Modifiers & Visuals",
+                            subsections: [
+                                {
+                                    title: "Mirror Mode",
+                                    items: [
+                                        "Horizontally flips the rendered world (Off / Kingdoms / Subareas / Everything / Random).",
+                                        "Mirrors analog stick controls, gyro pose, swing directions, world-anchored HUD, pause map icons, touch taps, and audio panning.",
+                                        "Compatibility fixes for Spark Pylons, Zippers, and Random Mode.",
+                                    ],
+                                },
+                                {
+                                    title: "Grey Moons Modifier",
+                                    items: [
+                                        "New modifier where every moon appears grey; supports vanilla moon models (and Moon Kingdom uses grey moons).",
+                                    ],
+                                },
+                                {
+                                    title: "Hide Current HP",
+                                    items: [
+                                        "Game modifier to hide Mario's current HP counter.",
+                                    ],
+                                },
+                                {
+                                    title: "New Icons in HUD/Menus",
+                                    items: [
+                                        "Updated jump icon, new 2D icon, and icons for P-Switches, Cap Flowers, Scarecrows, and Music Notes.",
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            category: "🗺️ Tracker, Map & Kingdom Checks",
+                            subsections: [
+                                {
+                                    title: "Kingdom Checks Integrated into Moon Lists",
+                                    items: [
+                                        "Removed Kingdom Checks from the Mod Menu and integrated them directly into the Moon Lists.",
+                                        "Checks now evaluate against the current scenario instead of auto-promoting on world complete.",
+                                        "Fixed Peach moons only appearing after starting her quest, and Shiveria properly recognized as part of Snow Kingdom.",
+                                    ],
+                                },
+                                {
+                                    title: "Tracker Improvements",
+                                    items: [
+                                        "The last collected moon label now scrolls if the moon name is too long.",
+                                        "Delayed highlighting abilities, captures, and paintings in the tracker until their unlock notifications finish playing.",
+                                        "Fixed tracker layout bug when only one of moon cave skip or moon cave requirements was enabled.",
+                                        "Fixed tracker bridge path location.",
+                                    ],
+                                },
+                                {
+                                    title: "Hide Moon Requirements Option",
+                                    items: [
+                                        "Option to keep moon requirements hidden until all required moons for that kingdom are collected.",
+                                    ],
+                                },
+                                {
+                                    title: "In-Game Timer",
+                                    items: [
+                                        "In-game timer now only counts time while the player actually has control of Mario.",
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            category: "🎒 Quality of Life & Settings",
+                            subsections: [
+                                {
+                                    title: "Quality of Life",
+                                    items: [
+                                        "Auto Skip Cutscenes: Option to automatically skip cutscenes.",
+                                        "1HP Bosses QoL: New QoL toggle for 1HP Boss challenges.",
+                                        "L3 to Sprint QoL: Option to click L3 (left analog stick) to sprint.",
+                                        "Free-Standing Station Moon: \"Powering Up the Station\" moon now spawns free-standing beside the helper NPC past Metro's factory quest.",
+                                        "Streamlined Sphynx Questions: Cleaned up questions and brochure wording.",
+                                    ],
+                                },
+                                {
+                                    title: "Talkatoo & Hints",
+                                    items: [
+                                        "Talkatoo Customization: Talkatoo hint cost, customizable hint limits, and customizable Talk to NPCs ability.",
+                                        "Enhanced Signpost Hints: Signpost hints can be made optional, with configurable percentage of useful hints.",
+                                        "Option for hints to only reveal critical items (abilities / critical captures).",
+                                        "Option to display a signpost in the Chapel revealing Bowser's capture location.",
+                                    ],
+                                },
+                                {
+                                    title: "Settings & Presets",
+                                    items: [
+                                        "Alternative Captures: Added setting (0–100%, default 50%) for alternative capture logic paths.",
+                                        "Inventory Badges & Filters: Added 2D section filter group and badges in the inventory.",
+                                        "Manual Health Upgrade Moon Count: Configure the exact number of Health Upgrade moons in a seed.",
+                                        "Kingdom Rewards OR Option: Restored the OR option for kingdom rewards (Captures OR Abilities).",
+                                        "Preset & Save Safety: Saves/loads more settings in presets and save files.",
+                                        "Added warning when generating a seed without enough unlockable moons for Paintings, Captures, or Abilities.",
+                                        "Added global \"Reallocate if short\" setting and improved menu window safety.",
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            category: "🐛 Bug Fixes",
+                            items: [
+                                "Fixed crash when a notification was displaying while triggering a loading zone.",
+                                "Fixed crash when using sprint QoL in 2D sections.",
+                                "Fixed crash when opening the moon list on the world map.",
+                                "Fixed crash during Shiveria Race.",
+                                "Fixed rare crash when navigating off the edge of moon lists.",
+                                "Fixed \"Return to Start\" not moving kingdoms and crashing in subareas.",
+                                "Fixed cases where death respawns lacked proper animations (e.g. vine into Wooded Kingdom).",
+                                "Fixed decoupling issues in Ice Cave, Jaxi Ruins, and Dark Side subareas.",
+                                "Fixed incorrect Sand Kingdom subarea labels and Snow Kingdom logic.",
+                                "Fixed unexpected scenario changes when entering certain subareas.",
+                                "Fixed Rango 1HP mode behavior.",
+                                "Fixed moon purchasing at purple coin shops.",
+                                "Fixed painting unlock logic bug and returned painting unlocks to the Kingdom Rewards list.",
+                                "Fixed logic bug where specific moon ordering could generate an unbeatable seed.",
+                                "Fixed Hint Tokens only being detected if located in Cap, Cloud, or Moon Kingdom.",
+                                "Filtered out invalid kingdom start positions.",
+                                "Fixed Talkatoo not adhering to selected settings.",
+                                "Fixed Seaside Kingdom Sphynx logic.",
+                                "Fixed trap moon edge cases.",
+                            ],
+                        },
+                        {
+                            category: "⚠️ Known Issues",
+                            items: [
+                                "Moon Sphynx subarea incorrectly in logic without Talk to NPC.",
+                                "Cascade Treasure accessible in the wrong scenario.",
+                                "Slots moon in logic without wallet.",
+                            ],
+                        },
+                    ],
+                },
+                {
+                    version: "Previous Build",
                     changes: [
                         "Sphynx questions updated",
                         "Crash mitigation for Wooded Moon Rock scenario crash",
@@ -5830,13 +6161,71 @@
                     }
                     wrap.appendChild(title);
 
-                    var list = document.createElement("ul");
-                    (entry.changes || []).forEach(function (text) {
-                        var li = document.createElement("li");
-                        li.textContent = text;
-                        list.appendChild(li);
-                    });
-                    wrap.appendChild(list);
+                    function formatChangelogItem(li, text) {
+                        var colonIdx = text.indexOf(": ");
+                        if (colonIdx > 0 && colonIdx < 50) {
+                            var strong = document.createElement("strong");
+                            strong.textContent = text.slice(0, colonIdx + 1);
+                            li.appendChild(strong);
+                            li.appendChild(document.createTextNode(" " + text.slice(colonIdx + 2)));
+                        } else {
+                            li.textContent = text;
+                        }
+                    }
+
+                    if (Array.isArray(entry.sections) && entry.sections.length > 0) {
+                        entry.sections.forEach(function (sec) {
+                            var secDiv = document.createElement("div");
+                            var isKnownIssues = sec.category && sec.category.indexOf("Known Issues") !== -1;
+                            secDiv.className = isKnownIssues ? "changelog-known-issues" : "changelog-section";
+
+                            if (sec.category) {
+                                var catTitle = document.createElement("div");
+                                catTitle.className = "changelog-category fontDB";
+                                catTitle.textContent = sec.category;
+                                secDiv.appendChild(catTitle);
+                            }
+
+                            if (Array.isArray(sec.subsections) && sec.subsections.length > 0) {
+                                sec.subsections.forEach(function (sub) {
+                                    if (sub.title) {
+                                        var subTitle = document.createElement("div");
+                                        subTitle.className = "changelog-subtitle fontDB";
+                                        subTitle.textContent = sub.title;
+                                        secDiv.appendChild(subTitle);
+                                    }
+                                    if (Array.isArray(sub.items) && sub.items.length > 0) {
+                                        var ul = document.createElement("ul");
+                                        sub.items.forEach(function (item) {
+                                            var li = document.createElement("li");
+                                            formatChangelogItem(li, item);
+                                            ul.appendChild(li);
+                                        });
+                                        secDiv.appendChild(ul);
+                                    }
+                                });
+                            } else if (Array.isArray(sec.items) && sec.items.length > 0) {
+                                var ul = document.createElement("ul");
+                                sec.items.forEach(function (item) {
+                                    var li = document.createElement("li");
+                                    formatChangelogItem(li, item);
+                                    ul.appendChild(li);
+                                });
+                                secDiv.appendChild(ul);
+                            }
+
+                            wrap.appendChild(secDiv);
+                        });
+                    } else if (Array.isArray(entry.changes)) {
+                        var list = document.createElement("ul");
+                        entry.changes.forEach(function (text) {
+                            var li = document.createElement("li");
+                            formatChangelogItem(li, text);
+                            list.appendChild(li);
+                        });
+                        wrap.appendChild(list);
+                    }
+
                     box.appendChild(wrap);
                 });
             }
