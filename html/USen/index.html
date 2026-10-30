@@ -652,63 +652,52 @@
             }
 
             /* ------------------------------------------------------------
-               DOWNLOADS -> DISCORD NOTICE (see SHOW_DOWNLOADS_DISCORD_NOTICE)
+               DISCORD NOTICE NEXT TO THE DOWNLOADS TAB
+               (shown only when SHOW_DOWNLOADS_DISCORD_NOTICE = 1)
                ------------------------------------------------------------ */
-            #downloads-notice {
+            .toc-downloads-item {
+                position: relative;
+            }
+            #downloads-discord-notice {
                 display: none;
                 position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                z-index: 50;
+                left: 100%;
+                top: 50%;
+                transform: translateY(-50%);
+                margin-left: 14px;
                 align-items: center;
-                justify-content: center;
-                background: rgba(0, 0, 0, 0.6);
+                gap: 10px;
+                white-space: nowrap;
+                color: #fff;
+                font-size: 13px;
+                line-height: 1.3;
+                z-index: 5;
             }
-            #downloads-notice.open {
+            #downloads-discord-notice.show {
                 display: flex;
             }
-            .downloads-notice-box {
-                position: relative;
-                max-width: 640px;
-                width: 80%;
-                padding: 34px 40px 30px;
-                box-sizing: border-box;
-                border-radius: 12px;
-                background: #fff;
-                color: #000;
-                border: 2px solid #d4af37;
-                text-align: center;
-            }
-            .downloads-notice-text {
-                margin: 0 0 22px;
-                font-size: 22px;
-                line-height: 1.4;
-            }
-            .downloads-discord-link {
+            #downloads-discord-notice .downloads-discord-link {
                 display: inline-flex;
                 align-items: center;
-                gap: 12px;
-                padding: 10px 22px;
-                border-radius: 8px;
+                gap: 8px;
+                padding: 5px 12px;
+                border-radius: 6px;
                 background: #5865f2;
                 color: #fff;
-                font-size: 20px;
                 font-weight: bold;
                 text-decoration: none;
                 transition: transform 0.15s ease, background-color 0.15s ease;
             }
-            .downloads-discord-link:hover,
-            .downloads-discord-link:focus {
+            #downloads-discord-notice .downloads-discord-link:hover,
+            #downloads-discord-notice .downloads-discord-link:focus {
                 background: #4752c4;
                 transform: scale(1.05);
                 outline: 2px solid #d4af37;
                 outline-offset: 2px;
             }
-            .downloads-discord-link img {
-                width: 36px;
-                height: 36px;
+            #downloads-discord-notice .downloads-discord-link img {
+                width: 24px;
+                height: 24px;
                 object-fit: contain;
             }
 
@@ -1272,25 +1261,6 @@
             })();
         </script>
         <div class="contents">
-            <div id="downloads-notice" role="dialog" aria-modal="true">
-                <div class="downloads-notice-box">
-                    <button class="changelog-close-btn" aria-label="Close" onclick="closeDownloadsNotice()">&times;</button>
-                    <p class="downloads-notice-text">
-                        The most updated version is available in the Discord Server
-                    </p>
-                    <a
-                        id="downloads-discord-link"
-                        class="downloads-discord-link"
-                        href="https://discord.gg/k7hVMeqX8g"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onclick="wsnd.play('seDecide')"
-                    >
-                        <img src="../../img/credits/discord.png" alt="Discord" />
-                        <span>Join the Discord Server</span>
-                    </a>
-                </div>
-            </div>
             <!-- ========================================================
                  PAGE 0: HOME MENU
                  ======================================================== -->
@@ -1327,10 +1297,10 @@
                     >
                 </h1>
                 <ul class="toc">
-                    <li>
+                    <li class="toc-downloads-item">
                         <a
                             href="javascript:void(0);"
-                            onclick="openDownloadsGate()"
+                            onclick="openDownloads()"
                             onblur="menuBlur(this)"
                             onfocus="menuFocus(this)"
                             id="toDownloads"
@@ -1343,6 +1313,20 @@
                                 >Last updated ...</span
                             ></a
                         >
+                        <div id="downloads-discord-notice">
+                            <span>The most updated version is available in the Discord Server</span>
+                            <a
+                                id="downloads-discord-link"
+                                class="downloads-discord-link"
+                                href="https://discord.gg/k7hVMeqX8g"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onclick="wsnd.play('seDecide')"
+                            >
+                                <img src="../../img/credits/discord.png" alt="Discord" />
+                                <span>Discord</span>
+                            </a>
+                        </div>
                     </li>
                     <li>
                         <a
@@ -5648,43 +5632,34 @@
 
         <script>
             /* ========================================================
-               DOWNLOADS -> DISCORD NOTICE TOGGLE
-               1 = clicking "Downloads" shows the Discord notice
-                   ("The most updated version is available in the
-                   Discord Server") instead of opening the Downloads page.
-               0 = clicking "Downloads" opens the Downloads page normally.
+               DISCORD NOTICE NEXT TO THE DOWNLOADS TAB
+               1 = show "The most updated version is available in the
+                   Discord Server" + a Discord link beside the Downloads tab
+               0 = hide it
+               (The Downloads tab itself always opens normally.)
                ======================================================== */
             var SHOW_DOWNLOADS_DISCORD_NOTICE = 1;
 
-            function openDownloadsGate() {
-                if (SHOW_DOWNLOADS_DISCORD_NOTICE === 1) {
-                    try { wsnd.play("seDecide"); } catch (e) {}
-                    var n = document.getElementById("downloads-notice");
-                    n.classList.add("open");
-                    document.getElementById("downloads-discord-link").focus();
-                    return;
+            (function initDownloadsDiscordNotice() {
+                var notice = document.getElementById("downloads-discord-notice");
+                var tab = document.getElementById("toDownloads");
+                if (!notice || !tab) { return; }
+                if (SHOW_DOWNLOADS_DISCORD_NOTICE !== 1) { return; }
+                notice.classList.add("show");
+
+                // Sit right after the Downloads button, whatever its width is.
+                function place() {
+                    notice.style.left =
+                        tab.offsetLeft + tab.offsetWidth + 14 + "px";
+                    notice.style.top =
+                        tab.offsetTop + tab.offsetHeight / 2 + "px";
+                    notice.style.marginLeft = "0";
                 }
-                openDownloads();
-            }
-
-            function closeDownloadsNotice() {
-                var n = document.getElementById("downloads-notice");
-                if (n) { n.classList.remove("open"); }
-                var d = document.getElementById("toDownloads");
-                if (d) { d.focus(); }
-            }
-
-            window.addEventListener("keydown", function (e) {
-                if (e.key === "Escape" || e.keyCode === 27) {
-                    var n = document.getElementById("downloads-notice");
-                    if (n && n.classList.contains("open")) { closeDownloadsNotice(); }
-                }
-            });
-
-            document.addEventListener("click", function (e) {
-                var n = document.getElementById("downloads-notice");
-                if (n && e.target === n) { closeDownloadsNotice(); }
-            });
+                place();
+                window.addEventListener("load", place);
+                window.addEventListener("resize", place);
+                setTimeout(place, 500);
+            })();
 
             /* ========================================================
                THEME (Dark/Light mode)
