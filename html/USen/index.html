@@ -652,6 +652,67 @@
             }
 
             /* ------------------------------------------------------------
+               DOWNLOADS -> DISCORD NOTICE (see SHOW_DOWNLOADS_DISCORD_NOTICE)
+               ------------------------------------------------------------ */
+            #downloads-notice {
+                display: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 50;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0, 0, 0, 0.6);
+            }
+            #downloads-notice.open {
+                display: flex;
+            }
+            .downloads-notice-box {
+                position: relative;
+                max-width: 640px;
+                width: 80%;
+                padding: 34px 40px 30px;
+                box-sizing: border-box;
+                border-radius: 12px;
+                background: #fff;
+                color: #000;
+                border: 2px solid #d4af37;
+                text-align: center;
+            }
+            .downloads-notice-text {
+                margin: 0 0 22px;
+                font-size: 22px;
+                line-height: 1.4;
+            }
+            .downloads-discord-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 22px;
+                border-radius: 8px;
+                background: #5865f2;
+                color: #fff;
+                font-size: 20px;
+                font-weight: bold;
+                text-decoration: none;
+                transition: transform 0.15s ease, background-color 0.15s ease;
+            }
+            .downloads-discord-link:hover,
+            .downloads-discord-link:focus {
+                background: #4752c4;
+                transform: scale(1.05);
+                outline: 2px solid #d4af37;
+                outline-offset: 2px;
+            }
+            .downloads-discord-link img {
+                width: 36px;
+                height: 36px;
+                object-fit: contain;
+            }
+
+            /* ------------------------------------------------------------
                MULTIPLAYER (SERVER LIST) OVERLAY PAGE
                ------------------------------------------------------------ */
             .multiplayer-page {
@@ -1211,6 +1272,25 @@
             })();
         </script>
         <div class="contents">
+            <div id="downloads-notice" role="dialog" aria-modal="true">
+                <div class="downloads-notice-box">
+                    <button class="changelog-close-btn" aria-label="Close" onclick="closeDownloadsNotice()">&times;</button>
+                    <p class="downloads-notice-text">
+                        The most updated version is available in the Discord Server
+                    </p>
+                    <a
+                        id="downloads-discord-link"
+                        class="downloads-discord-link"
+                        href="https://discord.gg/k7hVMeqX8g"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onclick="wsnd.play('seDecide')"
+                    >
+                        <img src="../../img/credits/discord.png" alt="Discord" />
+                        <span>Join the Discord Server</span>
+                    </a>
+                </div>
+            </div>
             <!-- ========================================================
                  PAGE 0: HOME MENU
                  ======================================================== -->
@@ -1250,7 +1330,7 @@
                     <li>
                         <a
                             href="javascript:void(0);"
-                            onclick="openDownloads()"
+                            onclick="openDownloadsGate()"
                             onblur="menuBlur(this)"
                             onfocus="menuFocus(this)"
                             id="toDownloads"
@@ -5567,6 +5647,45 @@
         <script src="../../js/index.js"></script>
 
         <script>
+            /* ========================================================
+               DOWNLOADS -> DISCORD NOTICE TOGGLE
+               1 = clicking "Downloads" shows the Discord notice
+                   ("The most updated version is available in the
+                   Discord Server") instead of opening the Downloads page.
+               0 = clicking "Downloads" opens the Downloads page normally.
+               ======================================================== */
+            var SHOW_DOWNLOADS_DISCORD_NOTICE = 1;
+
+            function openDownloadsGate() {
+                if (SHOW_DOWNLOADS_DISCORD_NOTICE === 1) {
+                    try { wsnd.play("seDecide"); } catch (e) {}
+                    var n = document.getElementById("downloads-notice");
+                    n.classList.add("open");
+                    document.getElementById("downloads-discord-link").focus();
+                    return;
+                }
+                openDownloads();
+            }
+
+            function closeDownloadsNotice() {
+                var n = document.getElementById("downloads-notice");
+                if (n) { n.classList.remove("open"); }
+                var d = document.getElementById("toDownloads");
+                if (d) { d.focus(); }
+            }
+
+            window.addEventListener("keydown", function (e) {
+                if (e.key === "Escape" || e.keyCode === 27) {
+                    var n = document.getElementById("downloads-notice");
+                    if (n && n.classList.contains("open")) { closeDownloadsNotice(); }
+                }
+            });
+
+            document.addEventListener("click", function (e) {
+                var n = document.getElementById("downloads-notice");
+                if (n && e.target === n) { closeDownloadsNotice(); }
+            });
+
             /* ========================================================
                THEME (Dark/Light mode)
                ======================================================== */
